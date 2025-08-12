@@ -10,13 +10,16 @@ Critério de conclusão: O pedido só é concluído quando o sistema permite sel
 -Avaliação do atendimento:
 
 -Mudar a aparência ou modelo do mobile da pizzaria:
-História de usuário: Como cliente ansioso durante um evento importante, quero acompanhar e confirmar o status de entrega do meu pedido pelo site, para ter confiança e segurança de que ele chegará no prazo.
+História de usuário: Como cliente envolvido em artes, quero personalizar o fundo e as cores do site/app da pizzaria (incluindo papel de parede e modo claro/escuro) para ter uma experiência visual única de acordo com meus gostos.
 
-Critério de conclusão: O sistema deve permitir que o cliente acesse a aba de pedidos, visualize o rastreamento em tempo real (com etapas e horários atualizados) e confirme que o pedido foi entregue com sucesso.
+Critério de conclusão: A personalização deve estar disponível nas configurações, permitindo escolher e aplicar as mudanças (fundo e cores) com sucesso, salvando as preferências do usuário.
 
 -Filtrar cardápio (vegetariano, sem glúten, doce, salgada, etc.):
 
 -Rastreamento do produto:
+História de usuário: Como cliente ansioso durante um evento importante, quero acompanhar e confirmar o status de entrega do meu pedido pelo site, para ter confiança e segurança de que ele chegará no prazo.
+
+Critério de conclusão: O sistema deve permitir que o cliente acesse a aba de pedidos, visualize o rastreamento em tempo real (com etapas e horários atualizados) e confirme que o pedido foi entregue com sucesso.
 
 -Agendamento de pedido:
 
