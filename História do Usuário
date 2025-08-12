@@ -10,6 +10,9 @@ Critério de conclusão: O pedido só é concluído quando o sistema permite sel
 -Avaliação do atendimento:
 
 -Mudar a aparência ou modelo do mobile da pizzaria:
+História de usuário: Como cliente ansioso durante um evento importante, quero acompanhar e confirmar o status de entrega do meu pedido pelo site, para ter confiança e segurança de que ele chegará no prazo.
+
+Critério de conclusão: O sistema deve permitir que o cliente acesse a aba de pedidos, visualize o rastreamento em tempo real (com etapas e horários atualizados) e confirme que o pedido foi entregue com sucesso.
 
 -Filtrar cardápio (vegetariano, sem glúten, doce, salgada, etc.):
 
