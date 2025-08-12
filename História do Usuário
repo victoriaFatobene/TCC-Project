@@ -8,6 +8,7 @@ Historia de usuário: Como cliente, quero personalizar minha pizza escolhendo in
 Critério de conclusão: O pedido só é concluído quando o sistema permite selecionar todas as opções e confirmar a compra com sucesso.
 
 -Avaliação do atendimento:
+Como cliente, eu quero poder avaliar o atendimento da pizzaria após receber meu pedido, deixando notas e comentários, para que a empresa saiba o que está fazendo certo ou errado e possa melhorar a qualidade do serviço prestado.
 
 -Mudar a aparência ou modelo do mobile da pizzaria:
 História de usuário: Como cliente envolvido em artes, quero personalizar o fundo e as cores do site/app da pizzaria (incluindo papel de parede e modo claro/escuro) para ter uma experiência visual única de acordo com meus gostos.
@@ -21,7 +22,8 @@ História de usuário: Como cliente ansioso durante um evento importante, quero 
 
 Critério de conclusão: O sistema deve permitir que o cliente acesse a aba de pedidos, visualize o rastreamento em tempo real (com etapas e horários atualizados) e confirme que o pedido foi entregue com sucesso.
 
--Agendamento de pedido:
+-Agendamento de pedido: 
+Como cliente, eu quero poder agendar o meu pedido para uma data e horário específicos, assim posso planejar antecipadamente e garantir que a pizza chegue exatamente quando eu desejar, seja para uma festa ou um momento especial.
 
 -Opção de pagamento após a efetuação do pedido dentro do próprio aplicativo:
 
