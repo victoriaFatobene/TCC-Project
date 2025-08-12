@@ -3,6 +3,10 @@ História do Usuário:
 -aba de restrição de ingredientes dentro do pedido sendo feito (ex.: sem pimenta, sem lactose, etc.):
 
 -Montar sua própria pizza:
+Historia de usuário: Como cliente, quero personalizar minha pizza escolhendo ingredientes, tamanho e borda para criar uma pizza única de acordo com meu gosto.
+
+Critério de conclusão: O pedido só é concluído quando o sistema permite selecionar todas as opções e confirmar a compra com sucesso.
+
 
 -Avaliação do atendimento:
 
