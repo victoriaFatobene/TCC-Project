@@ -1,11 +1,10 @@
 História do Usuário:
 
 -aba de restrição de ingredientes dentro do pedido sendo feito (ex.: sem pimenta, sem lactose, etc.):
+História do usuário: Como cliente, quero ter a capacidade de retirar alguns ingrediente de meu pedido caso eu tenha alguma restrição ou não me agrade.
 
 -Montar sua própria pizza:
 Historia de usuário: Como cliente, quero personalizar minha pizza escolhendo ingredientes, tamanho e borda para criar uma pizza única de acordo com meu gosto.
-
-Critério de conclusão: O pedido só é concluído quando o sistema permite selecionar todas as opções e confirmar a compra com sucesso.
 
 -Avaliação do atendimento:
 Como cliente, eu quero poder avaliar o atendimento da pizzaria após receber meu pedido, deixando notas e comentários, para que a empresa saiba o que está fazendo certo ou errado e possa melhorar a qualidade do serviço prestado.
@@ -13,21 +12,20 @@ Como cliente, eu quero poder avaliar o atendimento da pizzaria após receber meu
 -Mudar a aparência ou modelo do mobile da pizzaria:
 História de usuário: Como cliente envolvido em artes, quero personalizar o fundo e as cores do site/app da pizzaria (incluindo papel de parede e modo claro/escuro) para ter uma experiência visual única de acordo com meus gostos.
 
-Critério de conclusão: A personalização deve estar disponível nas configurações, permitindo escolher e aplicar as mudanças (fundo e cores) com sucesso, salvando as preferências do usuário.
-
 -Filtrar cardápio (vegetariano, sem glúten, doce, salgada, etc.):
+História  do usuário: Como cliente, quero ter opções que se adequem ao meu paladar e restrições, como comidas vegetarianas, veganas, etc.
 
 -Rastreamento do produto:
 História de usuário: Como cliente ansioso durante um evento importante, quero acompanhar e confirmar o status de entrega do meu pedido pelo site, para ter confiança e segurança de que ele chegará no prazo.
 
-Critério de conclusão: O sistema deve permitir que o cliente acesse a aba de pedidos, visualize o rastreamento em tempo real (com etapas e horários atualizados) e confirme que o pedido foi entregue com sucesso.
-
 -Agendamento de pedido: 
 Como cliente, eu quero poder agendar o meu pedido para uma data e horário específicos, assim posso planejar antecipadamente e garantir que a pizza chegue exatamente quando eu desejar, seja para uma festa ou um momento especial.
 
--Opção de pagamento após a efetuação do pedido dentro do próprio aplicativo:
+-Opção de pagamento após a efetuação do pedido dentro do aplicativo:
+História do usuário: Como cliente, gostaria de efetuar o pagamento de forma mais rápida e se possível evitando a demora do garçom ou da fila do caixa. Gostaria que após fazer o meu pedido, que eu pudesse já pagar pela comida, para que quando terminar, eu possa ir embora sem problemas de espera.
 
 -Ranking dos sabores mais pedidos atualizado no site:
+História do usuário: Como cliente, gostaria de ser informado sobre os sabores mais pedidos nas últimas semanas, para que minha escolha se torne mais fácil e eficiente, e ter certeza de que o meu pedido conseguira me agradar.
 
 -Pizza do dia. Cada dia um sabor especial específico:
 História de Usuário: Como cliente, quero receber sugestões diárias de pizzas recomendadas pelo chefe, com sabores variados e preços específicos para aproveitar a promoção ou novidade daquele dia.
@@ -38,10 +36,10 @@ História de Usuário: Como cliente da pizzaria, quero escolher o tamanho da piz
 -Opção de rodizio: 
 História de Usuário: Como cliente da pizzaria, quero escolher a opção de rodízio para poder experimentar vários sabores diferentes em uma única refeição, para aproveitar melhor a variedade do cardápio sem precisar fazer pedidos separados.
 
--Classificação de bebidas(alcoólicas, sem álcool, refrigerantes e sucos  naturais):
+-Classificação de Bebidas(alcoólicas, sem álcool, refrigerantes e sucos  naturais):
 História de Usuário: Como cliente da pizzaria, quero que as bebidas estejam classificadas em categorias como alcoólicas, sem álcool, refrigerantes e sucos naturais, para encontrar facilmente o tipo de bebida que desejo pedir.
 
--pizzas culturais (ingredientes e estilos de diferentes países):
+-Pizzas Culturais (ingredientes e estilos de diferentes países):
 História de Usuário: Como cliente, quero ter opções de pizzas baseadas em ingredientes e modos de preparo de diferentes países, para experimentar novos sabores e culturas.
 
 -Pedidos rápidos (botão “peça de novo” para repetir o último pedido em 1 clique):
