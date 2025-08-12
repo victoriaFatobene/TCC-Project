@@ -33,15 +33,19 @@ Como cliente, eu quero poder agendar o meu pedido para uma data e horário espec
 História de Usuário: Como cliente, quero receber sugestões diárias de pizzas recomendadas pelo chefe, com sabores variados e preços específicos para aproveitar a promoção ou novidade daquele dia.
 
 -Opções de tamanho (P, M, G):
+História de Usuário: Como cliente da pizzaria, quero escolher o tamanho da pizza entre pequeno (P), médio (M) e grande (G), para adequar a quantidade da pizza à minha fome ou ao número de pessoas.
 
--Opção de rodizio:
+-Opção de rodizio: 
+História de Usuário: Como cliente da pizzaria, quero escolher a opção de rodízio para poder experimentar vários sabores diferentes em uma única refeição, para aproveitar melhor a variedade do cardápio sem precisar fazer pedidos separados.
 
--Classificação de bebidas(alcoólicas, sem álcool, refrigerantes e sucos  naturais  ):
+-Classificação de bebidas(alcoólicas, sem álcool, refrigerantes e sucos  naturais):
+História de Usuário: Como cliente da pizzaria, quero que as bebidas estejam classificadas em categorias como alcoólicas, sem álcool, refrigerantes e sucos naturais, para encontrar facilmente o tipo de bebida que desejo pedir.
 
 -pizzas culturais (ingredientes e estilos de diferentes países):
 História de Usuário: Como cliente, quero ter opções de pizzas baseadas em ingredientes e modos de preparo de diferentes países, para experimentar novos sabores e culturas.
 
 -Pedidos rápidos (botão “peça de novo” para repetir o último pedido em 1 clique):
+História de Usuário: Como cliente da pizzaria, quero ter um botão “peça de novo” para repetir meu último pedido com 1 clique, para fazer pedidos rapidamente sem precisar montar tudo de novo.
 
 -Cardápio nutricional (informações calóricas e alergênicas para cada sabor):
 História de Usuário: Como cliente, quero poder visualizar informações nutricionais e sobre alergênicos de cada sabor de pizza para fazer escolhas mais seguras e adequadas à minha dieta.
