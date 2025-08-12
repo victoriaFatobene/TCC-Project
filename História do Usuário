@@ -22,6 +22,7 @@ Critério de conclusão: O pedido só é concluído quando o sistema permite sel
 -Ranking dos sabores mais pedidos atualizado no site:
 
 -Pizza do dia. Cada dia um sabor especial específico:
+História de Usuário: Como cliente, quero receber sugestões diárias de pizzas recomendadas pelo chefe, com sabores variados e preços específicos para aproveitar a promoção ou novidade daquele dia.
 
 -Opções de tamanho (P, M, G):
 
@@ -30,9 +31,12 @@ Critério de conclusão: O pedido só é concluído quando o sistema permite sel
 -Classificação de bebidas(alcoólicas, sem álcool, refrigerantes e sucos  naturais  ):
 
 -pizzas culturais (ingredientes e estilos de diferentes países):
+História de Usuário: Como cliente, quero ter opções de pizzas baseadas em ingredientes e modos de preparo de diferentes países, para experimentar novos sabores e culturas.
 
 -Pedidos rápidos (botão “peça de novo” para repetir o último pedido em 1 clique):
 
 -Cardápio nutricional (informações calóricas e alergênicas para cada sabor):
+História de Usuário: Como cliente, quero poder visualizar informações nutricionais e sobre alergênicos de cada sabor de pizza para fazer escolhas mais seguras e adequadas à minha dieta.
 
 -Favoritos (cliente salva suas pizzas preferidas para pedir mais rápido):
+História de Usuário: Como cliente, quero poder salvar minhas pizzas favoritas (que já foram compradas ou não) no sistema para poder pedir mais rápido quando eu desejar.
