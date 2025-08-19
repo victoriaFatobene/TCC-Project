@@ -15,8 +15,14 @@ História de usuário: Como cliente envolvido em artes, quero personalizar o fun
 -Filtrar cardápio (vegetariano, sem glúten, doce, salgada, etc.):
 História  do usuário: Como cliente, quero ter opções que se adequem ao meu paladar e restrições, como comidas vegetarianas, veganas, etc.
 
--Rastreamento do produto:
-História de usuário: Como cliente ansioso durante um evento importante, quero acompanhar e confirmar o status de entrega do meu pedido pelo site, para ter confiança e segurança de que ele chegará no prazo.
+-Status do Pedido:
+História de usuário: Como cliente, quero ter acesso ao status do meu pedido. Se ele está em produção ou em processo de entrega.
+
+-Método de escolha de pagamento dentro do próprio aplicativo:
+História de usuário: como cliente do aplicativo, quero escolher o método de pagamento (cartão de crédito, débito, PIX, dinheiro, etc.), para que eu possa finalizar minha compra de forma rápida.
+
+-Pizza da semana. Mostrar o sabor mais pedido na semana:
+História de Usuário: Como cliente, quero ver as sugestões da semana de pizzas recomendadas pelo chefe, para aproveitar a promoção ou novidade daquela semana.
 
 -Agendamento de pedido: 
 Como cliente, eu quero poder agendar o meu pedido para uma data e horário específicos, assim posso planejar antecipadamente e garantir que a pizza chegue exatamente quando eu desejar, seja para uma festa ou um momento especial.
@@ -27,9 +33,6 @@ História do usuário: Como cliente, gostaria de efetuar o pagamento de forma ma
 -Ranking dos sabores mais pedidos atualizado no site:
 História do usuário: Como cliente, gostaria de ser informado sobre os sabores mais pedidos nas últimas semanas, para que minha escolha se torne mais fácil e eficiente, e ter certeza de que o meu pedido conseguira me agradar.
 
--Pizza do dia. Cada dia um sabor especial específico:
-História de Usuário: Como cliente, quero receber sugestões diárias de pizzas recomendadas pelo chefe, com sabores variados e preços específicos para aproveitar a promoção ou novidade daquele dia.
-
 -Opções de tamanho (P, M, G):
 História de Usuário: Como cliente da pizzaria, quero escolher o tamanho da pizza entre pequeno (P), médio (M) e grande (G), para adequar a quantidade da pizza à minha fome ou ao número de pessoas.
 
@@ -39,11 +42,8 @@ História de Usuário: Como cliente da pizzaria, quero escolher a opção de rod
 -Classificação de Bebidas(alcoólicas, sem álcool, refrigerantes e sucos  naturais):
 História de Usuário: Como cliente da pizzaria, quero que as bebidas estejam classificadas em categorias como alcoólicas, sem álcool, refrigerantes e sucos naturais, para encontrar facilmente o tipo de bebida que desejo pedir.
 
--Pizzas Culturais (ingredientes e estilos de diferentes países):
-História de Usuário: Como cliente, quero ter opções de pizzas baseadas em ingredientes e modos de preparo de diferentes países, para experimentar novos sabores e culturas.
-
--Pedidos rápidos (botão “peça de novo” para repetir o último pedido em 1 clique):
-História de Usuário: Como cliente da pizzaria, quero ter um botão “peça de novo” para repetir meu último pedido com 1 clique, para fazer pedidos rapidamente sem precisar montar tudo de novo.
+-Descrição do Produto (informações calóricas e alergênicas para cada sabor):
+História de Usuário: Como cliente, quero poder visualizar informações nutricionais e sobre alergênicos de cada sabor de pizza para fazer escolhas mais seguras e adequadas à minha dieta.
 
 -Cardápio nutricional (informações calóricas e alergênicas para cada sabor):
 História de Usuário: Como cliente, quero poder visualizar informações nutricionais e sobre alergênicos de cada sabor de pizza para fazer escolhas mais seguras e adequadas à minha dieta.
