@@ -112,24 +112,7 @@ model Item {
  
  
  
- 
-// Tabela da categoria que o cliente entrou
-model CategoryView {
-  id String @id @default(uuid())
-  createdAt DateTime @default(now())
- 
-  // Relação com o User, que representa o cliente
-  user User @relation(fields: [userId], references: [id])
-  userId String
- 
-  // Relação com a categoria que foi visualizada
-  category Category @relation(fields: [categoryId], references: [id])
-  categoryId String
- 
-  @@map("category_views")
-}
- 
-//Tabela de MenuItem - mostra os itens individuais do cardápio(pizzas, bebidas, rodizios, etc.)
+ //Tabela de MenuItem - mostra os itens individuais do cardápio(pizzas, bebidas, rodizios, etc.)
 model MenuItem {
   id String @id @default(uuid())
   name String
@@ -145,38 +128,7 @@ model MenuItem {
  
   @@map("menu_items")
 }
- 
-//Tabela de Produto_Ingrediente - Tabela que junta os produtos com os ingredientes
-model ProductIngredient {
-  id String     @id @default(uuid())
-  productId String
-  ingredientId String
-  createdAt DateTime   @default(now())
- 
-  product Product    @relation(fields: [productId], references: [id])
-  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
- 
-  // Para garantir que não haja ingredientes duplicados para o mesmo produto
-  @@unique([productId, ingredientId])
- 
-  @@map("product_ingredients")
-}
- 
-//Tabela de Ingredientes - mostra os ingredientes que podem ser adcionados ou removidos dos itens do pedido
-model Ingredient {
-  id String @id @default(uuid())
-  name String
-  price Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
- 
-  //se relaciona com produtos e modificações de item
-  productIngredients ProductIngredient[]
-  itemModifications ItemModification[]
- 
-  @@map("ingredients")
-}
- 
+
 // Tabela de modificação de item - Esta é a tabela que registra as alterações do cliente
 model ItemModification {
   id String @id @default(uuid())
@@ -192,4 +144,52 @@ model ItemModification {
   ingredientId String
  
   @@map("item_modifications")
+}  
+
+//Tabela de Produto_Ingrediente - Tabela que junta os produtos com os ingredientes
+model ProductIngredient {
+  id String     @id @default(uuid())
+  productId String
+  ingredientId String
+  createdAt DateTime   @default(now())
+ 
+  product Product    @relation(fields: [productId], references: [id])
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+ 
+  // Para garantir que não haja ingredientes duplicados para o mesmo produto
+  @@unique([productId, ingredientId])
+ 
+  @@map("product_ingredients")
 }
+
+// Tabela da categoria que o cliente entrou
+model CategoryView {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+ 
+  // Relação com o User, que representa o cliente
+  user User @relation(fields: [userId], references: [id])
+  userId String
+ 
+  // Relação com a categoria que foi visualizada
+  category Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+ 
+  @@map("category_views")
+}
+
+//Tabela de Ingredientes - mostra os ingredientes que podem ser adcionados ou removidos dos itens do pedido
+model Ingredient {
+  id String @id @default(uuid())
+  name String
+  price Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  //se relaciona com produtos e modificações de item
+  productIngredients ProductIngredient[]
+  itemModifications ItemModification[]
+ 
+  @@map("ingredients")
+}
+ 
