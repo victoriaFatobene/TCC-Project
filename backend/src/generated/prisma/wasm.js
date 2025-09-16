@@ -98,14 +98,14 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   created_at: 'created_at',
-  update_at: 'update_at'
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
   created_at: 'created_at',
-  update_at: 'update_at'
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.ProductScalarFieldEnum = {
@@ -113,10 +113,10 @@ exports.Prisma.ProductScalarFieldEnum = {
   name: 'name',
   price: 'price',
   description: 'description',
-  banner: 'banner',
+  imageUrl: 'imageUrl',
   created_at: 'created_at',
-  update_at: 'update_at',
-  category_id: 'category_id'
+  updated_at: 'updated_at',
+  categoryId: 'categoryId'
 };
 
 exports.Prisma.OrderScalarFieldEnum = {
@@ -126,16 +126,57 @@ exports.Prisma.OrderScalarFieldEnum = {
   draft: 'draft',
   name: 'name',
   created_at: 'created_at',
-  update_at: 'update_at'
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.ItemScalarFieldEnum = {
   id: 'id',
   amount: 'amount',
   created_at: 'created_at',
-  update_at: 'update_at',
-  order_id: 'order_id',
-  product_id: 'product_id'
+  updated_at: 'updated_at',
+  orderId: 'orderId',
+  productId: 'productId'
+};
+
+exports.Prisma.CategoryViewScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  categoryId: 'categoryId'
+};
+
+exports.Prisma.MenuItemScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  imageUrl: 'imageUrl',
+  description: 'description',
+  price: 'price',
+  categoryId: 'categoryId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProductIngredientScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  ingredientId: 'ingredientId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.IngredientScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  price: 'price',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ItemModificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  createdAt: 'createdAt',
+  itemId: 'itemId',
+  ingredientId: 'ingredientId'
 };
 
 exports.Prisma.SortOrder = {
@@ -159,7 +200,12 @@ exports.Prisma.ModelName = {
   Category: 'Category',
   Product: 'Product',
   Order: 'Order',
-  Item: 'Item'
+  Item: 'Item',
+  CategoryView: 'CategoryView',
+  MenuItem: 'MenuItem',
+  ProductIngredient: 'ProductIngredient',
+  Ingredient: 'Ingredient',
+  ItemModification: 'ItemModification'
 };
 /**
  * Create the Client
@@ -200,7 +246,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -209,13 +254,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id         String    @id @default(uuid())\n  name       String\n  email      String\n  password   String\n  created_at DateTime? @default(now())\n  update_at  DateTime? @default(now())\n\n  @@map(\"users\")\n}\n\nmodel Category {\n  id         String    @id @default(uuid())\n  name       String\n  created_at DateTime? @default(now())\n  update_at  DateTime? @default(now())\n  products   Product[]\n\n  @@map(\"categories\")\n}\n\nmodel Product {\n  id          String    @id @default(uuid())\n  name        String\n  price       String\n  description String\n  banner      String\n  created_at  DateTime? @default(now())\n  update_at   DateTime? @default(now())\n\n  category    Category @relation(fields: [category_id], references: [id])\n  category_id String\n  items       Item[]\n\n  @@map(\"products\")\n}\n\nmodel Order {\n  id         String    @id @default(uuid())\n  table      Int\n  status     Boolean   @default(false)\n  draft      Boolean   @default(true)\n  name       String?\n  created_at DateTime? @default(now())\n  update_at  DateTime? @default(now())\n  items      Item[]\n\n  @@map(\"orders\")\n}\n\nmodel Item {\n  id         String    @id @default(uuid())\n  amount     Int\n  created_at DateTime? @default(now())\n  update_at  DateTime? @default(now())\n\n  order      Order   @relation(fields: [order_id], references: [id])\n  product    Product @relation(fields: [product_id], references: [id])\n  order_id   String\n  product_id String\n\n  @@map(\"items\")\n}\n",
-  "inlineSchemaHash": "7744ca89f6228db324b7971d128effe88fc9ad4929f909ab5abd1d479b1c71c9",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\n//informações\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n//tabela User(Salva os emails cadastrados)\nmodel User {\n  id         String   @id @default(uuid())\n  name       String\n  email      String   @unique\n  password   String\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  // Relação com CategoryView\n  categoryViews CategoryView[]\n\n  @@map(\"users\")\n}\n\n//Categorias(mostra o tipo do produto)\nmodel Category {\n  id         String   @id @default(uuid())\n  name       String\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  // Relações\n  products      Product[]\n  categoryViews CategoryView[]\n  menuItems     MenuItem[] // Relação com a tabela MenuItem\n\n  @@map(\"categories\")\n}\n\n//Tabela de produtos(mostra as informações do produto)\nmodel Product {\n  id          String   @id @default(uuid())\n  name        String\n  price       Float\n  description String\n  imageUrl    String\n  created_at  DateTime @default(now())\n  updated_at  DateTime @updatedAt\n\n  // Relação com a categoria\n  category   Category @relation(fields: [categoryId], references: [id])\n  categoryId String\n\n  // Relação com a tabela de ingredientes\n  productIngredients ProductIngredient[]\n\n  // Relação com Item pedidos\n  items Item[]\n\n  @@map(\"products\")\n}\n\n//Tabela de Pedido(mostra o numero do pedido)\nmodel Order {\n  id         String   @id @default(uuid())\n  table      Int\n  status     Boolean  @default(false)\n  draft      Boolean  @default(true)\n  name       String?\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  // Relação com Item\n  items Item[]\n\n  @@map(\"orders\")\n}\n\n//Tabela de quantidade de itens\nmodel Item {\n  id         String   @id @default(uuid())\n  amount     Int\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  // Relação com Order e chave estrangeira\n  order   Order  @relation(fields: [orderId], references: [id])\n  orderId String\n\n  // Relação com Product e chave estrangeira\n  product   Product @relation(fields: [productId], references: [id])\n  productId String\n\n  // Relação com modif icações de item\n  modifications ItemModification[]\n\n  @@map(\"items\")\n}\n\n// TABELAS NOVAS!!!!!\n\n// Tabela da categoria que o cliente entrou\nmodel CategoryView {\n  id        String   @id @default(uuid())\n  createdAt DateTime @default(now())\n\n  // Relação com o User, que representa o cliente\n  user   User   @relation(fields: [userId], references: [id])\n  userId String\n\n  // Relação com a categoria que foi visualizada\n  category   Category @relation(fields: [categoryId], references: [id])\n  categoryId String\n\n  @@map(\"category_views\")\n}\n\n//Tabela de MenuItem - mostra os itens individuais do cardápio(pizzas, bebidas, rodizios, etc.)\nmodel MenuItem {\n  id          String @id @default(uuid())\n  name        String\n  imageUrl    String\n  description String\n  price       Float\n\n  categoryId String\n  category   Category @relation(fields: [categoryId], references: [id])\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map(\"menu_items\")\n}\n\n//Tabela de Produto_Ingrediente - Tabela que junta os produtos com os ingredientes\nmodel ProductIngredient {\n  id           String   @id @default(uuid())\n  productId    String\n  ingredientId String\n  createdAt    DateTime @default(now())\n\n  product    Product    @relation(fields: [productId], references: [id])\n  ingredient Ingredient @relation(fields: [ingredientId], references: [id])\n\n  // Para garantir que não haja ingredientes duplicados para o mesmo produto\n  @@unique([productId, ingredientId])\n  @@map(\"product_ingredients\")\n}\n\n//Tabela de Ingredientes - mostra os ingredientes que podem ser adcionados ou removidos dos itens do pedido\nmodel Ingredient {\n  id        String   @id @default(uuid())\n  name      String\n  price     Float\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  //se relaciona com produtos e modificações de item\n  productIngredients ProductIngredient[]\n  itemModifications  ItemModification[]\n\n  @@map(\"ingredients\")\n}\n\n// Tabela de modificação de item - Esta é a tabela que registra as alterações do cliente\nmodel ItemModification {\n  id        String   @id @default(uuid())\n  type      String\n  createdAt DateTime @default(now())\n\n  // Relação com o Item do pedido\n  item   Item   @relation(fields: [itemId], references: [id])\n  itemId String\n\n  // Relação com o ingrediente que foi modificado\n  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])\n  ingredientId String\n\n  @@map(\"item_modifications\")\n}\n",
+  "inlineSchemaHash": "c50f86553243e39454e6c48dff3c7a96c34c010a00fe8089ac430e4c43310e3d",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"update_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"users\"},\"Category\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"update_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"CategoryToProduct\"}],\"dbName\":\"categories\"},\"Product\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"banner\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"update_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToProduct\"},{\"name\":\"category_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"Item\",\"relationName\":\"ItemToProduct\"}],\"dbName\":\"products\"},\"Order\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"table\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"draft\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"update_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"Item\",\"relationName\":\"ItemToOrder\"}],\"dbName\":\"orders\"},\"Item\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"update_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"order\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"ItemToOrder\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ItemToProduct\"},{\"name\":\"order_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"product_id\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":\"items\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"categoryViews\",\"kind\":\"object\",\"type\":\"CategoryView\",\"relationName\":\"CategoryViewToUser\"}],\"dbName\":\"users\"},\"Category\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"CategoryToProduct\"},{\"name\":\"categoryViews\",\"kind\":\"object\",\"type\":\"CategoryView\",\"relationName\":\"CategoryToCategoryView\"},{\"name\":\"menuItems\",\"kind\":\"object\",\"type\":\"MenuItem\",\"relationName\":\"CategoryToMenuItem\"}],\"dbName\":\"categories\"},\"Product\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"imageUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToProduct\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productIngredients\",\"kind\":\"object\",\"type\":\"ProductIngredient\",\"relationName\":\"ProductToProductIngredient\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"Item\",\"relationName\":\"ItemToProduct\"}],\"dbName\":\"products\"},\"Order\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"table\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"draft\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"Item\",\"relationName\":\"ItemToOrder\"}],\"dbName\":\"orders\"},\"Item\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"order\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"ItemToOrder\"},{\"name\":\"orderId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ItemToProduct\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"modifications\",\"kind\":\"object\",\"type\":\"ItemModification\",\"relationName\":\"ItemToItemModification\"}],\"dbName\":\"items\"},\"CategoryView\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CategoryViewToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToCategoryView\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":\"category_views\"},\"MenuItem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"imageUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToMenuItem\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"menu_items\"},\"ProductIngredient\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ingredientId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToProductIngredient\"},{\"name\":\"ingredient\",\"kind\":\"object\",\"type\":\"Ingredient\",\"relationName\":\"IngredientToProductIngredient\"}],\"dbName\":\"product_ingredients\"},\"Ingredient\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"productIngredients\",\"kind\":\"object\",\"type\":\"ProductIngredient\",\"relationName\":\"IngredientToProductIngredient\"},{\"name\":\"itemModifications\",\"kind\":\"object\",\"type\":\"ItemModification\",\"relationName\":\"IngredientToItemModification\"}],\"dbName\":\"ingredients\"},\"ItemModification\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"item\",\"kind\":\"object\",\"type\":\"Item\",\"relationName\":\"ItemToItemModification\"},{\"name\":\"itemId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ingredient\",\"kind\":\"object\",\"type\":\"Ingredient\",\"relationName\":\"IngredientToItemModification\"},{\"name\":\"ingredientId\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":\"item_modifications\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

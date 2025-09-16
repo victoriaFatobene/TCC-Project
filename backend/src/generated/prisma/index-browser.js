@@ -126,14 +126,14 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   created_at: 'created_at',
-  update_at: 'update_at'
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
   created_at: 'created_at',
-  update_at: 'update_at'
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.ProductScalarFieldEnum = {
@@ -141,10 +141,10 @@ exports.Prisma.ProductScalarFieldEnum = {
   name: 'name',
   price: 'price',
   description: 'description',
-  banner: 'banner',
+  imageUrl: 'imageUrl',
   created_at: 'created_at',
-  update_at: 'update_at',
-  category_id: 'category_id'
+  updated_at: 'updated_at',
+  categoryId: 'categoryId'
 };
 
 exports.Prisma.OrderScalarFieldEnum = {
@@ -154,16 +154,57 @@ exports.Prisma.OrderScalarFieldEnum = {
   draft: 'draft',
   name: 'name',
   created_at: 'created_at',
-  update_at: 'update_at'
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.ItemScalarFieldEnum = {
   id: 'id',
   amount: 'amount',
   created_at: 'created_at',
-  update_at: 'update_at',
-  order_id: 'order_id',
-  product_id: 'product_id'
+  updated_at: 'updated_at',
+  orderId: 'orderId',
+  productId: 'productId'
+};
+
+exports.Prisma.CategoryViewScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  categoryId: 'categoryId'
+};
+
+exports.Prisma.MenuItemScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  imageUrl: 'imageUrl',
+  description: 'description',
+  price: 'price',
+  categoryId: 'categoryId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProductIngredientScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  ingredientId: 'ingredientId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.IngredientScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  price: 'price',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ItemModificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  createdAt: 'createdAt',
+  itemId: 'itemId',
+  ingredientId: 'ingredientId'
 };
 
 exports.Prisma.SortOrder = {
@@ -187,7 +228,12 @@ exports.Prisma.ModelName = {
   Category: 'Category',
   Product: 'Product',
   Order: 'Order',
-  Item: 'Item'
+  Item: 'Item',
+  CategoryView: 'CategoryView',
+  MenuItem: 'MenuItem',
+  ProductIngredient: 'ProductIngredient',
+  Ingredient: 'Ingredient',
+  ItemModification: 'ItemModification'
 };
 
 /**
