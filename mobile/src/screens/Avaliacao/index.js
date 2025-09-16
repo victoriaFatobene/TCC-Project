@@ -1,32 +1,44 @@
-import React from "react";
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-export default function HomeScreen({ navigation }) {
+export default function Avaliacao({ navigation }) {
+  const [rating, setRating] = useState(0); // 0 a 5
+
+  // Função para renderizar estrelas
+  const renderStars = () => {
+    let stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <TouchableOpacity key={i} onPress={() => setRating(i)}>
+          <Text style={i <= rating ? styles.starSelected : styles.star}>★</Text>
+        </TouchableOpacity>
+      );
+    }
+    return stars;
+  };
+
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Bem-vindo ao App!</Text>
-        
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Cardapio")}>
-          <Text style={styles.buttonText}>Cardápio</Text>
-        </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Avalie nosso serviço!</Text>
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Pedidos")}>
-          <Text style={styles.buttonText}>Pedidos</Text>
-        </TouchableOpacity>
+      <View style={styles.starsContainer}>{renderStars()}</View>
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Perfil")}>
-          <Text style={styles.buttonText}>Perfil</Text>
-        </TouchableOpacity>
-      </ScrollView>
+      <Text style={styles.text}>{rating > 0 ? `Você deu ${rating} estrela(s)` : "Escolha sua avaliação"}</Text>
+
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("HomeScreen")}>
+        <Text style={styles.buttonText}>Voltar para Tela Inicial</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: "#fff" },
-  scrollContainer: { flexGrow: 1, justifyContent: "center", alignItems: "center", padding: 20 },
-  title: { fontSize: 28, fontWeight: "bold", color: "#333", marginBottom: 40 },
-  button: { backgroundColor: "#4CAF50", paddingVertical: 15, paddingHorizontal: 50, borderRadius: 12, marginBottom: 20, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 5, elevation: 5 },
+  container: { flex: 1, backgroundColor: "#FFF8E7", alignItems: "center", justifyContent: "center", padding: 20 },
+  title: { fontSize: 28, fontWeight: "bold", marginBottom: 30, color: "#333", textAlign: "center" },
+  starsContainer: { flexDirection: "row", marginBottom: 20 },
+  star: { fontSize: 50, color: "#ccc", marginHorizontal: 5 },
+  starSelected: { fontSize: 50, color: "#FFD700", marginHorizontal: 5 },
+  text: { fontSize: 18, marginBottom: 40, color: "#555" },
+  button: { backgroundColor: "#4CAF50", paddingVertical: 15, paddingHorizontal: 30, borderRadius: 12 },
   buttonText: { color: "#fff", fontSize: 18, fontWeight: "600" },
 });
