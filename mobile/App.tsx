@@ -1,7 +1,7 @@
 import React from "react";
 import { SafeAreaView } from "react-native";
 
-import TelaInicial from "./src/screens/Alcoolicas";
+import TelaInicial from "./src/screens/Pagamento";
 
 export default function App() {
   return (
