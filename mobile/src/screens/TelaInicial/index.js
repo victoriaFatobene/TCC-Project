@@ -1,158 +1,60 @@
 import React from "react";
-import { SafeAreaView, View, ScrollView, Text, Image, TouchableOpacity } from "react-native";
+import { SafeAreaView, ScrollView, Text, View, Image, TouchableOpacity, StyleSheet } from "react-native";
 
-export default (props) => {
+export default function HomeScreen({ navigation }) {
+  const categories = [
+    { name: "Pizzas", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/uulzo8g5_expires_30_days.png", color: "#F44336", screen: "Cardapio" },
+    { name: "Bebidas", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/88znwjll_expires_30_days.png", color: "#2196F3", screen: "Cardapio" },
+    { name: "Favoritos", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/d174b2pj_expires_30_days.png", color: "#FF9800", screen: "Cardapio" },
+    { name: "Sobremesas", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/snpswyio_expires_30_days.png", color: "#9C27B0", screen: "Cardapio" },
+    { name: "Rodízios", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/z9p8vx67_expires_30_days.png", color: "#4CAF50", screen: "Cardapio" },
+    { name: "Acompanhamentos", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/alzgc0j5_expires_30_days.png", color: "#00BCD4", screen: "Cardapio" },
+  ];
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <ScrollView style={{ flex: 1, backgroundColor: "#7B0909" }}>
-        {/* Header */}
-        <View
-          style={{
-            alignItems: "center",
-            backgroundColor: "#5E0808",
-            borderColor: "#000000",
-            borderWidth: 1,
-            paddingVertical: 12,
-          }}
-        >
-          <Text style={{ color: "#EEFF00", fontSize: 40 }}>{"Cardápio "}</Text>
-        </View>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.header}>🍕 Menu Principal</Text>
 
-        {/* Main content */}
-        <View style={{ flexDirection: "row" }}>
-          {/* Left Column */}
-          <View style={{ alignItems: "center", marginRight: 24 }}>
-            <View
-              style={{
-                backgroundColor: "#1F451A",
-                borderColor: "#000000",
-                borderWidth: 2,
-                paddingTop: 42,
-                paddingBottom: 27,
-              }}
+        <View style={styles.cardsContainer}>
+          {categories.map((cat, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.card, { backgroundColor: cat.color }]}
+              onPress={() => navigation.navigate(cat.screen)}
+              activeOpacity={0.8}
             >
-              <Text style={{ color: "#FFFFFF", fontSize: 19, marginLeft: 39 }}>
-                {"Pizzas"}
-              </Text>
-              <Image
-                source={{
-                  uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/uulzo8g5_expires_30_days.png",
-                }}
-                resizeMode="stretch"
-                style={{ width: 120, height: 112, marginBottom: 32 }}
-              />
-              <Text style={{ color: "#FFFFFF", fontSize: 19, marginLeft: 31 }}>
-                {"Bebidas"}
-              </Text>
-              <Image
-                source={{
-                  uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/88znwjll_expires_30_days.png",
-                }}
-                resizeMode="stretch"
-                style={{ width: 120, height: 112, marginBottom: 55 }}
-              />
-              <Image
-                source={{
-                  uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/snpswyio_expires_30_days.png",
-                }}
-                resizeMode="stretch"
-                style={{ width: 120, height: 112, marginBottom: 28 }}
-              />
-              <Text
-                style={{
-                  color: "#FFFFFF",
-                  fontSize: 19,
-                  marginBottom: 4,
-                  marginHorizontal: 23,
-                }}
-              >
-                {"Favoritos"}
-              </Text>
-              <Image
-                source={{
-                  uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/d174b2pj_expires_30_days.png",
-                }}
-                resizeMode="stretch"
-                style={{ width: 120, height: 112 }}
-              />
-            </View>
-
-            <Text
-              style={{
-                position: "absolute",
-                bottom: 314,
-                right: -2,
-                color: "#FFFFFF",
-                fontSize: 19,
-              }}
-            >
-              {"Sobremesas"}
-            </Text>
-          </View>
-
-          {/* Right Column */}
-          <View style={{ alignItems: "center", marginTop: 68 }}>
-            {/* Rodízios */}
-            <View style={{ alignItems: "center", marginBottom: 60 }}>
-              <View
-                style={{
-                  backgroundColor: "#FFF89E",
-                  borderColor: "#000000",
-                  borderRadius: 23,
-                  borderWidth: 1,
-                  paddingTop: 4,
-                  paddingBottom: 118,
-                  paddingHorizontal: 27,
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ color: "#000000", fontSize: 19 }}>{"Rodízios"}</Text>
-              </View>
-              <Image
-                source={{
-                  uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/z9p8vx67_expires_30_days.png",
-                }}
-                resizeMode="stretch"
-                style={{ position: "absolute", bottom: -2, left: 52, width: 122, height: 106 }}
-              />
-              <Image
-                source={{
-                  uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/cvkt9dbl_expires_30_days.png",
-                }}
-                resizeMode="stretch"
-                style={{ position: "absolute", bottom: -30, right: -22, width: 79, height: 88 }}
-              />
-            </View>
-
-            {/* Acompanhamentos */}
-            <View style={{ alignItems: "center", marginBottom: 61 }}>
-              <View
-                style={{
-                  alignItems: "center",
-                  backgroundColor: "#FFF89E",
-                  borderColor: "#000000",
-                  borderRadius: 23,
-                  borderWidth: 1,
-                  paddingTop: 4,
-                  paddingBottom: 25,
-                  paddingHorizontal: 27,
-                }}
-              >
-                <Text style={{ color: "#000000", fontSize: 19, marginBottom: 3 }}>
-                  {"Acompanhamentos"}
-                </Text>
-                <Image
-                  source={{
-                    uri: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/alzgc0j5_expires_30_days.png",
-                  }}
-                  resizeMode="stretch"
-                  style={{ width: 90, height: 90 }}
-                />
-              </View>
-            </View>
-          </View>
+              <Image source={{ uri: cat.img }} style={styles.cardImage} resizeMode="contain" />
+              <Text style={styles.cardText}>{cat.name}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
+
+const styles = StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: "#FFF8E7" },
+  scrollContainer: { paddingVertical: 30, paddingHorizontal: 20, alignItems: "center" },
+  header: { fontSize: 36, fontWeight: "bold", color: "#333", marginBottom: 30 },
+  cardsContainer: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center" },
+  card: {
+    width: 140,
+    height: 180,
+    borderRadius: 20,
+    margin: 10,
+    padding: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  cardImage: { width: 100, height: 100, marginBottom: 10 },
+  cardText: { color: "#fff", fontSize: 18, fontWeight: "bold", textAlign: "center" },
+});
+
+

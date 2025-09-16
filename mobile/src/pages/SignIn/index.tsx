@@ -1,74 +1,35 @@
-// src/pages/SignIn/index.tsx
+import React from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import type { StackNavigationProp } from "@react-navigation/stack";
-
-type RootStackParamList = {
-  SignIn: undefined;
-  Dashboard: undefined;
-};
-
-type NavigationProp = StackNavigationProp<RootStackParamList, "SignIn">;
-
-export default function SignIn() {
-  const navigation = useNavigation<NavigationProp>();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleLogin = () => {
-    if (!email || !password) {
-      Alert.alert("Erro", "Preencha todos os campos");
-      return;
-    }
-
-    // Aqui você pode chamar sua API de autenticação
-    console.log("Login:", { email, password });
-
-    // Exemplo: se login for válido → ir para dashboard
-    navigation.navigate("Dashboard");
-  };
-
+export default function HomeScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bem-vindo 👋</Text>
-      <Text style={styles.subtitle}>Faça login para continuar</Text>
+      {/* Logo com fallback em texto se não encontrar a imagem */}
+      {(() => {
+        try {
+          return (
+            <Image
+              source={require("../../assets/images/logo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          );
+        } catch {
+          return <Text style={styles.title}>🍕 Pizzaria Sabor Perfeito</Text>;
+        }
+      })()}
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#888"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
-      />
+      <Text style={styles.title}>🍕 Pizzaria Sabor Perfeito</Text>
+      <Text style={styles.subtitle}>
+        Aberto todos os dias das 18h às 23h {"\n"}
+        Rua das Flores, 123 - Centro
+      </Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        placeholderTextColor="#888"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Entrar</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity>
-        <Text style={styles.registerText}>
-          Não tem conta? Cadastre-se
-        </Text>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => navigation.navigate("Cardapio")}
+      >
+        <Text style={styles.buttonText}>Ver Cardápio</Text>
       </TouchableOpacity>
     </View>
   );
@@ -77,46 +38,36 @@ export default function SignIn() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF",
     justifyContent: "center",
-    paddingHorizontal: 30,
+    alignItems: "center",
+    backgroundColor: "#fff",
+    padding: 20,
+  },
+  logo: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
   },
   title: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 6,
-    textAlign: "center",
+    marginBottom: 10,
   },
   subtitle: {
     fontSize: 16,
-    color: "#666",
-    marginBottom: 20,
     textAlign: "center",
-  },
-  input: {
-    height: 50,
-    backgroundColor: "#F1F1F1",
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    fontSize: 16,
+    color: "#666",
+    marginBottom: 30,
   },
   button: {
-    backgroundColor: "#4CAF50",
-    paddingVertical: 15,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 10,
+    backgroundColor: "#E63946",
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 8,
   },
   buttonText: {
-    color: "#FFF",
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  registerText: {
-    marginTop: 20,
-    color: "#4CAF50",
-    fontSize: 14,
-    textAlign: "center",
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
