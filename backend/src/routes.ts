@@ -1,4 +1,3 @@
-routes.ts
 import { Router } from 'express';
 import multer from 'multer';
 
@@ -64,10 +63,10 @@ router.get('/order/detail', isAuthenticated, new DetailOrderController().handle)
 
 router.put('/order/finish', isAuthenticated, new FinishOrderController().handle);
 
-
+// cardápio público
 const listMenuController = new ListMenuController();
 router.get('/cardapio', (req, res, next) =>
   listMenuController.handle(req, res).catch(next)
-);b
+);
 
 export { router };
