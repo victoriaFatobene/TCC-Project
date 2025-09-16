@@ -1,18 +1,22 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ImageSourcePropType } from "react-native";
 
 type ListItemProps = {
   title: string;
   subtitle?: string;
-  image?: string;
+  image?: string | ImageSourcePropType; // aceita URL ou require()
   price?: string;
   onPress?: () => void;
 };
 
 export default function ListItem({ title, subtitle, image, price, onPress }: ListItemProps) {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
-      {image && <Image source={{ uri: image }} style={styles.image} />}
+    <TouchableOpacity style={styles.container} onPress={onPress || (() => {})}>
+      {image && (
+        typeof image === "string" 
+          ? <Image source={{ uri: image }} style={styles.image} />
+          : <Image source={image} style={styles.image} />
+      )}
       <View style={styles.info}>
         <Text style={styles.title}>{title}</Text>
         {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
