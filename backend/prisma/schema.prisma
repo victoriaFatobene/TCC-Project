@@ -72,16 +72,20 @@ model Product {
 model Order {
   id String @id @default(uuid())
   table Int
-  status Boolean  @default(false)
-  draft Boolean  @default(true)
   name String?
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
- 
-  // Relação com Item
+
+  //relaciona com a tabela de status
+  status Status @relation(fields: [status_Id], references: [id])
+  status_Id String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  //Relação com a tabela Item
   items Item[]
- 
+
   @@map("orders")
+
 }
  
 //Tabela de quantidade de itens
@@ -191,5 +195,16 @@ model Ingredient {
   itemModifications ItemModification[]
  
   @@map("ingredients")
+}
+
+//Tabela de Status - mostra o status de preparo do pedido
+model Status {
+  id String @id @default(uuid())
+  name String
+
+  //Se relaciona um status a vários pedidos
+  orders Order[]
+
+  @@map("status")
 }
  
