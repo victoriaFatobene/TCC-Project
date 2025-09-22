@@ -29,6 +29,8 @@ import { FinishOrderController } from './controllers/order/FinishOrderController
 
 // MENU
 import { ListMenuController } from './controllers/menu/ListMenuController';
+import { isAuthenticated } from './middlewares/isAuthenticated';
+import { processPayment } from './controllers/payment/PaymentController';
 
 const router = Router();
 const upload = multer(uploadConfig.upload('./tmp'));
@@ -72,5 +74,11 @@ router.put('/order/finish',    h((req, res) => new FinishOrderController().handl
 
 /** Menu (cardápio) */
 router.get('/menu', h((req, res) => new ListMenuController().handle(req, res)));
+
+// pagamento
+router.post('/payment', isAuthenticated, (req, res, next) => {
+  processPayment(req, res).catch(next);
+});
+
 
 export { router };
