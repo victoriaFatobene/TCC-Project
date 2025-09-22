@@ -1,84 +1,76 @@
-import { Router } from 'express';
+// src/routes.ts
+import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 
+import uploadConfig from './config/multer';
+
+// USERS
 import { CreateUserController } from './controllers/user/CreateUserController';
 import { AuthUserController } from './controllers/user/AuthUserController';
 import { DetailUserController } from './controllers/user/DetailUserController';
 
+// CATEGORY
 import { CreateCategoryController } from './controllers/category/CreateCategoryController';
 import { ListCategoryController } from './controllers/category/ListCategoryController';
 
+// PRODUCT
 import { CreateProductController } from './controllers/product/CreateProductController';
 import { ListByCategoryController } from './controllers/product/ListByCategoryController';
 
+// ORDER
 import { CreateOrderController } from './controllers/order/CreateOrderController';
 import { RemoveOrderController } from './controllers/order/RemoveOrderController';
-
 import { AddItemController } from './controllers/order/AddItemController';
 import { RemoveItemController } from './controllers/order/RemoveItemController';
 import { SendOrderController } from './controllers/order/SendOrderController';
-
 import { ListOrdersController } from './controllers/order/ListOrderController';
 import { DetailOrderController } from './controllers/order/DetailOrderController';
 import { FinishOrderController } from './controllers/order/FinishOrderController';
 
-import { isAuthenticated } from './middlewares/isAuthenticated';
-
-import uploadConfig from './config/multer';
-
-import { processPayment } from './controllers/payment/PaymentController';
-
-
-// Cardápio
-import { ListMenuController } from './controllers/menu/ListController';
+// MENU
+import { ListMenuController } from './controllers/menu/ListMenuController';
 
 const router = Router();
+const upload = multer(uploadConfig.upload('./tmp'));
 
-const upload = multer(uploadConfig.upload("./tmp"));
+// helper simples pra encadear async/await sem erro de tipo
+const h = (fn: (req: Request, res: Response, next: NextFunction) => any) =>
+  (req: Request, res: Response, next: NextFunction) =>
+    Promise.resolve(fn(req, res, next)).catch(next);
 
-// usuários
-router.post('/users', new CreateUserController().handle);
-router.post('/session', new AuthUserController().handle);
-router.get('/me', isAuthenticated, new DetailUserController().handle);
-
-// compatibilidade
-router.post('/signup', new CreateUserController().handle);
-router.post('/login', new AuthUserController().handle);
-
-// categorias
-router.post('/category', isAuthenticated, new CreateCategoryController().handle);
-router.get('/category', isAuthenticated, new ListCategoryController().handle);
-
-// produtos
-router.post('/product', isAuthenticated, upload.single('file'), new CreateProductController().handle);
-router.get('/category/product', isAuthenticated, new ListByCategoryController().handle);
-
-// pedidos
-router.post('/order', isAuthenticated, new CreateOrderController().handle);
-router.delete('/order', isAuthenticated, new RemoveOrderController().handle);
-
-// itens do pedido
-router.post('/order/add', isAuthenticated, (req, res, next) => {
-  new AddItemController().handle(req, res).catch(next);
+/** Healthcheck */
+router.get('/ping', (_req: Request, res: Response) => {
+  res.json({ ok: true });
 });
 
-router.delete('/order/remove', isAuthenticated, new RemoveItemController().handle);
-router.put('/order/send', isAuthenticated, new SendOrderController().handle);
+/** Users */
+router.post('/users', h((req, res) => new CreateUserController().handle(req, res)));
+router.post('/session', h((req, res) => new AuthUserController().handle(req, res)));
+router.get('/me',     h((req, res) => new DetailUserController().handle(req, res))); // adicione isAuthenticated se quiser
 
-router.get('/orders', isAuthenticated, new ListOrdersController().handle);
-router.get('/order/detail', isAuthenticated, new DetailOrderController().handle);
+/** Category */
+router.post('/category', h((req, res) => new CreateCategoryController().handle(req, res)));
+router.get('/category',  h((req, res) => new ListCategoryController().handle(req, res)));
 
-router.put('/order/finish', isAuthenticated, new FinishOrderController().handle);
-
-// cardápio público
-const listMenuController = new ListMenuController();
-router.get('/cardapio', (req, res, next) =>
-  listMenuController.handle(req, res).catch(next)
+/** Product */
+router.post(
+  '/product',
+  upload.single('file'),
+  h((req, res) => new CreateProductController().handle(req, res))
 );
+router.get('/category/product', h((req, res) => new ListByCategoryController().handle(req, res)));
 
-// pagamento
-router.post('/payment', isAuthenticated, (req, res, next) => {
-  processPayment(req, res).catch(next);
-});
+/** Orders */
+router.post('/order',          h((req, res) => new CreateOrderController().handle(req, res)));
+router.delete('/order',        h((req, res) => new RemoveOrderController().handle(req, res)));
+router.post('/order/add',      h((req, res) => new AddItemController().handle(req, res)));
+router.delete('/order/remove', h((req, res) => new RemoveItemController().handle(req, res)));
+router.put('/order/send',      h((req, res) => new SendOrderController().handle(req, res)));
+router.get('/orders',          h((req, res) => new ListOrdersController().handle(req, res)));
+router.get('/order/detail',    h((req, res) => new DetailOrderController().handle(req, res)));
+router.put('/order/finish',    h((req, res) => new FinishOrderController().handle(req, res)));
+
+/** Menu (cardápio) */
+router.get('/menu', h((req, res) => new ListMenuController().handle(req, res)));
 
 export { router };

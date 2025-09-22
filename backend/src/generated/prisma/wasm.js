@@ -5,28 +5,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 
 const {
-  PrismaClientKnownRequestError,
-  PrismaClientUnknownRequestError,
-  PrismaClientRustPanicError,
-  PrismaClientInitializationError,
-  PrismaClientValidationError,
-  getPrismaClient,
-  sqltag,
-  empty,
-  join,
-  raw,
-  skip,
   Decimal,
-  Debug,
   objectEnumValues,
   makeStrictEnum,
-  Extensions,
-  warnOnce,
-  defineDmmfProperty,
   Public,
   getRuntime,
-  createParam,
-} = require('./runtime/wasm-engine-edge.js')
+  skip
+} = require('./runtime/index-browser.js')
 
 
 const Prisma = {}
@@ -35,35 +20,79 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.16.2
- * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
+ * Prisma Client JS version: 6.15.0
+ * Query Engine version: 85179d7826409ee107a6ba334b5e305ae3fba9fb
  */
 Prisma.prismaVersion = {
-  client: "6.16.2",
-  engine: "1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
+  client: "6.15.0",
+  engine: "85179d7826409ee107a6ba334b5e305ae3fba9fb"
 }
 
-Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
-Prisma.PrismaClientUnknownRequestError = PrismaClientUnknownRequestError
-Prisma.PrismaClientRustPanicError = PrismaClientRustPanicError
-Prisma.PrismaClientInitializationError = PrismaClientInitializationError
-Prisma.PrismaClientValidationError = PrismaClientValidationError
+Prisma.PrismaClientKnownRequestError = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`PrismaClientKnownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)};
+Prisma.PrismaClientUnknownRequestError = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`PrismaClientUnknownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.PrismaClientRustPanicError = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`PrismaClientRustPanicError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.PrismaClientInitializationError = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`PrismaClientInitializationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.PrismaClientValidationError = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`PrismaClientValidationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
 Prisma.Decimal = Decimal
 
 /**
  * Re-export of sql-template-tag
  */
-Prisma.sql = sqltag
-Prisma.empty = empty
-Prisma.join = join
-Prisma.raw = raw
+Prisma.sql = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`sqltag is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.empty = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`empty is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.join = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`join is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.raw = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`raw is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
 Prisma.validator = Public.validator
 
 /**
 * Extensions
 */
-Prisma.getExtensionContext = Extensions.getExtensionContext
-Prisma.defineExtension = Extensions.defineExtension
+Prisma.getExtensionContext = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`Extensions.getExtensionContext is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
+Prisma.defineExtension = () => {
+  const runtimeName = getRuntime().prettyName;
+  throw new Error(`Extensions.defineExtension is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
+In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
+)}
 
 /**
  * Shorthand utilities for JSON filtering
@@ -80,11 +109,10 @@ Prisma.NullTypes = {
 
 
 
-
-
 /**
  * Enums
  */
+
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   ReadUncommitted: 'ReadUncommitted',
   ReadCommitted: 'ReadCommitted',
@@ -108,6 +136,13 @@ exports.Prisma.CategoryScalarFieldEnum = {
   updated_at: 'updated_at'
 };
 
+exports.Prisma.StatusScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -116,7 +151,8 @@ exports.Prisma.ProductScalarFieldEnum = {
   imageUrl: 'imageUrl',
   created_at: 'created_at',
   updated_at: 'updated_at',
-  categoryId: 'categoryId'
+  categoryId: 'categoryId',
+  statusId: 'statusId'
 };
 
 exports.Prisma.OrderScalarFieldEnum = {
@@ -126,7 +162,9 @@ exports.Prisma.OrderScalarFieldEnum = {
   draft: 'draft',
   name: 'name',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  startedAt: 'startedAt',
+  readyAt: 'readyAt'
 };
 
 exports.Prisma.ItemScalarFieldEnum = {
@@ -136,13 +174,6 @@ exports.Prisma.ItemScalarFieldEnum = {
   updated_at: 'updated_at',
   orderId: 'orderId',
   productId: 'productId'
-};
-
-exports.Prisma.CategoryViewScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  userId: 'userId',
-  categoryId: 'categoryId'
 };
 
 exports.Prisma.MenuItemScalarFieldEnum = {
@@ -156,11 +187,26 @@ exports.Prisma.MenuItemScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ItemModificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  createdAt: 'createdAt',
+  itemId: 'itemId',
+  ingredientId: 'ingredientId'
+};
+
 exports.Prisma.ProductIngredientScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
   ingredientId: 'ingredientId',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.CategoryViewScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  categoryId: 'categoryId'
 };
 
 exports.Prisma.IngredientScalarFieldEnum = {
@@ -169,14 +215,6 @@ exports.Prisma.IngredientScalarFieldEnum = {
   price: 'price',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ItemModificationScalarFieldEnum = {
-  id: 'id',
-  type: 'type',
-  createdAt: 'createdAt',
-  itemId: 'itemId',
-  ingredientId: 'ingredientId'
 };
 
 exports.Prisma.SortOrder = {
@@ -193,96 +231,53 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  RECEBIDO: 'RECEBIDO',
+  PREPARANDO: 'PREPARANDO',
+  PRONTO: 'PRONTO'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',
   Category: 'Category',
+  Status: 'Status',
   Product: 'Product',
   Order: 'Order',
   Item: 'Item',
-  CategoryView: 'CategoryView',
   MenuItem: 'MenuItem',
+  ItemModification: 'ItemModification',
   ProductIngredient: 'ProductIngredient',
-  Ingredient: 'Ingredient',
-  ItemModification: 'ItemModification'
+  CategoryView: 'CategoryView',
+  Ingredient: 'Ingredient'
 };
+
 /**
- * Create the Client
+ * This is a stub Prisma Client that will error at runtime if called.
  */
-const config = {
-  "generator": {
-    "name": "client",
-    "provider": {
-      "fromEnvVar": null,
-      "value": "prisma-client-js"
-    },
-    "output": {
-      "value": "C:\\Users\\SENAI\\Desktop\\PSOF_2-ORION_DEV\\TCC-Project\\TCC-Project\\backend\\src\\generated\\prisma",
-      "fromEnvVar": null
-    },
-    "config": {
-      "engineType": "library"
-    },
-    "binaryTargets": [
-      {
-        "fromEnvVar": null,
-        "value": "windows",
-        "native": true
-      }
-    ],
-    "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\SENAI\\Desktop\\PSOF_2-ORION_DEV\\TCC-Project\\TCC-Project\\backend\\prisma\\schema.prisma",
-    "isCustomOutput": true
-  },
-  "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
-  },
-  "relativePath": "../../../prisma",
-  "clientVersion": "6.16.2",
-  "engineVersion": "1c57fdcd7e44b29b9313256c76699e91c3ac3c43",
-  "datasourceNames": [
-    "db"
-  ],
-  "activeProvider": "postgresql",
-  "inlineDatasources": {
-    "db": {
-      "url": {
-        "fromEnvVar": "DATABASE_URL",
-        "value": null
-      }
-    }
-  },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\n//informações\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n//tabela User(Salva os emails cadastrados)\nmodel User {\n  id         String   @id @default(uuid())\n  name       String\n  email      String   @unique\n  password   String\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  // Relação com CategoryView\n  categoryViews CategoryView[]\n\n  @@map(\"users\")\n}\n\n//Categorias(mostra o tipo do produto)\nmodel Category {\n  id         String   @id @default(uuid())\n  name       String\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  // Relações\n  products      Product[]\n  categoryViews CategoryView[]\n  menuItems     MenuItem[] // Relação com a tabela MenuItem\n\n  @@map(\"categories\")\n}\n\n//Tabela de produtos(mostra as informações do produto)\nmodel Product {\n  id          String   @id @default(uuid())\n  name        String\n  price       Float\n  description String\n  imageUrl    String\n  created_at  DateTime @default(now())\n  updated_at  DateTime @updatedAt\n\n  // Relação com a categoria\n  category   Category @relation(fields: [categoryId], references: [id])\n  categoryId String\n\n  // Relação com a tabela de ingredientes\n  productIngredients ProductIngredient[]\n\n  // Relação com Item pedidos\n  items Item[]\n\n  @@map(\"products\")\n}\n\n//Tabela de Pedido(mostra o numero do pedido)\nmodel Order {\n  id         String   @id @default(uuid())\n  table      Int\n  status     Boolean  @default(false)\n  draft      Boolean  @default(true)\n  name       String?\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  // Relação com Item\n  items Item[]\n\n  @@map(\"orders\")\n}\n\n//Tabela de quantidade de itens\nmodel Item {\n  id         String   @id @default(uuid())\n  amount     Int\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  // Relação com Order e chave estrangeira\n  order   Order  @relation(fields: [orderId], references: [id])\n  orderId String\n\n  // Relação com Product e chave estrangeira\n  product   Product @relation(fields: [productId], references: [id])\n  productId String\n\n  // Relação com modif icações de item\n  modifications ItemModification[]\n\n  @@map(\"items\")\n}\n\n// TABELAS NOVAS!!!!!\n\n// Tabela da categoria que o cliente entrou\nmodel CategoryView {\n  id        String   @id @default(uuid())\n  createdAt DateTime @default(now())\n\n  // Relação com o User, que representa o cliente\n  user   User   @relation(fields: [userId], references: [id])\n  userId String\n\n  // Relação com a categoria que foi visualizada\n  category   Category @relation(fields: [categoryId], references: [id])\n  categoryId String\n\n  @@map(\"category_views\")\n}\n\n//Tabela de MenuItem - mostra os itens individuais do cardápio(pizzas, bebidas, rodizios, etc.)\nmodel MenuItem {\n  id          String @id @default(uuid())\n  name        String\n  imageUrl    String\n  description String\n  price       Float\n\n  categoryId String\n  category   Category @relation(fields: [categoryId], references: [id])\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map(\"menu_items\")\n}\n\n//Tabela de Produto_Ingrediente - Tabela que junta os produtos com os ingredientes\nmodel ProductIngredient {\n  id           String   @id @default(uuid())\n  productId    String\n  ingredientId String\n  createdAt    DateTime @default(now())\n\n  product    Product    @relation(fields: [productId], references: [id])\n  ingredient Ingredient @relation(fields: [ingredientId], references: [id])\n\n  // Para garantir que não haja ingredientes duplicados para o mesmo produto\n  @@unique([productId, ingredientId])\n  @@map(\"product_ingredients\")\n}\n\n//Tabela de Ingredientes - mostra os ingredientes que podem ser adcionados ou removidos dos itens do pedido\nmodel Ingredient {\n  id        String   @id @default(uuid())\n  name      String\n  price     Float\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  //se relaciona com produtos e modificações de item\n  productIngredients ProductIngredient[]\n  itemModifications  ItemModification[]\n\n  @@map(\"ingredients\")\n}\n\n// Tabela de modificação de item - Esta é a tabela que registra as alterações do cliente\nmodel ItemModification {\n  id        String   @id @default(uuid())\n  type      String\n  createdAt DateTime @default(now())\n\n  // Relação com o Item do pedido\n  item   Item   @relation(fields: [itemId], references: [id])\n  itemId String\n\n  // Relação com o ingrediente que foi modificado\n  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])\n  ingredientId String\n\n  @@map(\"item_modifications\")\n}\n",
-  "inlineSchemaHash": "c50f86553243e39454e6c48dff3c7a96c34c010a00fe8089ac430e4c43310e3d",
-  "copyEngine": true
-}
-config.dirname = '/'
+class PrismaClient {
+  constructor() {
+    return new Proxy(this, {
+      get(target, prop) {
+        let message
+        const runtime = getRuntime()
+        if (runtime.isEdge) {
+          message = `PrismaClient is not configured to run in ${runtime.prettyName}. In order to run Prisma Client on edge runtime, either:
+- Use Prisma Accelerate: https://pris.ly/d/accelerate
+- Use Driver Adapters: https://pris.ly/d/driver-adapters
+`;
+        } else {
+          message = 'PrismaClient is unable to run in this browser environment, or has been bundled for the browser (running in `' + runtime.prettyName + '`).'
+        }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"categoryViews\",\"kind\":\"object\",\"type\":\"CategoryView\",\"relationName\":\"CategoryViewToUser\"}],\"dbName\":\"users\"},\"Category\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"CategoryToProduct\"},{\"name\":\"categoryViews\",\"kind\":\"object\",\"type\":\"CategoryView\",\"relationName\":\"CategoryToCategoryView\"},{\"name\":\"menuItems\",\"kind\":\"object\",\"type\":\"MenuItem\",\"relationName\":\"CategoryToMenuItem\"}],\"dbName\":\"categories\"},\"Product\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"imageUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToProduct\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productIngredients\",\"kind\":\"object\",\"type\":\"ProductIngredient\",\"relationName\":\"ProductToProductIngredient\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"Item\",\"relationName\":\"ItemToProduct\"}],\"dbName\":\"products\"},\"Order\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"table\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"draft\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"Item\",\"relationName\":\"ItemToOrder\"}],\"dbName\":\"orders\"},\"Item\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"order\",\"kind\":\"object\",\"type\":\"Order\",\"relationName\":\"ItemToOrder\"},{\"name\":\"orderId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ItemToProduct\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"modifications\",\"kind\":\"object\",\"type\":\"ItemModification\",\"relationName\":\"ItemToItemModification\"}],\"dbName\":\"items\"},\"CategoryView\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CategoryViewToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToCategoryView\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":\"category_views\"},\"MenuItem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"imageUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToMenuItem\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"menu_items\"},\"ProductIngredient\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ingredientId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToProductIngredient\"},{\"name\":\"ingredient\",\"kind\":\"object\",\"type\":\"Ingredient\",\"relationName\":\"IngredientToProductIngredient\"}],\"dbName\":\"product_ingredients\"},\"Ingredient\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"productIngredients\",\"kind\":\"object\",\"type\":\"ProductIngredient\",\"relationName\":\"IngredientToProductIngredient\"},{\"name\":\"itemModifications\",\"kind\":\"object\",\"type\":\"ItemModification\",\"relationName\":\"IngredientToItemModification\"}],\"dbName\":\"ingredients\"},\"ItemModification\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"item\",\"kind\":\"object\",\"type\":\"Item\",\"relationName\":\"ItemToItemModification\"},{\"name\":\"itemId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ingredient\",\"kind\":\"object\",\"type\":\"Ingredient\",\"relationName\":\"IngredientToItemModification\"},{\"name\":\"ingredientId\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":\"item_modifications\"}},\"enums\":{},\"types\":{}}")
-defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
-config.engineWasm = {
-  getRuntime: async () => require('./query_engine_bg.js'),
-  getQueryEngineWasmModule: async () => {
-    const loader = (await import('#wasm-engine-loader')).default
-    const engine = (await loader).default
-    return engine
+        message += `
+If this is unexpected, please open an issue: https://pris.ly/prisma-prisma-bug-report`
+
+        throw new Error(message)
+      }
+    })
   }
 }
-config.compilerWasm = undefined
 
-config.injectableEdgeEnv = () => ({
-  parsed: {
-    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
-  }
-})
-
-if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {
-  Debug.enable(typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined)
-}
-
-const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
-Object.assign(exports, Prisma)
 
+Object.assign(exports, Prisma)
