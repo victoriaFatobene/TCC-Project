@@ -26,20 +26,20 @@ app.post('/status', async (req, res) => {
 // ... outras rotas para as outras tabelas ...
 
 //rota do Usuário
-app.post('/users', async(readConfigFile, res) => {
-    const {name, email, password} = req.body;
-    try{
-        const newUser = await prisma.user.create({
-            data: {
-                name,
-                email,
-                password
-            },
-        });
-        res.status(201).json(newUser);
-    }catch(error){
-        res.status(500).json({error: 'Erro ao criar o usuário'});
-    }
+app.post('/users', async (req, res) => {
+  const { name, email, password } = req.body;
+  try {
+    const newUser = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password
+      },
+    });
+    res.status(201).json(newUser);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao criar o usuário' });
+  }
 });
 
 //rota da categoria
@@ -57,21 +57,21 @@ app.post('/categories', async (req, res) => {
 
 //rota de produto
 app.post('/products', async (req, res) => {
-    const {name,price,description,imageUrl, categoryId} = req.body;
-    try{
-        const newProduct = await prisma.product.prisma.create({
-            data:{
-                name,
-                price,
-                description,
-                imageUrl,
-                categoryId,
-            },
-        });
-        res.status(201).json(newProduct);
-    } catch (error){
-        res.status(500).json({error: 'Error ao crias o pruduto'});
-    }
+  const { name, price, description, imageUrl, categoryId } = req.body;
+  try {
+    const newProduct = await prisma.product.create({
+      data: {
+        name,
+        price,
+        description,
+        imageUrl,
+        categoryId,
+      },
+    });
+    res.status(201).json(newProduct);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao criar o produto' });
+  }
 });
 
 // rota do pedido 
