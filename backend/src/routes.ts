@@ -57,7 +57,11 @@ router.get('/category/product', isAuthenticated, new ListByCategoryController().
 router.post('/order', isAuthenticated, new CreateOrderController().handle);
 router.delete('/order', isAuthenticated, new RemoveOrderController().handle);
 
-router.post('/order/add', isAuthenticated, new AddItemController().handle);
+// itens do pedido
+router.post('/order/add', isAuthenticated, (req, res, next) => {
+  new AddItemController().handle(req, res).catch(next);
+});
+
 router.delete('/order/remove', isAuthenticated, new RemoveItemController().handle);
 router.put('/order/send', isAuthenticated, new SendOrderController().handle);
 
