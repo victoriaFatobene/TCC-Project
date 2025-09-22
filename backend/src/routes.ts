@@ -26,8 +26,11 @@ import { isAuthenticated } from './middlewares/isAuthenticated';
 
 import uploadConfig from './config/multer';
 
+import { processPayment } from './controllers/payment/PaymentController';
+
+
 // Cardápio
-import { ListMenuController } from './controllers/menu/ListMenuController';
+import { ListMenuController } from './controllers/menu/ListController';
 
 const router = Router();
 
@@ -68,5 +71,10 @@ const listMenuController = new ListMenuController();
 router.get('/cardapio', (req, res, next) =>
   listMenuController.handle(req, res).catch(next)
 );
+
+// pagamento
+router.post('/payment', isAuthenticated, (req, res, next) => {
+  processPayment(req, res).catch(next);
+});
 
 export { router };
