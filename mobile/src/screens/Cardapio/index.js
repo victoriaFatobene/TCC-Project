@@ -1,166 +1,158 @@
-import React, { useState } from "react";
+import React from 'react';
 import {
   SafeAreaView,
   View,
   Text,
-  StyleSheet,
-  Image,
   FlatList,
+  Image,
   TouchableOpacity,
-  ScrollView,
-  Dimensions,
-} from "react-native";
+  StyleSheet,
+} from 'react-native';
 
-const { width } = Dimensions.get("window");
+// 1. IMPORTAMOS O NOSSO "GERENTE" DE CARRINHO
+import { useCart } from '../../contexts/CartContext'; // Verifique se este caminho está correto
 
-const categories = [
+// --- DADOS DE EXEMPLO (COM PREÇO CORRIGIDO) ---
+// ATENÇÃO: O preço foi alterado de string para número para os cálculos funcionarem.
+const pizzasSalgadas = [
   {
-    name: "Pizzas Tradicionais",
-    image: require("../assets/images/pizza.png"),
-    subcategories: ["Mussarela", "Calabresa", "Portuguesa", "Frango Catupiry"],
+    id: '1',
+    nome: 'Calabresa',
+    ingredientes: 'Molho de tomate, mussarela, calabresa fatiada e cebola.',
+    preco: 45.90, // <--- MUDANÇA IMPORTANTE
+    imagem: 'https://images.unsplash.com/photo-1594007654729-407eedc4be65?q=80&w=1928&auto=format&fit=crop',
   },
   {
-    name: "Pizzas Veganas",
-    image: require("../assets/images/pizza_vegana.png"),
-    subcategories: ["Mussarela Vegana", "Marguerita Vegana", "Shimeji", "Brócolis"],
+    id: '2',
+    nome: 'Margherita',
+    ingredientes: 'Molho de tomate, mussarela, fatias de tomate fresco e manjericão.',
+    preco: 42.50, // <--- MUDANÇA IMPORTANTE
+    imagem: 'https://images.unsplash.com/photo-1598021680133-eb3a73319420?q=80&w=2148&auto=format&fit=crop',
   },
   {
-    name: "Bebidas",
-    image: require("../assets/images/bebidas.png"),
-    subcategories: ["Refrigerante", "Suco Natural", "Água", "Cerveja"],
+    id: '3',
+    nome: 'Frango com Catupiry',
+    ingredientes: 'Molho de tomate, mussarela, frango desfiado e catupiry.',
+    preco: 48.00, // <--- MUDANÇA IMPORTANTE
+    imagem: 'https://images.unsplash.com/photo-1604382354936-07c5d9983d34?q=80&w=2070&auto=format&fit=crop',
   },
   {
-    name: "Sobremesas",
-    image: require("../assets/images/sobremesa.png"),
-    subcategories: ["Petit Gateau", "Torta de Limão", "Pudim", "Sorvete"],
-  },
-  {
-    name: "Acompanhamentos",
-    image: require("../assets/images/acompanhamentos.png"),
-    subcategories: ["Batata Frita", "Anéis de Cebola", "Pão de Alho", "Salada"],
+    id: '4',
+    nome: 'Portuguesa',
+    ingredientes: 'Molho, mussarela, presunto, ovos, cebola, pimentão e azeitonas.',
+    preco: 52.00, // <--- MUDANÇA IMPORTANTE
+    imagem: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1981&auto=format&fit=crop',
   },
 ];
 
-export default function MenuScreen() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+// --- COMPONENTE DO ITEM DA LISTA (MODIFICADO) ---
+const PizzaItem = ({ item }) => {
+  // 2. PEGUE A FUNÇÃO addToCart DO NOSSO GERENTE
+  const { addToCart } = useCart();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>🍕 Cardápio</Text>
+    // 3. ENVOLVA TUDO COM TouchableOpacity E CHAME A FUNÇÃO NO ONPRESS
+    <TouchableOpacity onPress={() => addToCart(item)}>
+      <View style={styles.itemContainer}>
+        <Image source={{ uri: item.imagem }} style={styles.itemImage} />
+        <View style={styles.itemDetails}>
+          <Text style={styles.itemName}>{item.nome}</Text>
+          <Text style={styles.itemIngredients}>{item.ingredientes}</Text>
+          {/* Usamos .toFixed(2) para garantir que o preço sempre tenha 2 casas decimais */}
+          <Text style={styles.itemPrice}>R$ {item.preco.toFixed(2)}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
-      {/* Categorias */}
+// --- Componente Principal da Tela do Cardápio ---
+function Cardapio({ navigation }) {
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Text style={styles.backButtonText}>{'<'}</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Pizzas Salgadas</Text>
+      </View>
       <FlatList
-        data={categories}
-        horizontal
-        keyExtractor={(item) => item.name}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.categoryList}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.categoryCard,
-              selectedCategory === item.name && styles.categoryCardActive,
-            ]}
-            onPress={() =>
-              setSelectedCategory(
-                selectedCategory === item.name ? null : item.name
-              )
-            }
-          >
-            <Image source={item.image} style={styles.categoryImage} />
-            <Text style={styles.categoryText}>{item.name}</Text>
-          </TouchableOpacity>
-        )}
+        data={pizzasSalgadas}
+        renderItem={({ item }) => <PizzaItem item={item} />}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.listContainer}
       />
-
-      {/* Subcategorias */}
-      <ScrollView style={styles.subcategoryContainer}>
-        {selectedCategory ? (
-          <>
-            <Text style={styles.subtitle}>👉 {selectedCategory}</Text>
-            {categories
-              .find((c) => c.name === selectedCategory)
-              ?.subcategories.map((sub, index) => (
-                <View key={index} style={styles.subCard}>
-                  <Text style={styles.subText}>{sub}</Text>
-                </View>
-              ))}
-          </>
-        ) : (
-          <Text style={styles.hint}>Selecione uma categoria acima 👆</Text>
-        )}
-      </ScrollView>
     </SafeAreaView>
   );
 }
 
+// Estilos (sem alterações)
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: 20,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#d35400",
-  },
-  categoryList: {
-    paddingHorizontal: 10,
-  },
-  categoryCard: {
-    width: width * 0.35,
-    backgroundColor: "#f4f4f4",
-    marginHorizontal: 8,
-    borderRadius: 16,
-    alignItems: "center",
-    padding: 12,
-    elevation: 3,
-  },
-  categoryCardActive: {
-    backgroundColor: "#ffe6cc",
-    borderWidth: 1,
-    borderColor: "#d35400",
-  },
-  categoryImage: {
-    width: 60,
-    height: 60,
-    resizeMode: "contain",
-    marginBottom: 8,
-  },
-  categoryText: {
-    fontSize: 14,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-  subcategoryContainer: {
-    marginTop: 20,
-    paddingHorizontal: 15,
-  },
-  subtitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#e67e22",
-    marginBottom: 10,
-  },
-  subCard: {
-    backgroundColor: "#f9f9f9",
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 10,
-    elevation: 2,
-  },
-  subText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#333",
-  },
-  hint: {
-    fontSize: 16,
-    textAlign: "center",
-    marginTop: 40,
-    color: "#888",
-  },
-});
+    safeArea: {
+      flex: 1,
+      backgroundColor: '#FFF8DC',
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#7B0909',
+      paddingVertical: 15,
+      paddingHorizontal: 10,
+    },
+    backButton: {
+      padding: 5,
+      marginRight: 15,
+    },
+    backButtonText: {
+      color: '#FFFFFF',
+      fontSize: 24,
+      fontWeight: 'bold',
+    },
+    headerTitle: {
+      color: '#FFFFFF',
+      fontSize: 22,
+      fontWeight: 'bold',
+    },
+    listContainer: {
+      padding: 10,
+    },
+    itemContainer: {
+      flexDirection: 'row',
+      backgroundColor: '#FFFFFF',
+      borderRadius: 10,
+      padding: 10,
+      marginBottom: 15,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    itemImage: {
+      width: 100,
+      height: 100,
+      borderRadius: 8,
+      marginRight: 15,
+    },
+    itemDetails: {
+      flex: 1,
+      justifyContent: 'center',
+    },
+    itemName: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#333',
+    },
+    itemIngredients: {
+      fontSize: 14,
+      color: '#666',
+      marginVertical: 4,
+    },
+    itemPrice: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#7B0909',
+    },
+  });
+
+export default Cardapio;
