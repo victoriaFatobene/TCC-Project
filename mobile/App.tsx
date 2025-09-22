@@ -7,25 +7,37 @@ import { Ionicons } from '@expo/vector-icons';
 // --- Importe o "Gerente" do Carrinho ---
 import { CartProvider } from './src/contexts/CartContext';
 
-// --- Importe TODAS as suas telas aqui ---
+// --- Importe TODAS as suas telas aqui, com os caminhos corrigidos ---
 import HomeScreen from './src/screens/TelaInicial';
-import Avaliacao from './src/screens/Avaliacao';
-import Cardapio from './src/pages/Cardapio';
+import Pizzas from './src/screens/Pizzas';
+import Cardapio from './src/screens/Cardapio'; // Pizzas Salgadas
+import PizzasVeganas from './src/screens/Veganas';
 import Bebidas from './src/screens/Bebidas';
-// CORREÇÃO: O caminho para o Carrinho provavelmente é em /pages e não /screens
-import Carrinho from './src/screens/Carrinho'; 
+import Sobremesas from './src/screens/Sobremesas';
+import Avaliacao from './src/screens/Avaliacao';
+import Carrinho from './src/screens/Carrinho';
+import Pagamento from './src/screens/Pagamento';
+import VerMais from './src/screens/VerMais';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // --- Pacote de Telas do Cardápio ---
+// Este é o "índice" do seu livro. Todas as telas que você quer navegar
+// a partir do menu principal precisam estar listadas aqui.
 function MenuStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {/* Telas principais do fluxo de navegação */}
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name="Pizzas" component={Pizzas} />
       <Stack.Screen name="Cardapio" component={Cardapio} />
+      <Stack.Screen name="PizzasVeganas" component={PizzasVeganas} />
       <Stack.Screen name="Bebidas" component={Bebidas} />
+      <Stack.Screen name="Sobremesas" component={Sobremesas} />
       <Stack.Screen name="Avaliacao" component={Avaliacao} />
+      <Stack.Screen name="Pagamento" component={Pagamento} />
+      <Stack.Screen name="VerMais" component={VerMais} />
     </Stack.Navigator>
   );
 }
@@ -33,7 +45,6 @@ function MenuStack() {
 // --- Componente Principal do App ---
 export default function App() {
   return (
-    // O CartProvider "abraça" o app, disponibilizando o carrinho para todas as telas
     <CartProvider>
       <NavigationContainer>
         <Tab.Navigator
@@ -52,7 +63,7 @@ export default function App() {
             },
           }}
         >
-          {/* Aba 1: Menu (contém a pilha de telas) */}
+          {/* Aba 1: Menu (que contém a pilha de telas) */}
           <Tab.Screen
             name="Menu"
             component={MenuStack}
