@@ -35,11 +35,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.16.2
+ * Prisma Client JS version: 6.16.1
  * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
  */
 Prisma.prismaVersion = {
-  client: "6.16.2",
+  client: "6.16.1",
   engine: "1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
 }
 
@@ -224,7 +224,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\SENAI\\Desktop\\PSOF_2-ORION_DEV\\TCC-Project\\TCC-Project\\backend\\src\\generated\\prisma",
+      "value": "C:\\Users\\SENAI\\Desktop\\TCC-Project\\backend\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -238,7 +238,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\SENAI\\Desktop\\PSOF_2-ORION_DEV\\TCC-Project\\TCC-Project\\backend\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\SENAI\\Desktop\\TCC-Project\\backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -246,7 +246,7 @@ const config = {
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
-  "clientVersion": "6.16.2",
+  "clientVersion": "6.16.1",
   "engineVersion": "1c57fdcd7e44b29b9313256c76699e91c3ac3c43",
   "datasourceNames": [
     "db"

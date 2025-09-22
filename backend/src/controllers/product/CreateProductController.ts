@@ -1,16 +1,17 @@
-import { Request, Response } from 'express'
-import { CreateProductService } from '../../services/product/CreateProductService'
+import { Request, Response } from "express";
+import { CreateProductService } from "../../services/product/CreateProductService";
 
 class CreateProductController {
     async handle(req: Request, res: Response) {
-        const { name, price, description, category_id } = req.body
+        const { name, price, description, category_id } = req.body;
 
-        const createProductService = new CreateProductService()
+        const createProductService = new CreateProductService();
 
         if (!req.file) {
-            throw new Error('error upload file')
+            throw new Error("error upload file")
         } else {
-            const { originalname, filename: banner } = req.file
+
+            const { originalname, filename: banner } = req.file;
 
             const product = await createProductService.execute({
                 name,
@@ -18,10 +19,11 @@ class CreateProductController {
                 description,
                 banner,
                 category_id
-            })
-            res.json(product)
+            });
+
+            res.json(product);
         }
     }
 }
 
-export { CreateProductController }
+export { CreateProductController };

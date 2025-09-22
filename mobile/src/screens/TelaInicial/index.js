@@ -1,60 +1,142 @@
-import React from "react";
-import { SafeAreaView, ScrollView, Text, View, Image, TouchableOpacity, StyleSheet } from "react-native";
+import React from 'react';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 
-export default function HomeScreen({ navigation }) {
-  const categories = [
-    { name: "Pizzas", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/uulzo8g5_expires_30_days.png", color: "#F44336", screen: "Cardapio" },
-    { name: "Bebidas", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/88znwjll_expires_30_days.png", color: "#2196F3", screen: "Cardapio" },
-    { name: "Favoritos", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/d174b2pj_expires_30_days.png", color: "#FF9800", screen: "Cardapio" },
-    { name: "Sobremesas", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/snpswyio_expires_30_days.png", color: "#9C27B0", screen: "Cardapio" },
-    { name: "Rodízios", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/z9p8vx67_expires_30_days.png", color: "#4CAF50", screen: "Cardapio" },
-    { name: "Acompanhamentos", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/alzgc0j5_expires_30_days.png", color: "#00BCD4", screen: "Cardapio" },
-  ];
-
+// --- Componente da Tela Inicial (em JavaScript) ---
+// Note que removemos a parte de tipagem (Props, etc.)
+// e recebemos { navigation } diretamente dos props.
+function TelaInicial({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.header}>🍕 Menu Principal</Text>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Cardápio</Text>
+        </View>
 
-        <View style={styles.cardsContainer}>
-          {categories.map((cat, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[styles.card, { backgroundColor: cat.color }]}
-              onPress={() => navigation.navigate(cat.screen)}
-              activeOpacity={0.8}
+        <View style={styles.menuContainer}>
+          {/* Coluna da Esquerda */}
+          <View style={styles.menuColumn}>
+            <TouchableOpacity 
+              style={styles.card} 
+              onPress={() => navigation.navigate('Cardapio')}
             >
-              <Image source={{ uri: cat.img }} style={styles.cardImage} resizeMode="contain" />
-              <Text style={styles.cardText}>{cat.name}</Text>
+              <Image
+                source={{ uri: 'https://storage.googleapis.com/tagjs-prod.appspot.com/v1/wU2WsSAm3N/lbwvpb7i_expires_30_days.png' }}
+                style={styles.cardImage}
+              />
+              <Text style={styles.cardTitle}>Pizzas</Text>
             </TouchableOpacity>
-          ))}
+
+            <TouchableOpacity 
+              style={styles.card} 
+              onPress={() => navigation.navigate('Bebidas')}
+            >
+              <Image
+                source={{ uri: 'https://storage.googleapis.com/tagjs-prod.appspot.com/v1/wU2WsSAm3N/9bzt8nk1_expires_30_days.png' }}
+                style={styles.cardImage}
+              />
+              <Text style={styles.cardTitle}>Bebidas</Text>
+            </TouchableOpacity>
+
+            {/* Adicione outros itens aqui se necessário */}
+          </View>
+          
+          {/* Coluna da Direita (exemplo) */}
+          <View style={styles.menuColumn}>
+            <TouchableOpacity 
+              style={styles.card} 
+              onPress={() => alert('Navegar para Rodízios')} // Altere para navigation.navigate
+            >
+              <Image
+                source={{ uri: 'https://storage.googleapis.com/tagjs-prod.appspot.com/v1/wU2WsSAm3N/v1oo72pc_expires_30_days.png' }}
+                style={styles.cardImage}
+              />
+              <Text style={styles.cardTitleBlack}>Rodízios</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.card} 
+              onPress={() => alert('Navegar para Acompanhamentos')} // Altere para navigation.navigate
+            >
+              <Image
+                source={{ uri: 'https://storage.googleapis.com/tagjs-prod.appspot.com/v1/wU2WsSAm3N/52xnhagk_expires_30_days.png' }}
+                style={styles.cardImage}
+              />
+              <Text style={styles.cardTitleBlack}>Acompanhamentos</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+// --- Folha de Estilos ---
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: "#FFF8E7" },
-  scrollContainer: { paddingVertical: 30, paddingHorizontal: 20, alignItems: "center" },
-  header: { fontSize: 36, fontWeight: "bold", color: "#333", marginBottom: 30 },
-  cardsContainer: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center" },
-  card: {
-    width: 140,
-    height: 180,
-    borderRadius: 20,
-    margin: 10,
-    padding: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
   },
-  cardImage: { width: 100, height: 100, marginBottom: 10 },
-  cardText: { color: "#fff", fontSize: 18, fontWeight: "bold", textAlign: "center" },
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#7B0909',
+  },
+  header: {
+    alignItems: 'center',
+    backgroundColor: '#5E0808',
+    borderColor: '#000000',
+    borderBottomWidth: 1,
+    paddingVertical: 12,
+  },
+  headerTitle: {
+    color: '#EEFF00',
+    fontSize: 40,
+    fontWeight: 'bold',
+  },
+  menuContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+  },
+  menuColumn: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 5,
+  },
+  card: {
+    backgroundColor: '#1F451A',
+    borderColor: '#000000',
+    borderWidth: 2,
+    borderRadius: 15,
+    padding: 10,
+    alignItems: 'center',
+    marginBottom: 20,
+    width: '100%',
+  },
+  cardImage: {
+    width: 120,
+    height: 112,
+    marginBottom: 8,
+  },
+  cardTitle: {
+    color: '#FFFFFF',
+    fontSize: 19,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  cardTitleBlack: {
+    color: '#000000',
+    fontSize: 19,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
 });
 
-
+export default TelaInicial;
