@@ -150,11 +150,10 @@ exports.Prisma.ProductScalarFieldEnum = {
 exports.Prisma.OrderScalarFieldEnum = {
   id: 'id',
   table: 'table',
-  status: 'status',
-  draft: 'draft',
   name: 'name',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
+  statusId: 'statusId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.ItemScalarFieldEnum = {
@@ -164,13 +163,6 @@ exports.Prisma.ItemScalarFieldEnum = {
   updated_at: 'updated_at',
   orderId: 'orderId',
   productId: 'productId'
-};
-
-exports.Prisma.CategoryViewScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  userId: 'userId',
-  categoryId: 'categoryId'
 };
 
 exports.Prisma.MenuItemScalarFieldEnum = {
@@ -184,11 +176,26 @@ exports.Prisma.MenuItemScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ItemModificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  createdAt: 'createdAt',
+  itemId: 'itemId',
+  ingredientId: 'ingredientId'
+};
+
 exports.Prisma.ProductIngredientScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
   ingredientId: 'ingredientId',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.CategoryViewScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  categoryId: 'categoryId'
 };
 
 exports.Prisma.IngredientScalarFieldEnum = {
@@ -199,12 +206,9 @@ exports.Prisma.IngredientScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ItemModificationScalarFieldEnum = {
+exports.Prisma.StatusScalarFieldEnum = {
   id: 'id',
-  type: 'type',
-  createdAt: 'createdAt',
-  itemId: 'itemId',
-  ingredientId: 'ingredientId'
+  name: 'name'
 };
 
 exports.Prisma.SortOrder = {
@@ -229,11 +233,12 @@ exports.Prisma.ModelName = {
   Product: 'Product',
   Order: 'Order',
   Item: 'Item',
-  CategoryView: 'CategoryView',
   MenuItem: 'MenuItem',
+  ItemModification: 'ItemModification',
   ProductIngredient: 'ProductIngredient',
+  CategoryView: 'CategoryView',
   Ingredient: 'Ingredient',
-  ItemModification: 'ItemModification'
+  Status: 'Status'
 };
 
 /**

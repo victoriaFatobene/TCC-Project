@@ -75,8 +75,8 @@ model Order {
   name String?
 
   //relaciona com a tabela de status
-  status Status @relation(fields: [status_Id], references: [id])
-  status_Id String
+  status Status @relation(fields: [statusId], references: [id])
+  statusId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
