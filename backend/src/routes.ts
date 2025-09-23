@@ -33,6 +33,8 @@ import { CreateItemModificationController } from './controllers/order/CreateItem
 
 import { CreateProductIngredientController } from './controllers/product-ingredient/CreateProductIngredientController'; 
 
+import {ListMenuItemController} from './controllers/menu/ListMenuController';
+
 // Cardápio
 import { ListMenuController } from './controllers/menu/ListMenuController';
 
@@ -87,5 +89,8 @@ router.post('/item-modifications', isAuthenticated, new CreateItemModificationCo
 
 //Ingredient do  produto
 router.post('/product-ingredients', isAuthenticated, new CreateProductIngredientController().handle);
+
+//itemsMenu
+router.get('/menu-items', new ListMenuItemController().handle);
 
 export { router };
