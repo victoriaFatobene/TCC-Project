@@ -26,14 +26,13 @@ import { isAuthenticated } from './middlewares/isAuthenticated';
 
 import uploadConfig from './config/multer';
 
-import { CreateIngredientController } from './controllers/ingredient/CreateIngredientController';
+import { CreateIngredientsController } from './controllers/Ingredientes/CreateIngredientsController';
+
 import { ListIngredientController } from './controllers/ingredient/ListIngredientController';
 
 import { CreateItemModificationController } from './controllers/order/CreateItemModificationController';
 
-import { CreateProductIngredientController } from './controllers/product-ingredient/CreateProductIngredientController'; 
-
-import {ListMenuItemController} from './controllers/menu/ListMenuController';
+import { CreateProductIngredientController } from './controllers/product-ingredient/CreateProductIngredientController';
 
 // Cardápio
 import { ListMenuController } from './controllers/menu/ListMenuController';
@@ -87,10 +86,7 @@ router.get('/ingredients', isAuthenticated, new ListIngredientController().handl
 //modificações de Item
 router.post('/item-modifications', isAuthenticated, new CreateItemModificationController().handle);
 
-//Ingredient do  produto
+//Ingredient do  produto
 router.post('/product-ingredients', isAuthenticated, new CreateProductIngredientController().handle);
-
-//itemsMenu
-router.get('/menu-items', new ListMenuItemController().handle);
 
 export { router };
