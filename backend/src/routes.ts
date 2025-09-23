@@ -29,11 +29,18 @@ import { FinishOrderController } from './controllers/order/FinishOrderController
 
 // MENU
 import { ListMenuController } from './controllers/menu/ListMenuController';
-import { isAuthenticated } from './middlewares/isAuthenticated';
+
+// PAYMENT
 import { processPayment } from './controllers/payment/PaymentController';
+
+// REVIEWS
+import { addReview, listReviews } from './controllers/user/ReviewController';
+import { isAuthenticated } from './middlewares/isAuthenticated';
 
 const router = Router();
 const upload = multer(uploadConfig.upload('./tmp'));
+
+const reviewRouter = Router(); // rota especifica para reviews
 
 // helper simples pra encadear async/await sem erro de tipo
 const h = (fn: (req: Request, res: Response, next: NextFunction) => any) =>
@@ -48,37 +55,39 @@ router.get('/ping', (_req: Request, res: Response) => {
 /** Users */
 router.post('/users', h((req, res) => new CreateUserController().handle(req, res)));
 router.post('/session', h((req, res) => new AuthUserController().handle(req, res)));
-router.get('/me',     h((req, res) => new DetailUserController().handle(req, res))); // adicione isAuthenticated se quiser
+router.get('/me', h((req, res) => new DetailUserController().handle(req, res)));
 
 /** Category */
 router.post('/category', h((req, res) => new CreateCategoryController().handle(req, res)));
-router.get('/category',  h((req, res) => new ListCategoryController().handle(req, res)));
+router.get('/category', h((req, res) => new ListCategoryController().handle(req, res)));
 
 /** Product */
-router.post(
-  '/product',
-  upload.single('file'),
-  h((req, res) => new CreateProductController().handle(req, res))
-);
+router.post('/product', upload.single('file'), h((req, res) => new CreateProductController().handle(req, res)));
 router.get('/category/product', h((req, res) => new ListByCategoryController().handle(req, res)));
 
 /** Orders */
-router.post('/order',          h((req, res) => new CreateOrderController().handle(req, res)));
-router.delete('/order',        h((req, res) => new RemoveOrderController().handle(req, res)));
-router.post('/order/add',      h((req, res) => new AddItemController().handle(req, res)));
+router.post('/order', h((req, res) => new CreateOrderController().handle(req, res)));
+router.delete('/order', h((req, res) => new RemoveOrderController().handle(req, res)));
+router.post('/order/add', h((req, res) => new AddItemController().handle(req, res)));
 router.delete('/order/remove', h((req, res) => new RemoveItemController().handle(req, res)));
-router.put('/order/send',      h((req, res) => new SendOrderController().handle(req, res)));
-router.get('/orders',          h((req, res) => new ListOrdersController().handle(req, res)));
-router.get('/order/detail',    h((req, res) => new DetailOrderController().handle(req, res)));
-router.put('/order/finish',    h((req, res) => new FinishOrderController().handle(req, res)));
+router.put('/order/send', h((req, res) => new SendOrderController().handle(req, res)));
+router.get('/orders', h((req, res) => new ListOrdersController().handle(req, res)));
+router.get('/order/detail', h((req, res) => new DetailOrderController().handle(req, res)));
+router.put('/order/finish', h((req, res) => new FinishOrderController().handle(req, res)));
 
 /** Menu (cardápio) */
 router.get('/menu', h((req, res) => new ListMenuController().handle(req, res)));
 
-// pagamento
+/** Payment */
 router.post('/payment', isAuthenticated, (req, res, next) => {
   processPayment(req, res).catch(next);
 });
 
+/** Reviews */
+reviewRouter.post('/', isAuthenticated, h(addReview));
+reviewRouter.get('/', isAuthenticated, h(listReviews));
+
+// todas as rotas de review começam com /reviews
+router.use('/reviews', reviewRouter);
 
 export { router };
