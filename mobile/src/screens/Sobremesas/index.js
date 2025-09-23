@@ -1,39 +1,5 @@
-// src/screens/Sobremesas/index.js
 import React from 'react';
-import { SafeAreaView, View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
-import { useCart } from '../../contexts/CartContext';
-
-const sobremesas = [
-  { id: 's1', nome: "Brigadeiro", preco: 5.00, imagem: "https://images.unsplash.com/photo-1582294522924-1016d5a78f3a?q=80&w=1974&auto=format&fit=crop", ingredientes: 'Chocolate ao leite e granulado.' },
-  { id: 's2', nome: "Pudim", preco: 7.00, imagem: "https://images.unsplash.com/photo-1590432247605-364736f56193?q=80&w=1964&auto=format&fit=crop", ingredientes: 'Leite condensado, ovos e calda de caramelo.' },
-  { id: 's3', nome: "Sorvete", preco: 6.50, imagem: "https://images.unsplash.com/photo-1580915411954-282cb1b0d780?q=80&w=1964&auto=format&fit=crop", ingredientes: 'Duas bolas, sabor a escolher.' },
-];
-
-const DessertItem = ({ item, navigation }) => {
-  const { addToCart } = useCart();
-  return (
-    <View style={styles.card}>
-      <Image source={{ uri: item.imagem }} style={styles.image} />
-      <View style={styles.cardContent}>
-        <View>
-          <Text style={styles.name}>{item.nome}</Text>
-          <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
-        </View>
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity 
-            style={styles.detailsButton} 
-            onPress={() => navigation.navigate('ProductDetails', { product: item })}
-          >
-            <Text style={styles.detailsButtonText}>Ver Mais</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.addBtn} onPress={() => addToCart(item)}>
-            <Text style={styles.addBtnText}>+</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  );
-};
+import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function Sobremesas({ navigation }) {
   return (
@@ -42,34 +8,31 @@ export default function Sobremesas({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>{'<'}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Sobremesas 🍰</Text>
+        <Text style={styles.headerTitle}>Sobremesas</Text>
       </View>
-      <FlatList
-        data={sobremesas}
-        renderItem={({ item }) => <DessertItem item={item} navigation={navigation} />}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContainer}
-      />
+      
+      <View style={styles.content}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Sorvetes')}>
+          <Text style={styles.menuButtonText}>🍨 Sorvetes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Bolos')}>
+          <Text style={styles.menuButtonText}>🍰 Bolos</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Doces')}>
+          <Text style={styles.menuButtonText}>🍬 Doces</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
 
-// Reutilizando os mesmos estilos
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#FAFAFA' },
-    header: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#7B0909', paddingVertical: 15, paddingHorizontal: 10 },
-    backButton: { padding: 5, marginRight: 15 },
-    backButtonText: { color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' },
-    headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
-    listContainer: { padding: 16 },
-    card: { flexDirection: 'row', backgroundColor: "#FFF", borderRadius: 12, padding: 12, marginBottom: 16, alignItems: 'center', elevation: 3 },
-    image: { width: 60, height: 60, borderRadius: 8, marginRight: 12 },
-    cardContent: { flex: 1, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' },
-    name: { fontSize: 18, fontWeight: '600' },
-    price: { fontSize: 16, color: '#555', marginTop: 4 },
-    buttonsContainer: { flexDirection: 'row', alignItems: 'center' },
-    detailsButton: { backgroundColor: '#f0f0f0', paddingVertical: 6, paddingHorizontal: 10, borderRadius: 20, marginRight: 10 },
-    detailsButtonText: { color: '#333', fontWeight: 'bold', fontSize: 12 },
-    addBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#4CAF50', justifyContent: 'center', alignItems: 'center' },
-    addBtnText: { color: '#FFF', fontSize: 22, fontWeight: 'bold' },
+  container: { flex: 1, backgroundColor: '#FAFAFA' },
+  header: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#7B0909', paddingVertical: 15, paddingHorizontal: 10 },
+  backButton: { padding: 5, marginRight: 15 },
+  backButtonText: { color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' },
+  headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
+  content: { flex: 1, justifyContent: 'center', padding: 20 },
+  menuButton: { backgroundColor: '#FFF', padding: 20, borderRadius: 15, alignItems: 'center', marginBottom: 20, elevation: 4 },
+  menuButtonText: { fontSize: 20, color: '#7B0909', fontWeight: 'bold' },
 });
