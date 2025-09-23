@@ -26,6 +26,11 @@ import { isAuthenticated } from './middlewares/isAuthenticated';
 
 import uploadConfig from './config/multer';
 
+import { CreateIngredientController } from './controllers/ingredient/CreateIngredientController';
+import { ListIngredientController } from './controllers/ingredient/ListIngredientController';
+
+import { CreateItemModificationController } from './controllers/order/CreateItemModificationController';
+
 // Cardápio
 import { ListMenuController } from './controllers/menu/ListMenuController';
 
@@ -68,5 +73,14 @@ const listMenuController = new ListMenuController();
 router.get('/cardapio', (req, res, next) =>
   listMenuController.handle(req, res).catch(next)
 );
+
+//Novos Abaixooooooo
+
+// Ingredientes
+router.post('/ingredient', isAuthenticated, new CreateIngredientController().handle);
+router.get('/ingredients', isAuthenticated, new ListIngredientController().handle);
+
+//modificações de Item
+router.post('/item-modifications', isAuthenticated, new CreateItemModificationController().handle);
 
 export { router };
