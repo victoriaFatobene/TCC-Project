@@ -1,27 +1,37 @@
 // src/screens/PizzasVeganas/index.js
 import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
-import { useCart } from '../../contexts/CartContext'; // Importe o carrinho
+import { useCart } from '../../contexts/CartContext';
 
 const pizzasVeganas = [
-  { id: 'v1', nome: "Veggie Supreme", preco: 28.00, imagem: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?q=80&w=1999&auto=format&fit=crop" },
-  { id: 'v2', nome: "Margherita Vegana", preco: 25.00, imagem: "https://images.unsplash.com/photo-1620374643423-276c1231a540?q=80&w=1964&auto=format&fit=crop" },
-  { id: 'v3', nome: "Portobello Gourmet", preco: 30.00, imagem: "https://images.unsplash.com/photo-1588315029754-2dd089d39a1a?q=80&w=2070&auto=format&fit=crop" },
+  { id: 'v1', nome: "Veggie Supreme", preco: 28.00, imagem: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?q=80&w=1999&auto=format&fit=crop", ingredientes: 'Pimentão, cebola, azeitona e cogumelos.' },
+  { id: 'v2', nome: "Margherita Vegana", preco: 25.00, imagem: "https://images.unsplash.com/photo-1620374643423-276c1231a540?q=80&w=1964&auto=format&fit=crop", ingredientes: 'Queijo vegano, tomate e manjericão.' },
+  { id: 'v3', nome: "Portobello Gourmet", preco: 30.00, imagem: "https://images.unsplash.com/photo-1588315029754-2dd089d39a1a?q=80&w=2070&auto=format&fit=crop", ingredientes: 'Cogumelos Portobello e azeite trufado.' },
 ];
 
-const VeganPizzaItem = ({ item }) => {
+const VeganPizzaItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
   return (
-    <TouchableOpacity style={styles.card} onPress={() => addToCart(item)}>
+    <View style={styles.card}>
       <Image source={{ uri: item.imagem }} style={styles.image} />
       <View style={styles.cardContent}>
-        <Text style={styles.name}>{item.nome}</Text>
-        <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
+        <View>
+          <Text style={styles.name}>{item.nome}</Text>
+          <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
+        </View>
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity 
+            style={styles.detailsButton} 
+            onPress={() => navigation.navigate('ProductDetails', { product: item })}
+          >
+            <Text style={styles.detailsButtonText}>Ver Mais</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.addBtn} onPress={() => addToCart(item)}>
+            <Text style={styles.addBtnText}>+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={styles.addBtn}>
-        <Text style={styles.addBtnText}>+</Text>
-      </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -36,7 +46,7 @@ export default function PizzasVeganas({ navigation }) {
       </View>
       <FlatList
         data={pizzasVeganas}
-        renderItem={({ item }) => <VeganPizzaItem item={item} />}
+        renderItem={({ item }) => <VeganPizzaItem item={item} navigation={navigation} />}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContainer}
       />
@@ -54,9 +64,12 @@ const styles = StyleSheet.create({
     listContainer: { padding: 16 },
     card: { flexDirection: 'row', backgroundColor: "#FFF", borderRadius: 12, padding: 12, marginBottom: 16, alignItems: 'center', elevation: 3 },
     image: { width: 60, height: 60, borderRadius: 8, marginRight: 12 },
-    cardContent: { flex: 1 },
+    cardContent: { flex: 1, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' },
     name: { fontSize: 18, fontWeight: '600' },
     price: { fontSize: 16, color: '#555', marginTop: 4 },
+    buttonsContainer: { flexDirection: 'row', alignItems: 'center' },
+    detailsButton: { backgroundColor: '#f0f0f0', paddingVertical: 6, paddingHorizontal: 10, borderRadius: 20, marginRight: 10 },
+    detailsButtonText: { color: '#333', fontWeight: 'bold', fontSize: 12 },
     addBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#4CAF50', justifyContent: 'center', alignItems: 'center' },
     addBtnText: { color: '#FFF', fontSize: 22, fontWeight: 'bold' },
 });

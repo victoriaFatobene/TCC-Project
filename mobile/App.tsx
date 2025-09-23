@@ -7,28 +7,26 @@ import { Ionicons } from '@expo/vector-icons';
 // --- Importe o "Gerente" do Carrinho ---
 import { CartProvider } from './src/contexts/CartContext';
 
-// --- Importe TODAS as suas telas aqui, com os caminhos corrigidos ---
+// --- Importe TODAS as suas telas aqui ---
 import HomeScreen from './src/screens/TelaInicial';
 import Pizzas from './src/screens/Pizzas';
-import Cardapio from './src/screens/Cardapio'; // Pizzas Salgadas
-import PizzasVeganas from './src/screens/Veganas';
+import Cardapio from './src/screens/Cardapio';
+import PizzasVeganas from './src/screens/Veganas'; // <-- CORREÇÃO AQUI
 import Bebidas from './src/screens/Bebidas';
 import Sobremesas from './src/screens/Sobremesas';
 import Avaliacao from './src/screens/Avaliacao';
 import Carrinho from './src/screens/Carrinho';
 import Pagamento from './src/screens/Pagamento';
 import VerMais from './src/screens/VerMais';
+import ProductDetails from './src/screens/ProductDetails';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // --- Pacote de Telas do Cardápio ---
-// Este é o "índice" do seu livro. Todas as telas que você quer navegar
-// a partir do menu principal precisam estar listadas aqui.
 function MenuStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* Telas principais do fluxo de navegação */}
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="Pizzas" component={Pizzas} />
       <Stack.Screen name="Cardapio" component={Cardapio} />
@@ -38,6 +36,7 @@ function MenuStack() {
       <Stack.Screen name="Avaliacao" component={Avaliacao} />
       <Stack.Screen name="Pagamento" component={Pagamento} />
       <Stack.Screen name="VerMais" component={VerMais} />
+      <Stack.Screen name="ProductDetails" component={ProductDetails} />
     </Stack.Navigator>
   );
 }

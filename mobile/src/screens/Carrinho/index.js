@@ -1,17 +1,30 @@
+// src/screens/Carrinho/index.js
 import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity } from 'react-native';
-import { useCart } from '../../contexts/CartContext'; // Importa nosso hook
+import { useCart } from '../../contexts/CartContext';
 
 function Carrinho({ navigation }) {
-  // Pega os itens e as funções do nosso "gerente" global
-  const { cartItems, addToCart, decreaseQuantity, removeFromCart } = useCart();
-
-  // Calcula o subtotal a partir dos itens do contexto
+  const { cartItems, addToCart, decreaseQuantity, removeFromCart, clearCart } = useCart();
   const subtotal = cartItems.reduce((total, p) => total + p.preco * p.quantidade, 0);
 
   const finalizarPedido = () => {
-    Alert.alert("Pedido Finalizado", `Total: R$ ${subtotal.toFixed(2)}`);
-    // Aqui você pode adicionar a lógica para limpar o carrinho ou navegar para outra tela
+    Alert.alert(
+      "Confirmar Pedido",
+      `Total: R$ ${subtotal.toFixed(2)}. Deseja finalizar?`,
+      [
+        { text: "Cancelar", style: "cancel" },
+        { 
+          text: "Confirmar", 
+          onPress: () => {
+            clearCart();
+            
+            // --- ESTA É A LINHA CORRIGIDA ---
+            // Damos o "endereço completo" para a tela de Avaliação
+            navigation.navigate('Menu', { screen: 'Avaliacao' });
+          } 
+        },
+      ]
+    );
   };
 
   // Se o carrinho estiver vazio, mostra uma mensagem amigável
@@ -71,6 +84,7 @@ function Carrinho({ navigation }) {
   );
 }
 
+// Seus estilos (sem alterações)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
   title: { fontSize: 28, fontWeight: "bold", textAlign: "center", color: "#4CAF50", marginVertical: 20 },
