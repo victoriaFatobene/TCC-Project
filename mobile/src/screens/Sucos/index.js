@@ -2,13 +2,12 @@ import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { useCart } from '../../contexts/CartContext';
 
-const alcoolicas = [
-  { id: 'al1', nome: "Cerveja Heineken", preco: 9.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5X_8_Q_w_z_y_x_y_x_y_x_y_x_y_x_y_x_y_x_y&s", ingredientes: 'Long neck 330ml.' },
-  { id: 'al2', nome: "Cerveja Budweiser", preco: 8.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5X_8_Q_w_z_y_x_y_x_y_x_y_x_y_x_y_x_y_x_y&s", ingredientes: 'Long neck 330ml.' },
-  { id: 'al3', nome: "Caipirinha de Limão", preco: 15.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_2f_x_w_z_y_x_y_x_y_x_y_x_y_x_y_x_y_x_y&s", ingredientes: 'Cachaça, limão, açúcar e gelo.' },
+const sucos = [
+  { id: 'su1', nome: "Suco de Laranja", preco: 10.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhVwmGAV2KzDDa52rG2Pq_pLz5V3Ff_Xb9aQ&s", ingredientes: 'Natural, feito na hora com laranjas frescas. 500ml.' },
+  { id: 'su2', nome: "Suco de Abacaxi", preco: 10.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBJg58U7_P_hY1yC38Q7j6b7p2K9F_wX5b3g&s", ingredientes: 'Natural, feito na hora com abacaxi. 500ml.' },
 ];
 
-const AlcoolicaItem = ({ item, navigation }) => {
+const SucoItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
   return (
     <View style={styles.card}>
@@ -31,18 +30,18 @@ const AlcoolicaItem = ({ item, navigation }) => {
   );
 };
 
-export default function Alcoolicas({ navigation }) {
+export default function Sucos({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>{'<'}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Bebidas Alcoólicas 🍺</Text>
+        <Text style={styles.headerTitle}>Sucos</Text>
       </View>
       <FlatList
-        data={alcoolicas}
-        renderItem={({ item }) => <AlcoolicaItem item={item} navigation={navigation} />}
+        data={sucos}
+        renderItem={({ item }) => <SucoItem item={item} navigation={navigation} />}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContainer}
       />

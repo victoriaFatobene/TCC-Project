@@ -8,14 +8,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { CartProvider } from './src/contexts/CartContext';
 
 // --- Importe TODAS as suas telas aqui ---
-// Lembre-se de verificar se os caminhos correspondem à sua estrutura de pastas
 import HomeScreen from './src/screens/TelaInicial';
 import Pizzas from './src/screens/Pizzas';
 import Cardapio from './src/screens/Cardapio';
 import PizzasVeganas from './src/screens/Veganas';
 import PizzasDoces from './src/screens/PizzasDoces';
 import Bebidas from './src/screens/Bebidas';
+import Refrigerantes from './src/screens/Refrigerantes';
+import Sucos from './src/screens/Sucos';
 import Alcoolicas from './src/screens/Alcoolicas';
+import Vinhos from './src/screens/Vinhos';
 import Sobremesas from './src/screens/Sobremesas';
 import Sorvetes from './src/screens/Sorvetes';
 import Bolos from './src/screens/Bolos';
@@ -24,15 +26,13 @@ import Avaliacao from './src/screens/Avaliacao';
 import Carrinho from './src/screens/Carrinho';
 import Pagamento from './src/screens/Pagamento';
 import ProductDetails from './src/screens/ProductDetails';
-import MaisOpcoes from './src/screens/VerMais';
-
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // --- Pacote de Telas do Cardápio ---
 // Este é o "mapa" completo do seu fluxo de navegação.
-// Todas as telas que você pode visitar a partir do menu devem estar listadas aqui.
+// TODAS as telas que podem ser acessadas devem estar listadas aqui.
 function MenuStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -42,7 +42,10 @@ function MenuStack() {
       <Stack.Screen name="PizzasVeganas" component={PizzasVeganas} />
       <Stack.Screen name="PizzasDoces" component={PizzasDoces} />
       <Stack.Screen name="Bebidas" component={Bebidas} />
+      <Stack.Screen name="Refrigerantes" component={Refrigerantes} />
+      <Stack.Screen name="Sucos" component={Sucos} />
       <Stack.Screen name="Alcoolicas" component={Alcoolicas} />
+      <Stack.Screen name="Vinhos" component={Vinhos} />
       <Stack.Screen name="Sobremesas" component={Sobremesas} />
       <Stack.Screen name="Sorvetes" component={Sorvetes} />
       <Stack.Screen name="Bolos" component={Bolos} />
@@ -50,7 +53,6 @@ function MenuStack() {
       <Stack.Screen name="Avaliacao" component={Avaliacao} />
       <Stack.Screen name="Pagamento" component={Pagamento} />
       <Stack.Screen name="ProductDetails" component={ProductDetails} />
-      <Stack.Screen name="MaisOpcoes" component={MaisOpcoes} />
     </Stack.Navigator>
   );
 }
@@ -104,3 +106,4 @@ export default function App() {
     </CartProvider>
   );
 }
+

@@ -2,13 +2,12 @@ import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { useCart } from '../../contexts/CartContext';
 
-const alcoolicas = [
-  { id: 'al1', nome: "Cerveja Heineken", preco: 9.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5X_8_Q_w_z_y_x_y_x_y_x_y_x_y_x_y_x_y_x_y&s", ingredientes: 'Long neck 330ml.' },
-  { id: 'al2', nome: "Cerveja Budweiser", preco: 8.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5X_8_Q_w_z_y_x_y_x_y_x_y_x_y_x_y_x_y_x_y&s", ingredientes: 'Long neck 330ml.' },
-  { id: 'al3', nome: "Caipirinha de Limão", preco: 15.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_2f_x_w_z_y_x_y_x_y_x_y_x_y_x_y_x_y_x_y&s", ingredientes: 'Cachaça, limão, açúcar e gelo.' },
+const refrigerantes = [
+  { id: 'r1', nome: "Coca-Cola", preco: 5.00, imagem: "URL_DA_IMAGEM_AQUI", ingredientes: 'Lata 350ml.' },
+  { id: 'r2', nome: "Guaraná Antarctica", preco: 5.00, imagem: "URL_DA_IMAGEM_AQUI", ingredientes: 'Lata 350ml.' },
 ];
 
-const AlcoolicaItem = ({ item, navigation }) => {
+const RefrigeranteItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
   return (
     <View style={styles.card}>
@@ -31,18 +30,18 @@ const AlcoolicaItem = ({ item, navigation }) => {
   );
 };
 
-export default function Alcoolicas({ navigation }) {
+export default function Refrigerantes({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>{'<'}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Bebidas Alcoólicas 🍺</Text>
+        <Text style={styles.headerTitle}>Refrigerantes</Text>
       </View>
       <FlatList
-        data={alcoolicas}
-        renderItem={({ item }) => <AlcoolicaItem item={item} navigation={navigation} />}
+        data={refrigerantes}
+        renderItem={({ item }) => <RefrigeranteItem item={item} navigation={navigation} />}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContainer}
       />
