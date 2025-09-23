@@ -1,2 +1,2 @@
 # Ignorar dependências do Node
-node_modules/
+/node_modules
