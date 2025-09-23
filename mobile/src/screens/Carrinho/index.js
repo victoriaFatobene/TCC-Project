@@ -17,17 +17,17 @@ function Carrinho({ navigation }) {
           text: "Confirmar", 
           onPress: () => {
             clearCart();
-            
-            // --- ESTA É A LINHA CORRIGIDA ---
-            // Damos o "endereço completo" para a tela de Avaliação
-            navigation.navigate('Menu', { screen: 'Avaliacao' });
+
+            // --- NAVEGAÇÃO CORRIGIDA ---
+            // Como a tela Pagamento está dentro do Stack Menu, precisamos
+            // passar o "endereço completo"
+            navigation.navigate('Menu', { screen: 'Pagamento' });
           } 
         },
       ]
     );
   };
 
-  // Se o carrinho estiver vazio, mostra uma mensagem amigável
   if (cartItems.length === 0) {
     return (
       <SafeAreaView style={styles.container}>
@@ -42,7 +42,6 @@ function Carrinho({ navigation }) {
     );
   }
 
-  // Renderiza um item da lista
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       <Image source={{ uri: item.imagem }} style={styles.image} />
@@ -84,7 +83,6 @@ function Carrinho({ navigation }) {
   );
 }
 
-// Seus estilos (sem alterações)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
   title: { fontSize: 28, fontWeight: "bold", textAlign: "center", color: "#4CAF50", marginVertical: 20 },
