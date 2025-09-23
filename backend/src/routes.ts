@@ -79,6 +79,7 @@ router.get('/cardapio', (req, res, next) =>
 
 //Novos Abaixooooooo
 
+
 // Ingredientes
 router.post('/ingredient', isAuthenticated, new CreateIngredientController().handle);
 router.get('/ingredients', isAuthenticated, new ListIngredientController().handle);
