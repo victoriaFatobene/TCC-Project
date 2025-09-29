@@ -7,6 +7,7 @@ function Carrinho({ navigation }) {
   const { cartItems, addToCart, decreaseQuantity, removeFromCart, clearCart } = useCart();
   const subtotal = cartItems.reduce((total, p) => total + p.preco * p.quantidade, 0);
 
+  // --- FUNÇÃO MODIFICADA ---
   const finalizarPedido = () => {
     Alert.alert(
       "Confirmar Pedido",
@@ -16,11 +17,10 @@ function Carrinho({ navigation }) {
         { 
           text: "Confirmar", 
           onPress: () => {
-            clearCart();
-            
-            // --- ESTA É A LINHA CORRIGIDA ---
-            // Damos o "endereço completo" para a tela de Avaliação
-            navigation.navigate('Menu', { screen: 'Avaliacao' });
+            // AÇÃO CORRIGIDA:
+            // 1. Removemos o clearCart() daqui. O carrinho só deve ser limpo APÓS o pagamento.
+            // 2. Navegamos para a tela de Pagamento.
+            navigation.navigate('Menu', { screen: 'Pagamento' });
           } 
         },
       ]

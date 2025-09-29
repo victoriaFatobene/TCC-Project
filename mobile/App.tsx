@@ -3,8 +3,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-
-// --- Importe o "Gerente" do Carrinho ---
 import { CartProvider } from './src/contexts/CartContext';
 
 // --- Importe TODAS as suas telas aqui ---
@@ -26,13 +24,12 @@ import Avaliacao from './src/screens/Avaliacao';
 import Carrinho from './src/screens/Carrinho';
 import Pagamento from './src/screens/Pagamento';
 import ProductDetails from './src/screens/ProductDetails';
+// --- MODIFICAÇÃO: Nova tela importada ---
+import StatusPedido from './src/screens/StatusPedido';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// --- Pacote de Telas do Cardápio ---
-// Este é o "mapa" completo do seu fluxo de navegação.
-// TODAS as telas que podem ser acessadas devem estar listadas aqui.
 function MenuStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -53,6 +50,8 @@ function MenuStack() {
       <Stack.Screen name="Avaliacao" component={Avaliacao} />
       <Stack.Screen name="Pagamento" component={Pagamento} />
       <Stack.Screen name="ProductDetails" component={ProductDetails} />
+      {/* --- MODIFICAÇÃO: Nova tela registrada no navegador --- */}
+      <Stack.Screen name="StatusPedido" component={StatusPedido} />
     </Stack.Navigator>
   );
 }
@@ -106,4 +105,3 @@ export default function App() {
     </CartProvider>
   );
 }
-
