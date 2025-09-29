@@ -1,4 +1,3 @@
-// src/screens/Pizzas/index.js
 import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
@@ -6,20 +5,18 @@ export default function Pizzas({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-              <Text style={styles.backButtonText}>{'<'}</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Pizzas</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Text style={styles.backButtonText}>{'<'}</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Pizzas</Text>
       </View>
       <View style={styles.content}>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Cardapio')}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('MenuPizzas')}>
           <Text style={styles.menuButtonText}>🍕 Pizzas Salgadas</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('PizzasVeganas')}>
           <Text style={styles.menuButtonText}>🌱 Pizzas Veganas</Text>
         </TouchableOpacity>
-        
-        {/* --- BOTÃO NOVO ADICIONADO AQUI --- */}
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('PizzasDoces')}>
           <Text style={styles.menuButtonText}>🍫 Pizzas Doces</Text>
         </TouchableOpacity>
@@ -28,7 +25,6 @@ export default function Pizzas({ navigation }) {
   );
 }
 
-// Seus estilos (sem alteração)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FAFAFA' },
   header: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#7B0909', paddingVertical: 15, paddingHorizontal: 10 },

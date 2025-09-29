@@ -13,7 +13,6 @@ const DADOS_EXEMPLO = {
   total: 54.90,
 };
 
-// Componente para cada etapa do status
 const StatusItem = ({ icon, label, isCompleted }) => (
   <View style={styles.statusItem}>
     <View style={[styles.statusIconContainer, isCompleted && styles.statusIconCompleted]}>
@@ -43,7 +42,6 @@ export default function StatusPedido({ navigation }) {
         <Text style={styles.orderId}>Senha do Pedido</Text>
         <Text style={styles.orderNumber}>{pedido.id}</Text>
         
-        {/* Card de Destaque quando o pedido está pronto */}
         {isReady && (
           <View style={styles.readyCard}>
             <Ionicons name="checkmark-circle" size={40} color="#FFF" />
@@ -51,7 +49,6 @@ export default function StatusPedido({ navigation }) {
           </View>
         )}
 
-        {/* Tracker Visual do Status */}
         <View style={styles.statusTracker}>
           <StatusItem icon="hourglass-outline" label="Na Fila" isCompleted={currentStatusIndex >= 0} />
           <View style={styles.statusLine} />
@@ -60,7 +57,6 @@ export default function StatusPedido({ navigation }) {
           <StatusItem icon="checkmark-done-outline" label="Pronto!" isCompleted={currentStatusIndex >= 2} />
         </View>
 
-        {/* Resumo do Pedido */}
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>Resumo da Compra</Text>
           {pedido.itens.map((item, index) => (
@@ -71,6 +67,17 @@ export default function StatusPedido({ navigation }) {
           <View style={styles.divider} />
           <Text style={styles.summaryTotal}>Total: R$ {pedido.total.toFixed(2)}</Text>
         </View>
+        
+        {/* --- MODIFICAÇÃO: BOTÃO DE AVALIAÇÃO APARECE AQUI --- */}
+        {isReady && (
+          <TouchableOpacity 
+            style={styles.evaluateButton} 
+            onPress={() => navigation.navigate('Avaliacao')}
+          >
+            <Text style={styles.evaluateButtonText}>Avaliar Pedido</Text>
+          </TouchableOpacity>
+        )}
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -85,20 +92,12 @@ const styles = StyleSheet.create({
   container: { padding: 20, paddingBottom: 40 },
   orderId: { fontSize: 22, fontWeight: '600', textAlign: 'center', color: '#555' },
   orderNumber: { fontSize: 80, fontWeight: 'bold', textAlign: 'center', color: '#7B0909', marginBottom: 20 },
-  readyCard: {
-    backgroundColor: '#4CAF50', // Verde
-    borderRadius: 12,
-    padding: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 4,
-    marginBottom: 30,
-  },
+  readyCard: { backgroundColor: '#4CAF50', borderRadius: 12, padding: 20, flexDirection: 'row', alignItems: 'center', elevation: 4, marginBottom: 30 },
   readyText: { color: '#FFF', fontSize: 18, fontWeight: 'bold', marginLeft: 15, flex: 1 },
   statusTracker: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 40 },
   statusItem: { alignItems: 'center', flex: 1 },
   statusIconContainer: { width: 50, height: 50, borderRadius: 25, backgroundColor: '#e0e0e0', justifyContent: 'center', alignItems: 'center' },
-  statusIconCompleted: { backgroundColor: '#7B0909' }, // Vermelho quando completo
+  statusIconCompleted: { backgroundColor: '#7B0909' },
   statusLabel: { marginTop: 8, color: '#666', fontWeight: '600', textAlign: 'center' },
   statusLabelCompleted: { color: '#7B0909' },
   statusLine: { flex: 1, height: 4, backgroundColor: '#e0e0e0', marginHorizontal: -15, top: 23, zIndex: -1 },
@@ -107,4 +106,13 @@ const styles = StyleSheet.create({
   summaryItem: { fontSize: 16, color: '#444', marginBottom: 5 },
   divider: { height: 1, backgroundColor: '#eee', marginVertical: 15 },
   summaryTotal: { fontSize: 18, fontWeight: 'bold', textAlign: 'right' },
+  // --- MODIFICAÇÃO: Estilo para o novo botão ---
+  evaluateButton: { 
+    backgroundColor: '#0288D1', // Um azul para diferenciar
+    padding: 15, 
+    borderRadius: 8, 
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  evaluateButtonText: { color: '#FFF', fontSize: 16, fontWeight: 'bold' },
 });

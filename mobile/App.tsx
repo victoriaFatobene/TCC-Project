@@ -1,14 +1,15 @@
 import React from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { CartProvider } from './src/contexts/CartContext';
 
-// --- Importe TODAS as suas telas aqui ---
+// Importando todas as telas necessárias
 import HomeScreen from './src/screens/TelaInicial';
 import Pizzas from './src/screens/Pizzas';
-import Cardapio from './src/screens/Cardapio';
+import MenuPizzas from './src/screens/MenuPizzas'; // A única versão correta
 import PizzasVeganas from './src/screens/Veganas';
 import PizzasDoces from './src/screens/PizzasDoces';
 import Bebidas from './src/screens/Bebidas';
@@ -24,10 +25,10 @@ import Avaliacao from './src/screens/Avaliacao';
 import Carrinho from './src/screens/Carrinho';
 import Pagamento from './src/screens/Pagamento';
 import ProductDetails from './src/screens/ProductDetails';
-// --- MODIFICAÇÃO: Nova tela importada ---
 import StatusPedido from './src/screens/StatusPedido';
+import CadastroCartao from './src/screens/CadastroCartao';
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function MenuStack() {
@@ -35,7 +36,7 @@ function MenuStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="Pizzas" component={Pizzas} />
-      <Stack.Screen name="Cardapio" component={Cardapio} />
+      <Stack.Screen name="MenuPizzas" component={MenuPizzas} />
       <Stack.Screen name="PizzasVeganas" component={PizzasVeganas} />
       <Stack.Screen name="PizzasDoces" component={PizzasDoces} />
       <Stack.Screen name="Bebidas" component={Bebidas} />
@@ -50,58 +51,46 @@ function MenuStack() {
       <Stack.Screen name="Avaliacao" component={Avaliacao} />
       <Stack.Screen name="Pagamento" component={Pagamento} />
       <Stack.Screen name="ProductDetails" component={ProductDetails} />
-      {/* --- MODIFICAÇÃO: Nova tela registrada no navegador --- */}
       <Stack.Screen name="StatusPedido" component={StatusPedido} />
+      <Stack.Screen name="CadastroCartao" component={CadastroCartao} />
     </Stack.Navigator>
   );
 }
 
-// --- Componente Principal do App ---
 export default function App() {
   return (
-    <CartProvider>
-      <NavigationContainer>
-        <Tab.Navigator
-          initialRouteName="Menu"
-          screenOptions={{
-            headerShown: false,
-            tabBarActiveTintColor: '#EEFF00',
-            tabBarInactiveTintColor: 'white',
-            tabBarStyle: {
-              backgroundColor: '#5B0000',
-              borderTopWidth: 0,
-            },
-            tabBarLabelStyle: {
-              fontSize: 14,
-              fontWeight: 'bold',
-            },
-          }}
-        >
-          {/* Aba 1: Menu (que contém a pilha de telas) */}
-          <Tab.Screen
-            name="Menu"
-            component={MenuStack}
-            options={{
-              tabBarLabel: 'Início',
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="home" color={color} size={size} />
-              ),
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <CartProvider>
+        <NavigationContainer>
+          <Tab.Navigator
+            initialRouteName="Menu"
+            screenOptions={{
+              headerShown: false,
+              tabBarActiveTintColor: '#EEFF00',
+              tabBarInactiveTintColor: 'white',
+              tabBarStyle: { backgroundColor: '#5B0000', borderTopWidth: 0 },
+              tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
             }}
-          />
-
-          {/* Aba 2: Carrinho */}
-          <Tab.Screen
-            name="CarrinhoTab"
-            component={Carrinho}
-            options={{
-              tabBarLabel: 'Carrinho',
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="cart" color={color} size={size} />
-              ),
-            }}
-          />
-        </Tab.Navigator>
-      </NavigationContainer>
-    </CartProvider>
+          >
+            <Tab.Screen
+              name="Menu"
+              component={MenuStack}
+              options={{
+                tabBarLabel: 'Início',
+                tabBarIcon: ({ color, size }) => (<Ionicons name="home" color={color} size={size} />),
+              }}
+            />
+            <Tab.Screen
+              name="CarrinhoTab"
+              component={Carrinho}
+              options={{
+                tabBarLabel: 'Carrinho',
+                tabBarIcon: ({ color, size }) => (<Ionicons name="cart" color={color} size={size} />),
+              }}
+            />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </CartProvider>
+    </GestureHandlerRootView>
   );
 }
