@@ -91,6 +91,7 @@ export default function App() {
       <CartProvider>
         <NavigationContainer>
           <Tab.Navigator
+          
             initialRouteName="Menu"
             screenOptions={{
               headerShown: false,
