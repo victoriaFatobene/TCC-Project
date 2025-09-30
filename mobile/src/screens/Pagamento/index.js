@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+// MODIFICAÇÃO: Importamos o useCart completo
 import { useCart } from '../../contexts/CartContext';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function Pagamento({ navigation, route }) {
-  const { clearCart } = useCart();
-  const [metodo, setMetodo] = useState('dinheiro'); // 'dinheiro' ou 'cartao'
+  // MODIFICAÇÃO: Pegamos os itens, o subtotal e a função de limpar do carrinho
+  const { cartItems, clearCart } = useCart();
+  const subtotal = cartItems.reduce((total, item) => total + item.preco * item.quantidade, 0);
+
+  const [metodo, setMetodo] = useState('dinheiro');
   const [cartoes, setCartoes] = useState([
-    // Cartão de exemplo para começar
     { id: '1', final: '1234', nome: 'Meu Cartão Fictício' },
   ]);
   const [cartaoSelecionado, setCartaoSelecionado] = useState(null);
 
-  // Efeito para receber um novo cartão da tela de cadastro
   useEffect(() => {
     if (route.params?.novoCartao) {
       setCartoes(listaAnterior => [...listaAnterior, route.params.novoCartao]);
@@ -24,15 +26,25 @@ export default function Pagamento({ navigation, route }) {
       alert('Por favor, selecione um cartão.');
       return;
     }
+
+    // MODIFICAÇÃO: Criamos um objeto com os dados REAIS do pedido
+    const pedidoFinalizado = {
+      id: Math.floor(Math.random() * 1000).toString(), // Gera uma senha/ID aleatória
+      status: 'Na Fila', // O pedido sempre começa "Na Fila"
+      itens: cartItems.map(item => ({ nome: item.nome, qtd: item.quantidade })),
+      total: subtotal,
+    };
     
-    console.log(`Pedido finalizado com ${metodo}.`);
+    // Limpamos o carrinho
     clearCart();
-    const numeroDoPedido = Math.floor(Math.random() * 1000);
-    navigation.navigate('StatusPedido', { orderId: numeroDoPedido });
+
+    // MODIFICAÇÃO: Enviamos o objeto 'pedidoFinalizado' para a próxima tela
+    navigation.navigate('StatusPedido', { pedido: pedidoFinalizado });
   };
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* O resto do seu código de Pagamento continua aqui, sem alterações... */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backButtonText}>{'<'}</Text>
@@ -43,7 +55,6 @@ export default function Pagamento({ navigation, route }) {
       <View style={styles.content}>
         <Text style={styles.title}>Escolha a forma de pagamento</Text>
 
-        {/* Seletores de Método */}
         <View style={styles.methodSelector}>
           <TouchableOpacity
             style={[styles.methodButton, metodo === 'dinheiro' && styles.methodSelected]}
@@ -59,7 +70,6 @@ export default function Pagamento({ navigation, route }) {
           </TouchableOpacity>
         </View>
 
-        {/* Seção do Cartão (só aparece se 'cartao' for selecionado) */}
         {metodo === 'cartao' && (
           <View style={styles.cardSection}>
             <Text style={styles.sectionTitle}>Meus Cartões</Text>
@@ -90,7 +100,6 @@ export default function Pagamento({ navigation, route }) {
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#f5f5f5' },

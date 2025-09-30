@@ -2,16 +2,7 @@ import React, { useState } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-// Dados de exemplo do pedido. Mude o status para testar a aparência da tela.
-const DADOS_EXEMPLO = {
-  id: '58',
-  status: 'Pronto!', // Mude aqui para testar: 'Na Fila', 'Em Preparo', 'Pronto!'
-  itens: [
-    { nome: 'Pizza Calabresa', qtd: 1 },
-    { nome: 'Coca-Cola 2L', qtd: 1 },
-  ],
-  total: 54.90,
-};
+// MODIFICAÇÃO: Removemos os DADOS_EXEMPLO daqui.
 
 const StatusItem = ({ icon, label, isCompleted }) => (
   <View style={styles.statusItem}>
@@ -22,25 +13,31 @@ const StatusItem = ({ icon, label, isCompleted }) => (
   </View>
 );
 
-export default function StatusPedido({ navigation }) {
-  const [pedido] = useState(DADOS_EXEMPLO);
+// MODIFICAÇÃO: Adicionamos 'route' para receber os dados
+export default function StatusPedido({ navigation, route }) {
+  // MODIFICAÇÃO: Pegamos os dados do pedido que foram enviados da tela de Pagamento
+  const { pedido } = route.params;
+
+  // O estado do nosso pedido agora começa com os dados reais
+  const [dadosDoPedido] = useState(pedido);
 
   const statusList = ['Na Fila', 'Em Preparo', 'Pronto!'];
-  const currentStatusIndex = statusList.indexOf(pedido.status);
-  const isReady = pedido.status === 'Pronto!';
+  const currentStatusIndex = statusList.indexOf(dadosDoPedido.status);
+  const isReady = dadosDoPedido.status === 'Pronto!';
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backButtonText}>{'<'}</Text>
+        {/* MODIFICAÇÃO: Botão de voltar para a tela inicial, pois o pedido já foi feito */}
+        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')} style={styles.backButton}>
+          <Text style={styles.backButtonText}>{'<'} Início</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Status do Pedido</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.orderId}>Senha do Pedido</Text>
-        <Text style={styles.orderNumber}>{pedido.id}</Text>
+        <Text style={styles.orderNumber}>{dadosDoPedido.id}</Text>
         
         {isReady && (
           <View style={styles.readyCard}>
@@ -59,16 +56,16 @@ export default function StatusPedido({ navigation }) {
 
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>Resumo da Compra</Text>
-          {pedido.itens.map((item, index) => (
+          {/* MODIFICAÇÃO: Usamos os itens e o total do pedido real */}
+          {dadosDoPedido.itens.map((item, index) => (
             <Text key={index} style={styles.summaryItem}>
               {item.qtd}x {item.nome}
             </Text>
           ))}
           <View style={styles.divider} />
-          <Text style={styles.summaryTotal}>Total: R$ {pedido.total.toFixed(2)}</Text>
+          <Text style={styles.summaryTotal}>Total: R$ {dadosDoPedido.total.toFixed(2)}</Text>
         </View>
         
-        {/* --- MODIFICAÇÃO: BOTÃO DE AVALIAÇÃO APARECE AQUI --- */}
         {isReady && (
           <TouchableOpacity 
             style={styles.evaluateButton} 
@@ -77,17 +74,17 @@ export default function StatusPedido({ navigation }) {
             <Text style={styles.evaluateButtonText}>Avaliar Pedido</Text>
           </TouchableOpacity>
         )}
-
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#f5f5f5' },
   header: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#7B0909', paddingVertical: 15, paddingHorizontal: 10 },
   backButton: { padding: 5, marginRight: 15 },
-  backButtonText: { color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' },
+  backButtonText: { color: '#FFFFFF', fontSize: 18, fontWeight: 'bold' },
   headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
   container: { padding: 20, paddingBottom: 40 },
   orderId: { fontSize: 22, fontWeight: '600', textAlign: 'center', color: '#555' },
@@ -106,13 +103,6 @@ const styles = StyleSheet.create({
   summaryItem: { fontSize: 16, color: '#444', marginBottom: 5 },
   divider: { height: 1, backgroundColor: '#eee', marginVertical: 15 },
   summaryTotal: { fontSize: 18, fontWeight: 'bold', textAlign: 'right' },
-  // --- MODIFICAÇÃO: Estilo para o novo botão ---
-  evaluateButton: { 
-    backgroundColor: '#0288D1', // Um azul para diferenciar
-    padding: 15, 
-    borderRadius: 8, 
-    alignItems: 'center',
-    marginTop: 10,
-  },
+  evaluateButton: { backgroundColor: '#0288D1', padding: 15, borderRadius: 8, alignItems: 'center', marginTop: 10 },
   evaluateButtonText: { color: '#FFF', fontSize: 16, fontWeight: 'bold' },
 });

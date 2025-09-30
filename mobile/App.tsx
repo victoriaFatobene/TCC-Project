@@ -1,7 +1,7 @@
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { CartProvider } from './src/contexts/CartContext';
@@ -9,7 +9,7 @@ import { CartProvider } from './src/contexts/CartContext';
 // Importando todas as telas necessárias
 import HomeScreen from './src/screens/TelaInicial';
 import Pizzas from './src/screens/Pizzas';
-import MenuPizzas from './src/screens/MenuPizzas'; // A única versão correta
+import MenuPizzas from './src/screens/MenuPizzas';
 import PizzasVeganas from './src/screens/Veganas';
 import PizzasDoces from './src/screens/PizzasDoces';
 import Bebidas from './src/screens/Bebidas';
@@ -28,8 +28,36 @@ import ProductDetails from './src/screens/ProductDetails';
 import StatusPedido from './src/screens/StatusPedido';
 import CadastroCartao from './src/screens/CadastroCartao';
 
-const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator();
+// --- Tipagem para os Navegadores (As "Etiquetas") ---
+type RootStackParamList = {
+  HomeScreen: undefined;
+  Pizzas: undefined;
+  MenuPizzas: undefined;
+  PizzasVeganas: undefined;
+  PizzasDoces: undefined;
+  Bebidas: undefined;
+  Refrigerantes: undefined;
+  Sucos: undefined;
+  Alcoolicas: undefined;
+  Vinhos: undefined;
+  Sobremesas: undefined;
+  Sorvetes: undefined;
+  Bolos: undefined;
+  Doces: undefined;
+  Avaliacao: undefined;
+  Pagamento: { novoCartao?: object };
+  ProductDetails: { product: object };
+  StatusPedido: { orderId: number };
+  CadastroCartao: undefined;
+};
+
+type RootTabParamList = {
+  Menu: undefined;
+  CarrinhoTab: undefined;
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<RootTabParamList>();
 
 function MenuStack() {
   return (
@@ -77,7 +105,9 @@ export default function App() {
               component={MenuStack}
               options={{
                 tabBarLabel: 'Início',
-                tabBarIcon: ({ color, size }) => (<Ionicons name="home" color={color} size={size} />),
+                tabBarIcon: ({ color, size }: { color: string, size: number }) => (
+                  <Ionicons name="home" color={color} size={size} />
+                ),
               }}
             />
             <Tab.Screen
@@ -85,7 +115,9 @@ export default function App() {
               component={Carrinho}
               options={{
                 tabBarLabel: 'Carrinho',
-                tabBarIcon: ({ color, size }) => (<Ionicons name="cart" color={color} size={size} />),
+                tabBarIcon: ({ color, size }: { color: string, size: number }) => (
+                  <Ionicons name="cart" color={color} size={size} />
+                ),
               }}
             />
           </Tab.Navigator>
