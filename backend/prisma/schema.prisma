@@ -87,21 +87,22 @@ model Product {
 }
 
 model Order {
-  id         String      @id @default(uuid())
-  table      Int
-  status     OrderStatus @default(RECEBIDO)  // RECEBIDO | PREPARANDO | PRONTO
-  draft      Boolean     @default(true)
-  name       String?
-  created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
+  id String @id @default(uuid())
+  table Int
+  name String?
 
-  // marcos opcionais do fluxo
-  startedAt  DateTime?   // quando virou PREPARANDO
-  readyAt    DateTime?   // quando virou PRONTO
+  //relaciona com a tabela de status
+  status Status @relation(fields: [statusId], references: [id])
+  statusId String
 
-  items      Item[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  //Relação com a tabela Item
+  items Item[]
+  
   @@map("orders")
+
 }
 
 model Item {
@@ -188,4 +189,15 @@ model Ingredient {
   itemModifications  ItemModification[]
 
   @@map("ingredients")
+}
+
+//Tabela de Status - mostra o status de preparo do pedido
+model Status {
+  id String @id @default(uuid())
+  name String
+
+  //Se relaciona um status a vários pedidos
+  orders Order[]
+
+  @@map("status")
 }

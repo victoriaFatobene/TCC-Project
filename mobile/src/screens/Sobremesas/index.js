@@ -1,66 +1,38 @@
-import React from "react";
-import { SafeAreaView, ScrollView, View, Text, Image, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import React from 'react';
+import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-const { width } = Dimensions.get("window");
-
-// Exemplo de dados de sobremesas
-const sobremesas = [
-  { id: 1, nome: "Brigadeiro", preco: "R$ 5,00", imagem: "https://via.placeholder.com/150" },
-  { id: 2, nome: "Pudim", preco: "R$ 7,00", imagem: "https://via.placeholder.com/150" },
-  { id: 3, nome: "Sorvete", preco: "R$ 6,50", imagem: "https://via.placeholder.com/150" },
-];
-
-export default function Sobremesas() {
+export default function Sobremesas({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Cabeçalho */}
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Sobremesas 🍰</Text>
-          <Text style={styles.subHeaderText}>Delícias doces para finalizar sua refeição!</Text>
-        </View>
-
-        {/* Lista de sobremesas */}
-        <View style={styles.list}>
-          {sobremesas.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.card}>
-              <Image source={{ uri: item.imagem }} style={styles.cardImage} resizeMode="cover" />
-              <View style={styles.cardContent}>
-                <Text style={styles.cardTitle}>{item.nome}</Text>
-                <Text style={styles.cardPrice}>{item.preco}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Text style={styles.backButtonText}>{'<'}</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Sobremesas</Text>
+      </View>
+      
+      <View style={styles.content}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Sorvetes')}>
+          <Text style={styles.menuButtonText}>🍨 Sorvetes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Bolos')}>
+          <Text style={styles.menuButtonText}>🍰 Bolos</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Doces')}>
+          <Text style={styles.menuButtonText}>🍬 Doces</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff8f0" },
-  scrollContent: { padding: 16, paddingBottom: 50 },
-
-  header: { alignItems: "center", marginBottom: 20 },
-  headerText: { fontSize: width * 0.08, fontWeight: "bold", color: "#ff6b00", textAlign: "center" },
-  subHeaderText: { fontSize: width * 0.045, color: "#ff914d", textAlign: "center", marginTop: 4 },
-
-  list: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
-
-  card: {
-    width: width * 0.45,
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    marginBottom: 16,
-    overflow: "hidden",
-    elevation: 3, // sombra Android
-    shadowColor: "#000", // sombra iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  cardImage: { width: "100%", height: width * 0.45 },
-  cardContent: { padding: 8 },
-  cardTitle: { fontSize: width * 0.045, fontWeight: "600", color: "#333" },
-  cardPrice: { fontSize: width * 0.04, fontWeight: "500", color: "#ff6b00", marginTop: 4 },
+  container: { flex: 1, backgroundColor: '#FAFAFA' },
+  header: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#7B0909', paddingVertical: 15, paddingHorizontal: 10 },
+  backButton: { padding: 5, marginRight: 15 },
+  backButtonText: { color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' },
+  headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
+  content: { flex: 1, justifyContent: 'center', padding: 20 },
+  menuButton: { backgroundColor: '#FFF', padding: 20, borderRadius: 15, alignItems: 'center', marginBottom: 20, elevation: 4 },
+  menuButtonText: { fontSize: 20, color: '#7B0909', fontWeight: 'bold' },
 });

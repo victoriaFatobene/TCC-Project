@@ -1,15 +1,16 @@
-// src/screens/PizzasVeganas/index.js
+// src/screens/PizzasDoces/index.js
 import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { useCart } from '../../contexts/CartContext';
 
-const pizzasVeganas = [
-  { id: 'v1', nome: "Veggie Supreme", preco: 28.00, imagem: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?q=80&w=1999&auto=format&fit=crop", ingredientes: 'Pimentão, cebola, azeitona e cogumelos.' },
-  { id: 'v2', nome: "Margherita Vegana", preco: 25.00, imagem: "https://images.unsplash.com/photo-1620374643423-276c1231a540?q=80&w=1964&auto=format&fit=crop", ingredientes: 'Queijo vegano, tomate e manjericão.' },
-  { id: 'v3', nome: "Portobello Gourmet", preco: 30.00, imagem: "https://images.unsplash.com/photo-1588315029754-2dd089d39a1a?q=80&w=2070&auto=format&fit=crop", ingredientes: 'Cogumelos Portobello e azeite trufado.' },
+// Lista de exemplo para pizzas doces
+const pizzasDoces = [
+  { id: 'd1', nome: "Chocolate com Morango", preco: 55.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhVwmGAV2KzDDa52rG2Pq_pLz5V3Ff_Xb9aQ&s", ingredientes: 'Chocolate ao leite, morangos frescos e leite condensado.' },
+  { id: 'd2', nome: "Romeu e Julieta", preco: 48.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBJg58U7_P_hY1yC38Q7j6b7p2K9F_wX5b3g&s", ingredientes: 'Mussarela especial e goiabada cremosa.' },
+  { id: 'd3', nome: "Prestígio", preco: 52.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6f7z8w9X0y-N7l8q9Y4k7Z_v4e-f_E6l9aA&s", ingredientes: 'Chocolate, coco ralado e leite condensado.' },
 ];
 
-const VeganPizzaItem = ({ item, navigation }) => {
+const SweetPizzaItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
   return (
     <View style={styles.card}>
@@ -35,18 +36,18 @@ const VeganPizzaItem = ({ item, navigation }) => {
   );
 };
 
-export default function PizzasVeganas({ navigation }) {
+export default function PizzasDoces({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>{'<'}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Pizzas Veganas 🌱</Text>
+        <Text style={styles.headerTitle}>Pizzas Doces 🍫</Text>
       </View>
       <FlatList
-        data={pizzasVeganas}
-        renderItem={({ item }) => <VeganPizzaItem item={item} navigation={navigation} />}
+        data={pizzasDoces}
+        renderItem={({ item }) => <SweetPizzaItem item={item} navigation={navigation} />}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContainer}
       />
@@ -54,7 +55,7 @@ export default function PizzasVeganas({ navigation }) {
   );
 }
 
-// Reutilizando os mesmos estilos
+// Estilos (padrão das outras telas de produto)
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#FAFAFA' },
     header: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#7B0909', paddingVertical: 15, paddingHorizontal: 10 },

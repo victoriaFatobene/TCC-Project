@@ -1,15 +1,15 @@
-// src/screens/PizzasVeganas/index.js
+// src/screens/Bolos/index.js
 import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { useCart } from '../../contexts/CartContext';
 
-const pizzasVeganas = [
-  { id: 'v1', nome: "Veggie Supreme", preco: 28.00, imagem: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?q=80&w=1999&auto=format&fit=crop", ingredientes: 'Pimentão, cebola, azeitona e cogumelos.' },
-  { id: 'v2', nome: "Margherita Vegana", preco: 25.00, imagem: "https://images.unsplash.com/photo-1620374643423-276c1231a540?q=80&w=1964&auto=format&fit=crop", ingredientes: 'Queijo vegano, tomate e manjericão.' },
-  { id: 'v3', nome: "Portobello Gourmet", preco: 30.00, imagem: "https://images.unsplash.com/photo-1588315029754-2dd089d39a1a?q=80&w=2070&auto=format&fit=crop", ingredientes: 'Cogumelos Portobello e azeite trufado.' },
+const bolos = [
+  { id: 'bo1', nome: "Bolo de Chocolate", preco: 15.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9f-y_o-4w_z-Y7X7l2p_xX5y_j8W6e8z8w&s", ingredientes: 'Fatia generosa de bolo de chocolate com cobertura cremosa.' },
+  { id: 'bo2', nome: "Torta Holandesa", preco: 18.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-q-j8c_w-l6Z-X6Y-y_r4Z_xV-c_o7d7bQ&s", ingredientes: 'Base de biscoito, creme holandês e cobertura de ganache.' },
+  { id: 'bo3', nome: "Cheesecake de Frutas", preco: 20.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-v-H5X_x_f-D_w_e-j5F_x_y-L6Z_x_y-L6Z_x_y-L6Z&s", ingredientes: 'Cheesecake cremoso com calda de frutas vermelhas.' },
 ];
 
-const VeganPizzaItem = ({ item, navigation }) => {
+const BoloItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
   return (
     <View style={styles.card}>
@@ -20,10 +20,7 @@ const VeganPizzaItem = ({ item, navigation }) => {
           <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
         </View>
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity 
-            style={styles.detailsButton} 
-            onPress={() => navigation.navigate('ProductDetails', { product: item })}
-          >
+          <TouchableOpacity style={styles.detailsButton} onPress={() => navigation.navigate('ProductDetails', { product: item })}>
             <Text style={styles.detailsButtonText}>Ver Mais</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.addBtn} onPress={() => addToCart(item)}>
@@ -35,18 +32,18 @@ const VeganPizzaItem = ({ item, navigation }) => {
   );
 };
 
-export default function PizzasVeganas({ navigation }) {
+export default function Bolos({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>{'<'}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Pizzas Veganas 🌱</Text>
+        <Text style={styles.headerTitle}>Bolos 🍰</Text>
       </View>
       <FlatList
-        data={pizzasVeganas}
-        renderItem={({ item }) => <VeganPizzaItem item={item} navigation={navigation} />}
+        data={bolos}
+        renderItem={({ item }) => <BoloItem item={item} navigation={navigation} />}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContainer}
       />
@@ -54,7 +51,7 @@ export default function PizzasVeganas({ navigation }) {
   );
 }
 
-// Reutilizando os mesmos estilos
+// Estilos
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#FAFAFA' },
     header: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#7B0909', paddingVertical: 15, paddingHorizontal: 10 },
@@ -63,7 +60,7 @@ const styles = StyleSheet.create({
     headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
     listContainer: { padding: 16 },
     card: { flexDirection: 'row', backgroundColor: "#FFF", borderRadius: 12, padding: 12, marginBottom: 16, alignItems: 'center', elevation: 3 },
-    image: { width: 60, height: 60, borderRadius: 8, marginRight: 12 },
+    image: { width: 60, height: 60, borderRadius: 8, marginRight: 12, backgroundColor: '#eee' },
     cardContent: { flex: 1, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' },
     name: { fontSize: 18, fontWeight: '600' },
     price: { fontSize: 16, color: '#555', marginTop: 4 },

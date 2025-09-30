@@ -1,60 +1,77 @@
-import React from "react";
-import { SafeAreaView, ScrollView, Text, View, Image, TouchableOpacity, StyleSheet } from "react-native";
+import React from 'react';
+import { SafeAreaView, View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 
-export default function HomeScreen({ navigation }) {
-  const categories = [
-    { name: "Pizzas", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/uulzo8g5_expires_30_days.png", color: "#F44336", screen: "Cardapio" },
-    { name: "Bebidas", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/88znwjll_expires_30_days.png", color: "#2196F3", screen: "Cardapio" },
-    { name: "Favoritos", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/d174b2pj_expires_30_days.png", color: "#FF9800", screen: "Cardapio" },
-    { name: "Sobremesas", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/snpswyio_expires_30_days.png", color: "#9C27B0", screen: "Cardapio" },
-    { name: "Rodízios", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/z9p8vx67_expires_30_days.png", color: "#4CAF50", screen: "Cardapio" },
-    { name: "Acompanhamentos", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/alzgc0j5_expires_30_days.png", color: "#00BCD4", screen: "Cardapio" },
-  ];
-
+export default function TelaInicial({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.header}>🍕 Menu Principal</Text>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Cardápio</Text>
+        </View>
 
-        <View style={styles.cardsContainer}>
-          {categories.map((cat, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[styles.card, { backgroundColor: cat.color }]}
-              onPress={() => navigation.navigate(cat.screen)}
-              activeOpacity={0.8}
-            >
-              <Image source={{ uri: cat.img }} style={styles.cardImage} resizeMode="contain" />
-              <Text style={styles.cardText}>{cat.name}</Text>
-            </TouchableOpacity>
-          ))}
+        <View style={styles.menuContainer}>
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Pizzas')}>
+            <Image
+              // CAMINHO CORRIGIDO: Usando a URL da web
+              source={{ uri: 'https://storage.googleapis.com/tagjs-prod.appspot.com/v1/wU2WsSAm3N/lbwvpb7i_expires_30_days.png' }}
+              style={styles.cardImage}
+            />
+            <Text style={styles.cardTitle}>Pizzas</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Bebidas')}>
+            <Image
+              // CAMINHO CORRIGIDO: Usando a URL da web
+              source={{ uri: 'https://storage.googleapis.com/tagjs-prod.appspot.com/v1/wU2WsSAm3N/9bzt8nk1_expires_30_days.png' }}
+              style={styles.cardImage}
+            />
+            <Text style={styles.cardTitle}>Bebidas</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Sobremesas')}>
+            <Image
+              // CAMINHO CORRIGIDO: Usando uma URL de exemplo para sobremesas
+              source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2917/2917631.png' }}
+              style={styles.cardImage}
+            />
+            <Text style={styles.cardTitle}>Sobremesas</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+// Estilos
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: "#FFF8E7" },
-  scrollContainer: { paddingVertical: 30, paddingHorizontal: 20, alignItems: "center" },
-  header: { fontSize: 36, fontWeight: "bold", color: "#333", marginBottom: 30 },
-  cardsContainer: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center" },
-  card: {
-    width: 140,
-    height: 180,
-    borderRadius: 20,
-    margin: 10,
-    padding: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+  safeArea: { flex: 1, backgroundColor: '#FFFFFF' },
+  scrollView: { flex: 1, backgroundColor: '#7B0909' },
+  header: { alignItems: 'center', backgroundColor: '#5E0808', borderBottomWidth: 1, paddingVertical: 12 },
+  headerTitle: { color: '#EEFF00', fontSize: 40, fontWeight: 'bold' },
+  menuContainer: { 
+    padding: 20, 
   },
-  cardImage: { width: 100, height: 100, marginBottom: 10 },
-  cardText: { color: "#fff", fontSize: 18, fontWeight: "bold", textAlign: "center" },
+  card: { 
+    backgroundColor: '#FFF', 
+    borderColor: '#000', 
+    borderWidth: 2, 
+    borderRadius: 15, 
+    padding: 15, 
+    alignItems: 'center', 
+    marginBottom: 20, 
+    width: '100%', 
+    elevation: 4,
+    flexDirection: 'row',
+  },
+  cardImage: { 
+    width: 100, 
+    height: 100, 
+    marginRight: 20,
+    resizeMode: 'contain' 
+  },
+  cardTitle: { 
+    color: '#5E0808', 
+    fontSize: 24, 
+    fontWeight: 'bold', 
+  },
 });
-
-
