@@ -1,55 +1,80 @@
+// src/screens/BebidasAlcoolicas/index.js
 import React from "react";
 import {
   SafeAreaView,
   View,
   Text,
-  StyleSheet,
   FlatList,
   Image,
   TouchableOpacity,
-  useWindowDimensions,
+  StyleSheet,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
 
-const alcoolicas = [
-  { id: "al1", nome: "Cerveja Heineken", preco: 9.0, imagem: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Heineken_Bottle.png/480px-Heineken_Bottle.png", ingredientes: "Long neck 330ml." },
-  { id: "al2", nome: "Cerveja Budweiser", preco: 8.5, imagem: "https://upload.wikimedia.org/wikipedia/commons/6/66/Budweiser_king_of_beers.jpg", ingredientes: "Long neck 330ml." },
-  { id: "al3", nome: "Caipirinha de Limão", preco: 15.0, imagem: "https://upload.wikimedia.org/wikipedia/commons/7/7d/Caipirinha.jpg", ingredientes: "Cachaça, limão, açúcar e gelo." },
-   { id: "al3", nome: "Caipirinha de Morango", preco: 15.0, imagem: "https://upload.wikimedia.org/wikipedia/commons/7/7d/Caipirinha.jpg", ingredientes: "Cachaça, morango, açúcar e gelo." },
+const bebidasAlcoolicas = [
+  {
+    id: "a1",
+    nome: "Cerveja Heineken",
+    ingredientes: "Garrafa 600ml gelada.",
+    preco: 12.0,
+    imagem:
+      "https://images.unsplash.com/photo-1603461593863-c3c747eafd95?q=80&w=1964&auto=format&fit=crop",
+  },
+  {
+    id: "a2",
+    nome: "Vinho Tinto",
+    ingredientes: "Taça de vinho tinto seco.",
+    preco: 18.5,
+    imagem:
+      "https://images.unsplash.com/photo-1606787366850-de6330128bfc?q=80&w=2070&auto=format&fit=crop",
+  },
+  {
+    id: "a3",
+    nome: "Caipirinha",
+    ingredientes: "Cachaça, limão e açúcar.",
+    preco: 15.0,
+    imagem:
+      "https://images.unsplash.com/photo-1574786310643-6e98d68f077d?q=80&w=1974&auto=format&fit=crop",
+  },
 ];
 
-const AlcoolicaItem = ({ item, navigation, cardWidth }) => {
+const BebidaAlcoolicaItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
   return (
-    <View style={[styles.card, { width: cardWidth }]}>
+    <View style={styles.card}>
       <Image source={{ uri: item.imagem }} style={styles.image} />
-      <Text style={styles.name}>{item.nome}</Text>
-      <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
+      <View style={styles.cardContent}>
+        <Text style={styles.name}>{item.nome}</Text>
+        <Text style={styles.ingredients}>{item.ingredientes}</Text>
 
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={styles.detailsButton}
-          onPress={() => navigation.navigate("ProductDetails", { product: item })}
-        >
-          <Text style={styles.detailsButtonText}>Ver Mais</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.addBtn} onPress={() => addToCart(item)}>
-          <Text style={styles.addBtnText}>+</Text>
-        </TouchableOpacity>
+        <View style={styles.footer}>
+          <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity
+              style={styles.detailsButton}
+              onPress={() =>
+                navigation.navigate("ProductDetails", { product: item })
+              }
+            >
+              <Text style={styles.detailsButtonText}>Ver Mais</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.addBtn}
+              onPress={() => addToCart(item)}
+            >
+              <Text style={styles.addBtnText}>+</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     </View>
   );
 };
 
-export default function Alcoolicas({ navigation }) {
-  const { width } = useWindowDimensions();
-
-  // 🔥 Responsividade:
-  const numColumns = width < 400 ? 1 : width < 800 ? 2 : 3; // celular = 1, tablet = 2, web = 3
-  const cardWidth = (width - 32 - (numColumns - 1) * 12) / numColumns;
-
+export default function BebidasAlcoolicas({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
+      {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -60,60 +85,69 @@ export default function Alcoolicas({ navigation }) {
         <Text style={styles.headerTitle}>Bebidas Alcoólicas 🍺</Text>
       </View>
 
+      {/* LISTA */}
       <FlatList
-        data={alcoolicas}
+        data={bebidasAlcoolicas}
         renderItem={({ item }) => (
-          <AlcoolicaItem item={item} navigation={navigation} cardWidth={cardWidth} />
+          <BebidaAlcoolicaItem item={item} navigation={navigation} />
         )}
         keyExtractor={(item) => item.id}
-        numColumns={numColumns}
-        columnWrapperStyle={numColumns > 1 ? { gap: 12 } : null}
         contentContainerStyle={styles.listContainer}
       />
     </SafeAreaView>
   );
 }
 
+// ESTILOS
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
+
   header: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#7B0909",
     paddingVertical: 15,
     paddingHorizontal: 10,
+    elevation: 4,
   },
   backButton: { padding: 5, marginRight: 15 },
   backButtonText: { color: "#FFFFFF", fontSize: 24, fontWeight: "bold" },
   headerTitle: { color: "#FFFFFF", fontSize: 22, fontWeight: "bold" },
 
-  listContainer: {
-    padding: 16,
-    gap: 12,
-  },
+  listContainer: { padding: 16 },
 
   card: {
     backgroundColor: "#FFF",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
-    alignItems: "center",
-    elevation: 3,
+    borderRadius: 16,
+    marginBottom: 20,
+    overflow: "hidden",
+
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
   image: {
     width: "100%",
-    aspectRatio: 1,
-    borderRadius: 8,
-    marginBottom: 8,
-    backgroundColor: "#eee",
+    height: 180,
+    resizeMode: "cover",
   },
-  name: { fontSize: 16, fontWeight: "600", textAlign: "center" },
-  price: { fontSize: 14, color: "#555", marginTop: 4, textAlign: "center" },
-  buttonsContainer: { flexDirection: "row", marginTop: 8 },
+  cardContent: { padding: 12 },
+  name: { fontSize: 18, fontWeight: "bold", color: "#333" },
+  ingredients: { fontSize: 14, color: "#777", marginTop: 4, marginBottom: 10 },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  price: { fontSize: 16, fontWeight: "bold", color: "#7B0909" },
+
+  buttonsContainer: { flexDirection: "row", alignItems: "center" },
   detailsButton: {
     backgroundColor: "#f0f0f0",
     paddingVertical: 6,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     borderRadius: 20,
     marginRight: 10,
   },
@@ -122,7 +156,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#E53935",
     justifyContent: "center",
     alignItems: "center",
   },

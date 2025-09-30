@@ -4,41 +4,49 @@ import {
   SafeAreaView,
   View,
   Text,
-  StyleSheet,
   FlatList,
   Image,
   TouchableOpacity,
+  StyleSheet,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
 
 const pizzasDoces = [
   {
     id: "d1",
-    nome: "Chocolate com Morango",
-    preco: 55.0,
+    nome: "Pizza de Chocolate",
+    ingredientes: "Coberta com muito chocolate ao leite derretido.",
+    preco: 34.9,
     imagem:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhVwmGAV2KzDDa52rG2Pq_pLz5V3Ff_Xb9aQ&s",
-    ingredientes: "Chocolate ao leite, morangos frescos e leite condensado.",
+      "https://images.unsplash.com/photo-1617196039897-c824dff0b8d2?q=80&w=2070&auto=format&fit=crop",
   },
   {
     id: "d2",
-    nome: "Romeu e Julieta",
-    preco: 48.0,
+    nome: "Pizza de Morango com Chocolate",
+    ingredientes: "Chocolate derretido e morangos frescos.",
+    preco: 39.9,
     imagem:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBJg58U7_P_hY1yC38Q7j6b7p2K9F_wX5b3g&s",
-    ingredientes: "Mussarela especial e goiabada cremosa.",
+      "https://images.unsplash.com/photo-1632932227092-4a7929fdbefb?q=80&w=2070&auto=format&fit=crop",
   },
   {
     id: "d3",
-    nome: "Prestígio",
-    preco: 52.0,
+    nome: "Pizza de Banana com Canela",
+    ingredientes: "Banana fatiada, açúcar e canela polvilhada.",
+    preco: 32.5,
     imagem:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6f7z8w9X0y-N7l8q9Y4k7Z_v4e-f_E6l9aA&s",
-    ingredientes: "Chocolate, coco ralado e leite condensado.",
+      "https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?q=80&w=2070&auto=format&fit=crop",
+  },
+  {
+    id: "d4",
+    nome: "Pizza de Nutella",
+    ingredientes: "Recheada e coberta com creme de avelã.",
+    preco: 42.0,
+    imagem:
+      "https://images.unsplash.com/photo-1593560708920-61dd95d6d251?q=80&w=2070&auto=format&fit=crop",
   },
 ];
 
-const SweetPizzaItem = ({ item, navigation }) => {
+const PizzaDoceItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
   return (
     <View style={styles.card}>
@@ -46,6 +54,7 @@ const SweetPizzaItem = ({ item, navigation }) => {
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
+
         <View style={styles.footer}>
           <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
           <View style={styles.buttonsContainer}>
@@ -73,7 +82,7 @@ const SweetPizzaItem = ({ item, navigation }) => {
 export default function PizzasDoces({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
+      {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -84,11 +93,11 @@ export default function PizzasDoces({ navigation }) {
         <Text style={styles.headerTitle}>Pizzas Doces 🍫</Text>
       </View>
 
-      {/* Lista */}
+      {/* LISTA */}
       <FlatList
         data={pizzasDoces}
         renderItem={({ item }) => (
-          <SweetPizzaItem item={item} navigation={navigation} />
+          <PizzaDoceItem item={item} navigation={navigation} />
         )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
@@ -97,8 +106,9 @@ export default function PizzasDoces({ navigation }) {
   );
 }
 
+// ESTILOS
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF8F8" },
+  container: { flex: 1, backgroundColor: "#FAFAFA" },
 
   header: {
     flexDirection: "row",
@@ -115,35 +125,35 @@ const styles = StyleSheet.create({
   listContainer: { padding: 16 },
 
   card: {
-    flexDirection: "row",
     backgroundColor: "#FFF",
-    borderRadius: 15,
-    padding: 12,
-    marginBottom: 16,
-    elevation: 4,
+    borderRadius: 16,
+    marginBottom: 20,
+    overflow: "hidden",
 
+    elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 5,
   },
-  image: { width: 90, height: 90, borderRadius: 12, marginRight: 12 },
-
-  cardContent: { flex: 1, justifyContent: "center" },
+  image: {
+    width: "100%",
+    height: 180,
+    resizeMode: "cover",
+  },
+  cardContent: { padding: 12 },
   name: { fontSize: 18, fontWeight: "bold", color: "#333" },
-  ingredients: { fontSize: 14, color: "#666", marginVertical: 4 },
-  price: { fontSize: 16, fontWeight: "bold", color: "#7B0909" },
-
+  ingredients: { fontSize: 14, color: "#777", marginTop: 4, marginBottom: 10 },
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 8,
   },
+  price: { fontSize: 16, fontWeight: "bold", color: "#7B0909" },
 
   buttonsContainer: { flexDirection: "row", alignItems: "center" },
   detailsButton: {
-    backgroundColor: "#f3f3f3",
+    backgroundColor: "#f0f0f0",
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 20,
