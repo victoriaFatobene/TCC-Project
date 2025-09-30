@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   name: { fontSize: 18, fontWeight: "600" },
   price: { fontSize: 16, color: "#888", marginVertical: 5 },
   controls: { flexDirection: "row", alignItems: "center", marginTop: 5 },
-  button: { backgroundColor: "#4CAF50", width: 30, height: 30, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
+  button: { backgroundColor: "#E53935", width: 30, height: 30, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
   buttonText: { color: "#FFF", fontSize: 18, fontWeight: "600" },
   quantity: { marginHorizontal: 15, fontSize: 16, fontWeight: 'bold' },
   remove: { marginLeft: 15, color: "#FF5252", fontWeight: "600" },
