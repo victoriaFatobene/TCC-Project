@@ -66,13 +66,13 @@ const PizzaItem = ({ item, navigation }) => {
                 navigation.navigate("ProductDetails", { product: item })
               }
             >
-              <Text style={styles.detailsButtonText}>Ver Mais</Text>
+              <Text style={styles.detailsButtonText}>🍴 Ver Mais</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.addBtn}
               onPress={() => addToCart(item)}
             >
-              <Text style={styles.addBtnText}>+</Text>
+              <Text style={styles.addBtnText}>➕</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -90,9 +90,9 @@ export default function MenuPizzas({ navigation }) {
           onPress={() => navigation.goBack()}
           style={styles.backButton}
         >
-          <Text style={styles.backButtonText}>{"<"}</Text>
+          <Text style={styles.backButtonText}>{"←"}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Pizzas Salgadas 🍕</Text>
+        <Text style={styles.headerTitle}>🍕 Pizzas Salgadas</Text>
       </View>
 
       {/* LISTA */}
@@ -110,65 +110,71 @@ export default function MenuPizzas({ navigation }) {
 
 // ESTILOS
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FAFAFA" },
+  container: { flex: 1, backgroundColor: "#FFF8F0" },
 
   header: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#7B0909",
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-    elevation: 4,
+    backgroundColor: "#B22222", // vermelho mais aconchegante
+    paddingVertical: 18,
+    paddingHorizontal: 12,
+    elevation: 6,
   },
   backButton: { padding: 5, marginRight: 15 },
-  backButtonText: { color: "#FFFFFF", fontSize: 24, fontWeight: "bold" },
-  headerTitle: { color: "#FFFFFF", fontSize: 22, fontWeight: "bold" },
+  backButtonText: { color: "#FFD700", fontSize: 26, fontWeight: "bold" },
+  headerTitle: { color: "#FFD700", fontSize: 24, fontWeight: "bold" },
 
-  listContainer: { padding: 16 },
+  listContainer: { padding: 18 },
 
   card: {
     backgroundColor: "#FFF",
-    borderRadius: 16,
-    marginBottom: 20,
+    borderRadius: 20,
+    marginBottom: 22,
     overflow: "hidden",
 
-    elevation: 4,
+    elevation: 6,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
   },
   image: {
     width: "100%",
-    height: 180,
+    height: 200,
     resizeMode: "cover",
   },
-  cardContent: { padding: 12 },
-  name: { fontSize: 18, fontWeight: "bold", color: "#333" },
-  ingredients: { fontSize: 14, color: "#777", marginTop: 4, marginBottom: 10 },
+  cardContent: { padding: 14 },
+  name: { fontSize: 20, fontWeight: "bold", color: "#B22222" },
+  ingredients: {
+    fontSize: 14,
+    color: "#555",
+    marginTop: 6,
+    marginBottom: 12,
+    fontStyle: "italic",
+  },
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  price: { fontSize: 16, fontWeight: "bold", color: "#7B0909" },
+  price: { fontSize: 18, fontWeight: "bold", color: "#2E8B57" },
 
   buttonsContainer: { flexDirection: "row", alignItems: "center" },
   detailsButton: {
-    backgroundColor: "#f0f0f0",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 20,
+    backgroundColor: "#FFD700",
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 25,
     marginRight: 10,
   },
-  detailsButtonText: { color: "#333", fontWeight: "bold", fontSize: 12 },
+  detailsButtonText: { color: "#B22222", fontWeight: "bold", fontSize: 13 },
   addBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#E53935",
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#B22222",
     justifyContent: "center",
     alignItems: "center",
   },
-  addBtnText: { color: "#FFF", fontSize: 22, fontWeight: "bold" },
+  addBtnText: { color: "#FFD700", fontSize: 22, fontWeight: "bold" },
 });
