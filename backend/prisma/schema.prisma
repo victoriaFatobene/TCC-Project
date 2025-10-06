@@ -77,10 +77,16 @@ model Order {
   name String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
- 
+
   // Relação com Item
   items Item[]
- 
+
+  // Relação com Payment
+  payments Payment[]
+
+  // Relação com Review
+  review Review?
+
   @@map("orders")
 }
  
@@ -192,4 +198,47 @@ model ItemModification {
   ingredientId String
  
   @@map("item_modifications")
+}
+
+// Tabela de pagamentos - apresenta o tipo de pagamento do pedido
+model Payment {
+  id String @id @default(uuid())
+  paymentDate DateTime @default(now())
+  amount Decimal
+  paymentType String
+  status String
+
+order Order? @relation(fields: [orderId], references: [id])
+orderId String?
+
+  @@map("payments")
+}
+
+// Tabela de Cliente - salva informações do cliente
+model Client {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reviews Review[]
+
+  @@map("clients")
+}
+
+// Tabela de Avaliação do site- salva as informações da pesquisa
+model Review{
+  id String @id @default(uuid())
+  rating Int
+  comment String?
+  createAt DateTime @default (now())
+
+  order Order @relation(fields: [orderId], references: [id])
+  orderId String @unique
+
+  client Client @relation(fields: [clientId], references: [id])
+  clientId String 
+  
+  @@map("reviews")  
 }
