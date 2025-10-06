@@ -1,85 +1,98 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-// MODIFICAÇÃO: Removemos os DADOS_EXEMPLO daqui.
-
+import { supabase } from '../../services/supabase';
+ 
 const StatusItem = ({ icon, label, isCompleted }) => (
-  <View style={styles.statusItem}>
-    <View style={[styles.statusIconContainer, isCompleted && styles.statusIconCompleted]}>
-      <Ionicons name={icon} size={24} color={isCompleted ? '#FFF' : '#7B0909'} />
-    </View>
-    <Text style={[styles.statusLabel, isCompleted && styles.statusLabelCompleted]}>{label}</Text>
-  </View>
+<View style={styles.statusItem}>
+<View style={[styles.statusIconContainer, isCompleted && styles.statusIconCompleted]}>
+<Ionicons name={icon} size={24} color={isCompleted ? '#FFF' : '#7B0909'} />
+</View>
+<Text style={[styles.statusLabel, isCompleted && styles.statusLabelCompleted]}>{label}</Text>
+</View>
 );
-
-// MODIFICAÇÃO: Adicionamos 'route' para receber os dados
+ 
 export default function StatusPedido({ navigation, route }) {
-  // MODIFICAÇÃO: Pegamos os dados do pedido que foram enviados da tela de Pagamento
-  const { pedido } = route.params;
-
-  // O estado do nosso pedido agora começa com os dados reais
-  const [dadosDoPedido] = useState(pedido);
-
+  const { pedido: pedidoInicial } = route.params;
+  const [dadosDoPedido, setDadosDoPedido] = useState(pedidoInicial);
+ 
+  useEffect(() => {
+    // Escuta por atualizações na tabela 'orders' para o ID do nosso pedido
+    const subscription = supabase
+      .channel(`pedido-status-${dadosDoPedido.id}`)
+      .on(
+        'postgres_changes',
+        { 
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'orders',
+          filter: `id=eq.${dadosDoPedido.id}`
+        },
+        (payload) => {
+          console.log('Recebi uma atualização no pedido!', payload.new);
+          setDadosDoPedido(estadoAnterior => ({ ...estadoAnterior, ...payload.new }));
+        }
+      )
+      .subscribe();
+ 
+    // Quando o usuário sair da tela, a inscrição é removida para não gastar recursos
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, [dadosDoPedido.id]);
+ 
+  // Adapte esta lista se os nomes dos status no seu banco forem diferentes
   const statusList = ['Na Fila', 'Em Preparo', 'Pronto!'];
   const currentStatusIndex = statusList.indexOf(dadosDoPedido.status);
   const isReady = dadosDoPedido.status === 'Pronto!';
-
+ 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.header}>
-        {/* MODIFICAÇÃO: Botão de voltar para a tela inicial, pois o pedido já foi feito */}
-        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')} style={styles.backButton}>
-          <Text style={styles.backButtonText}>{'<'} Início</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Status do Pedido</Text>
-      </View>
-
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.orderId}>Senha do Pedido</Text>
-        <Text style={styles.orderNumber}>{dadosDoPedido.id}</Text>
-        
+<SafeAreaView style={styles.safeArea}>
+<View style={styles.header}>
+<TouchableOpacity onPress={() => navigation.navigate('HomeScreen')} style={styles.backButton}>
+<Text style={styles.backButtonText}>{'<'} Início</Text>
+</TouchableOpacity>
+<Text style={styles.headerTitle}>Status do Pedido</Text>
+</View>
+<ScrollView contentContainerStyle={styles.container}>
+<Text style={styles.orderId}>Senha do Pedido</Text>
+<Text style={styles.orderNumber}>{dadosDoPedido.id.substring(0, 8)}</Text>
         {isReady && (
-          <View style={styles.readyCard}>
-            <Ionicons name="checkmark-circle" size={40} color="#FFF" />
-            <Text style={styles.readyText}>Seu pedido está pronto para retirada!</Text>
-          </View>
+<View style={styles.readyCard}>
+<Ionicons name="checkmark-circle" size={40} color="#FFF" />
+<Text style={styles.readyText}>Seu pedido está pronto para retirada!</Text>
+</View>
         )}
-
-        <View style={styles.statusTracker}>
-          <StatusItem icon="hourglass-outline" label="Na Fila" isCompleted={currentStatusIndex >= 0} />
-          <View style={styles.statusLine} />
-          <StatusItem icon="pizza-outline" label="Em Preparo" isCompleted={currentStatusIndex >= 1} />
-          <View style={styles.statusLine} />
-          <StatusItem icon="checkmark-done-outline" label="Pronto!" isCompleted={currentStatusIndex >= 2} />
-        </View>
-
-        <View style={styles.summaryCard}>
-          <Text style={styles.summaryTitle}>Resumo da Compra</Text>
-          {/* MODIFICAÇÃO: Usamos os itens e o total do pedido real */}
+<View style={styles.statusTracker}>
+<StatusItem icon="hourglass-outline" label="Na Fila" isCompleted={currentStatusIndex >= 0} />
+<View style={styles.statusLine} />
+<StatusItem icon="pizza-outline" label="Em Preparo" isCompleted={currentStatusIndex >= 1} />
+<View style={styles.statusLine} />
+<StatusItem icon="checkmark-done-outline" label="Pronto!" isCompleted={currentStatusIndex >= 2} />
+</View>
+<View style={styles.summaryCard}>
+<Text style={styles.summaryTitle}>Resumo da Compra</Text>
           {dadosDoPedido.itens.map((item, index) => (
-            <Text key={index} style={styles.summaryItem}>
+<Text key={index} style={styles.summaryItem}>
               {item.qtd}x {item.nome}
-            </Text>
+</Text>
           ))}
-          <View style={styles.divider} />
-          <Text style={styles.summaryTotal}>Total: R$ {dadosDoPedido.total.toFixed(2)}</Text>
-        </View>
-        
+<View style={styles.divider} />
+<Text style={styles.summaryTotal}>Total: R$ {dadosDoPedido.total.toFixed(2)}</Text>
+</View>
         {isReady && (
-          <TouchableOpacity 
+<TouchableOpacity 
             style={styles.evaluateButton} 
             onPress={() => navigation.navigate('Avaliacao')}
-          >
-            <Text style={styles.evaluateButtonText}>Avaliar Pedido</Text>
-          </TouchableOpacity>
+>
+<Text style={styles.evaluateButtonText}>Avaliar Pedido</Text>
+</TouchableOpacity>
         )}
-      </ScrollView>
-    </SafeAreaView>
+</ScrollView>
+</SafeAreaView>
   );
 }
-
-
+ 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#f5f5f5' },
   header: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#7B0909', paddingVertical: 15, paddingHorizontal: 10 },
