@@ -203,13 +203,12 @@ model ItemModification {
  
   @@map("item_modifications")
 }
-<<<<<<< HEAD
   
 model Status {
   id       Int      @id @default(autoincrement())
   name     String   @unique
   products Product[]
-=======
+}
 
 // Tabela de pagamentos - apresenta o tipo de pagamento do pedido
 model Payment {
@@ -250,7 +249,6 @@ model Review{
 
   client Client @relation(fields: [clientId], references: [id])
   clientId String 
-  
-  @@map("reviews")  
->>>>>>> 9a053602f8459199712a3cca3c7c0bad6f7a1128
+
+  @@map("reviews")
 }
