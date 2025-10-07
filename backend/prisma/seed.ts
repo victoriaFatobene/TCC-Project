@@ -1,16 +1,17 @@
 import prismaClient from "../src/prisma";
 
 async function main() {
+  // Cria os status padrão se não existirem
   await prismaClient.status.createMany({
     data: [
       { name: "DISPONIVEL" },
       { name: "INDISPONIVEL" },
-      { name: "ESGOTADO" }
+      { name: "ESGOTADO" },
     ],
     skipDuplicates: true, // não cria se já existir
   });
 
-  console.log("Status padrão criado com sucesso!");
+  console.log("Status padrão garantido no banco!");
 }
 
 main()
