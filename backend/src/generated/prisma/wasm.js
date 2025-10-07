@@ -136,13 +136,6 @@ exports.Prisma.CategoryScalarFieldEnum = {
   updated_at: 'updated_at'
 };
 
-exports.Prisma.StatusScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -162,9 +155,7 @@ exports.Prisma.OrderScalarFieldEnum = {
   draft: 'draft',
   name: 'name',
   created_at: 'created_at',
-  updated_at: 'updated_at',
-  startedAt: 'startedAt',
-  readyAt: 'readyAt'
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.ItemScalarFieldEnum = {
@@ -174,6 +165,13 @@ exports.Prisma.ItemScalarFieldEnum = {
   updated_at: 'updated_at',
   orderId: 'orderId',
   productId: 'productId'
+};
+
+exports.Prisma.CategoryViewScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  categoryId: 'categoryId'
 };
 
 exports.Prisma.MenuItemScalarFieldEnum = {
@@ -187,26 +185,11 @@ exports.Prisma.MenuItemScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ItemModificationScalarFieldEnum = {
-  id: 'id',
-  type: 'type',
-  createdAt: 'createdAt',
-  itemId: 'itemId',
-  ingredientId: 'ingredientId'
-};
-
 exports.Prisma.ProductIngredientScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
   ingredientId: 'ingredientId',
   createdAt: 'createdAt'
-};
-
-exports.Prisma.CategoryViewScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  userId: 'userId',
-  categoryId: 'categoryId'
 };
 
 exports.Prisma.IngredientScalarFieldEnum = {
@@ -215,6 +198,19 @@ exports.Prisma.IngredientScalarFieldEnum = {
   price: 'price',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ItemModificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  createdAt: 'createdAt',
+  itemId: 'itemId',
+  ingredientId: 'ingredientId'
+};
+
+exports.Prisma.StatusScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
 };
 
 exports.Prisma.SortOrder = {
@@ -231,24 +227,20 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.OrderStatus = exports.$Enums.OrderStatus = {
-  RECEBIDO: 'RECEBIDO',
-  PREPARANDO: 'PREPARANDO',
-  PRONTO: 'PRONTO'
-};
+
 
 exports.Prisma.ModelName = {
   User: 'User',
   Category: 'Category',
-  Status: 'Status',
   Product: 'Product',
   Order: 'Order',
   Item: 'Item',
-  MenuItem: 'MenuItem',
-  ItemModification: 'ItemModification',
-  ProductIngredient: 'ProductIngredient',
   CategoryView: 'CategoryView',
-  Ingredient: 'Ingredient'
+  MenuItem: 'MenuItem',
+  ProductIngredient: 'ProductIngredient',
+  Ingredient: 'Ingredient',
+  ItemModification: 'ItemModification',
+  Status: 'Status'
 };
 
 /**
