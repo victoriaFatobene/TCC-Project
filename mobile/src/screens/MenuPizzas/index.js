@@ -1,15 +1,15 @@
-// src/screens/Pizzas/index.js
 import React from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   FlatList,
   Image,
   TouchableOpacity,
   StyleSheet,
+  StatusBar,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const pizzasSalgadas = [
   {
@@ -17,34 +17,28 @@ const pizzasSalgadas = [
     nome: "Calabresa",
     ingredientes: "Molho de tomate, mussarela, calabresa fatiada e cebola.",
     preco: 45.9,
-    imagem:
-      "https://images.unsplash.com/photo-1594007654729-407eedc4be65?q=80&w=1928&auto=format&fit=crop",
+    imagem: "https://images.unsplash.com/photo-1594007654729-407eedc4be65?q=80&w=1928&auto=format&fit=crop",
   },
   {
     id: "2",
     nome: "Margherita",
-    ingredientes:
-      "Molho de tomate, mussarela, fatias de tomate fresco e manjericão.",
+    ingredientes: "Molho de tomate, mussarela, fatias de tomate fresco e manjericão.",
     preco: 42.5,
-    imagem:
-      "https://images.unsplash.com/photo-1598021680133-eb3a73319420?q=80&w=2148&auto=format&fit=crop",
+    imagem: "https://images.unsplash.com/photo-1598021680133-eb3a73319420?q=80&w=2148&auto=format&fit=crop",
   },
   {
     id: "3",
     nome: "Frango com Catupiry",
     ingredientes: "Molho de tomate, mussarela, frango desfiado e catupiry.",
     preco: 48.0,
-    imagem:
-      "https://images.unsplash.com/photo-1604382354936-07c5d9983d34?q=80&w=2070&auto=format&fit=crop",
+    imagem: "https://images.unsplash.com/photo-1604382354936-07c5d9983d34?q=80&w=2070&auto=format&fit=crop",
   },
   {
     id: "4",
     nome: "Portuguesa",
-    ingredientes:
-      "Molho, mussarela, presunto, ovos, cebola, pimentão e azeitonas.",
+    ingredientes: "Molho, mussarela, presunto, ovos, cebola, pimentão e azeitonas.",
     preco: 52.0,
-    imagem:
-      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1981&auto=format&fit=crop",
+    imagem: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1981&auto=format&fit=crop",
   },
 ];
 
@@ -56,7 +50,6 @@ const PizzaItem = ({ item, navigation }) => {
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
-
         <View style={styles.footer}>
           <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
           <View style={styles.buttonsContainer}>
@@ -70,7 +63,7 @@ const PizzaItem = ({ item, navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.addBtn}
-              onPress={() => addToCart(item)}
+              onPress={() => addToCart({ ...item, quantidade: 1 })}
             >
               <Text style={styles.addBtnText}>➕</Text>
             </TouchableOpacity>
@@ -82,10 +75,12 @@ const PizzaItem = ({ item, navigation }) => {
 };
 
 export default function MenuPizzas({ navigation }) {
+  const insets = useSafeAreaInsets();
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#B22222" />
+      
+      <View style={[styles.header, { paddingTop: insets.top + 18 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
@@ -95,7 +90,6 @@ export default function MenuPizzas({ navigation }) {
         <Text style={styles.headerTitle}>🍕 Pizzas Salgadas</Text>
       </View>
 
-      {/* LISTA */}
       <FlatList
         data={pizzasSalgadas}
         renderItem={({ item }) => (
@@ -104,34 +98,29 @@ export default function MenuPizzas({ navigation }) {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
-// ESTILOS
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFF8F0" },
-
   header: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#B22222", // vermelho mais aconchegante
-    paddingVertical: 18,
+    backgroundColor: "#B22222",
+    paddingBottom: 18,
     paddingHorizontal: 12,
     elevation: 6,
   },
   backButton: { padding: 5, marginRight: 15 },
   backButtonText: { color: "#FFD700", fontSize: 26, fontWeight: "bold" },
   headerTitle: { color: "#FFD700", fontSize: 24, fontWeight: "bold" },
-
   listContainer: { padding: 18 },
-
   card: {
     backgroundColor: "#FFF",
     borderRadius: 20,
     marginBottom: 22,
     overflow: "hidden",
-
     elevation: 6,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -158,7 +147,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   price: { fontSize: 18, fontWeight: "bold", color: "#2E8B57" },
-
   buttonsContainer: { flexDirection: "row", alignItems: "center" },
   detailsButton: {
     backgroundColor: "#FFD700",

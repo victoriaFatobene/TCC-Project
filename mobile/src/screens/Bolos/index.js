@@ -1,7 +1,7 @@
 // src/screens/Bolos/index.js
 import React from "react";
 import {
-  SafeAreaView,
+  // MODIFICAÇÃO 1: Trocamos SafeAreaView por View e adicionamos StatusBar
   View,
   Text,
   StyleSheet,
@@ -9,8 +9,11 @@ import {
   Image,
   TouchableOpacity,
   Platform,
+  StatusBar,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
+// MODIFICAÇÃO 2: Importamos o hook da área segura
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const bolos = [
   {
@@ -60,7 +63,7 @@ const BoloItem = ({ item, navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.addBtn}
-              onPress={() => addToCart(item)}
+              onPress={() => addToCart({ ...item, quantidade: 1 })}
             >
               <Text style={styles.addBtnText}>+</Text>
             </TouchableOpacity>
@@ -72,10 +75,17 @@ const BoloItem = ({ item, navigation }) => {
 };
 
 export default function Bolos({ navigation }) {
+  // MODIFICAÇÃO 3: Pegamos os valores da área segura
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
+    // MODIFICAÇÃO 4: Usamos uma View normal como container
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+
       {/* HEADER */}
-      <View style={styles.header}>
+      {/* MODIFICAÇÃO 5: Aplicamos o padding do topo dinamicamente */}
+      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
@@ -94,7 +104,7 @@ export default function Bolos({ navigation }) {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -106,7 +116,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#7B0909",
-    paddingVertical: 15,
+    // MODIFICAÇÃO 6: Trocamos paddingVertical por paddingBottom
+    paddingBottom: 15,
     paddingHorizontal: 10,
     elevation: 4,
   },
@@ -121,8 +132,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 20,
     overflow: "hidden",
-
-    // sombra cross-plataforma
     elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },

@@ -1,15 +1,15 @@
-// src/screens/Sucos/index.js
 import React from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   FlatList,
   Image,
   TouchableOpacity,
   StyleSheet,
+  StatusBar,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const sucos = [
   {
@@ -17,24 +17,21 @@ const sucos = [
     nome: "Suco de Laranja",
     ingredientes: "Natural, 300ml.",
     preco: 7.5,
-    imagem:
-      "https://images.unsplash.com/photo-1617196039897-0ec90ffb47d4?q=80&w=1887&auto=format&fit=crop",
+    imagem: "https://images.unsplash.com/photo-1617196039897-0ec90ffb47d4?q=80&w=1887&auto=format&fit=crop",
   },
   {
     id: "s2",
     nome: "Suco de Uva",
     ingredientes: "Integral, 300ml.",
     preco: 8.0,
-    imagem:
-      "https://images.unsplash.com/photo-1600271886742-f049cd451bba?q=80&w=1887&auto=format&fit=crop",
+    imagem: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?q=80&w=1887&auto=format&fit=crop",
   },
   {
     id: "s3",
     nome: "Suco de Abacaxi",
     ingredientes: "Natural, 300ml.",
     preco: 7.5,
-    imagem:
-      "https://images.unsplash.com/photo-1623065427557-d7c2a2dff7e3?q=80&w=1887&auto=format&fit=crop",
+    imagem: "https://images.unsplash.com/photo-1623065427557-d7c2a2dff7e3?q=80&w=1887&auto=format&fit=crop",
   },
 ];
 
@@ -46,7 +43,6 @@ const SucoItem = ({ item, navigation }) => {
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
-
         <View style={styles.footer}>
           <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
           <View style={styles.buttonsContainer}>
@@ -60,7 +56,7 @@ const SucoItem = ({ item, navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.addBtn}
-              onPress={() => addToCart(item)}
+              onPress={() => addToCart({ ...item, quantidade: 1 })}
             >
               <Text style={styles.addBtnText}>+</Text>
             </TouchableOpacity>
@@ -72,10 +68,12 @@ const SucoItem = ({ item, navigation }) => {
 };
 
 export default function Sucos({ navigation }) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
@@ -84,42 +82,35 @@ export default function Sucos({ navigation }) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Sucos 🧃</Text>
       </View>
-
-      {/* LISTA */}
       <FlatList
         data={sucos}
         renderItem={({ item }) => <SucoItem item={item} navigation={navigation} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
-// ESTILOS
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
-
   header: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#7B0909",
-    paddingVertical: 15,
+    paddingBottom: 15,
     paddingHorizontal: 10,
     elevation: 4,
   },
   backButton: { padding: 5, marginRight: 15 },
   backButtonText: { color: "#FFFFFF", fontSize: 24, fontWeight: "bold" },
   headerTitle: { color: "#FFFFFF", fontSize: 22, fontWeight: "bold" },
-
   listContainer: { padding: 16 },
-
   card: {
     backgroundColor: "#FFF",
     borderRadius: 16,
     marginBottom: 20,
     overflow: "hidden",
-
     elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
@@ -140,7 +131,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   price: { fontSize: 16, fontWeight: "bold", color: "#7B0909" },
-
   buttonsContainer: { flexDirection: "row", alignItems: "center" },
   detailsButton: {
     backgroundColor: "#f0f0f0",
@@ -154,10 +144,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#F9A825", // amarelo para diferenciar os sucos
+    backgroundColor: "#F9A825",
     justifyContent: "center",
     alignItems: "center",
   },
   addBtnText: { color: "#FFF", fontSize: 22, fontWeight: "bold" },
 });
-

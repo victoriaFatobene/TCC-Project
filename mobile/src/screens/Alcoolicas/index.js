@@ -1,15 +1,18 @@
 // src/screens/BebidasAlcoolicas/index.js
 import React from "react";
 import {
-  SafeAreaView,
+  // MODIFICAÇÃO 1: Trocamos SafeAreaView por View e adicionamos StatusBar
   View,
   Text,
   FlatList,
   Image,
   TouchableOpacity,
   StyleSheet,
+  StatusBar,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
+// MODIFICAÇÃO 2: Importamos o hook da área segura
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const bebidasAlcoolicas = [
   {
@@ -17,24 +20,21 @@ const bebidasAlcoolicas = [
     nome: "Cerveja Heineken",
     ingredientes: "Garrafa 600ml gelada.",
     preco: 12.0,
-    imagem:
-      "https://images.unsplash.com/photo-1603461593863-c3c747eafd95?q=80&w=1964&auto=format&fit=crop",
+    imagem: "https://images.unsplash.com/photo-1603461593863-c3c747eafd95?q=80&w=1964&auto=format&fit=crop",
   },
   {
     id: "a2",
     nome: "Vinho Tinto",
     ingredientes: "Taça de vinho tinto seco.",
     preco: 18.5,
-    imagem:
-      "https://images.unsplash.com/photo-1606787366850-de6330128bfc?q=80&w=2070&auto=format&fit=crop",
+    imagem: "https://images.unsplash.com/photo-1606787366850-de6330128bfc?q=80&w=2070&auto=format&fit=crop",
   },
   {
     id: "a3",
     nome: "Caipirinha",
     ingredientes: "Cachaça, limão e açúcar.",
     preco: 15.0,
-    imagem:
-      "https://images.unsplash.com/photo-1574786310643-6e98d68f077d?q=80&w=1974&auto=format&fit=crop",
+    imagem: "https://images.unsplash.com/photo-1574786310643-6e98d68f077d?q=80&w=1974&auto=format&fit=crop",
   },
 ];
 
@@ -60,7 +60,7 @@ const BebidaAlcoolicaItem = ({ item, navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.addBtn}
-              onPress={() => addToCart(item)}
+              onPress={() => addToCart({ ...item, quantidade: 1 })}
             >
               <Text style={styles.addBtnText}>+</Text>
             </TouchableOpacity>
@@ -72,10 +72,16 @@ const BebidaAlcoolicaItem = ({ item, navigation }) => {
 };
 
 export default function BebidasAlcoolicas({ navigation }) {
+  // MODIFICAÇÃO 3: Usamos o hook
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
+    // MODIFICAÇÃO 4: Usamos uma View normal
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+
+      {/* MODIFICAÇÃO 5: Aplicamos o padding dinâmico */}
+      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
@@ -85,7 +91,6 @@ export default function BebidasAlcoolicas({ navigation }) {
         <Text style={styles.headerTitle}>Bebidas Alcoólicas 🍺</Text>
       </View>
 
-      {/* LISTA */}
       <FlatList
         data={bebidasAlcoolicas}
         renderItem={({ item }) => (
@@ -94,11 +99,10 @@ export default function BebidasAlcoolicas({ navigation }) {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
-// ESTILOS
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
 
@@ -106,7 +110,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#7B0909",
-    paddingVertical: 15,
+    // MODIFICAÇÃO 6: Trocamos paddingVertical por paddingBottom
+    paddingBottom: 15,
     paddingHorizontal: 10,
     elevation: 4,
   },
@@ -121,7 +126,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 20,
     overflow: "hidden",
-
     elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },

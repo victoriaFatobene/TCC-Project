@@ -1,15 +1,15 @@
-// src/screens/Refrigerantes/index.js
 import React from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   FlatList,
   Image,
   TouchableOpacity,
   StyleSheet,
+  StatusBar,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const refrigerantes = [
   {
@@ -17,24 +17,21 @@ const refrigerantes = [
     nome: "Coca-Cola",
     ingredientes: "Lata 350ml gelada.",
     preco: 5.0,
-    imagem:
-      "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?q=80&w=1932&auto=format&fit=crop",
+    imagem: "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?q=80&w=1932&auto=format&fit=crop",
   },
   {
     id: "r2",
     nome: "Guaraná Antarctica",
     ingredientes: "Lata 350ml gelada.",
     preco: 5.0,
-    imagem:
-      "https://images.unsplash.com/photo-1628557114185-6e2e9a97ab62?q=80&w=1887&auto=format&fit=crop",
+    imagem: "https://images.unsplash.com/photo-1628557114185-6e2e9a97ab62?q=80&w=1887&auto=format&fit=crop",
   },
   {
     id: "r3",
     nome: "Sprite",
     ingredientes: "Lata 350ml gelada.",
     preco: 5.0,
-    imagem:
-      "https://images.unsplash.com/photo-1603126857599-1ecdf8d4e755?q=80&w=1887&auto=format&fit=crop",
+    imagem: "https://images.unsplash.com/photo-1603126857599-1ecdf8d4e755?q=80&w=1887&auto=format&fit=crop",
   },
 ];
 
@@ -46,7 +43,6 @@ const RefrigeranteItem = ({ item, navigation }) => {
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
-
         <View style={styles.footer}>
           <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
           <View style={styles.buttonsContainer}>
@@ -60,7 +56,7 @@ const RefrigeranteItem = ({ item, navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.addBtn}
-              onPress={() => addToCart(item)}
+              onPress={() => addToCart({ ...item, quantidade: 1 })}
             >
               <Text style={styles.addBtnText}>+</Text>
             </TouchableOpacity>
@@ -72,10 +68,12 @@ const RefrigeranteItem = ({ item, navigation }) => {
 };
 
 export default function Refrigerantes({ navigation }) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
@@ -85,7 +83,6 @@ export default function Refrigerantes({ navigation }) {
         <Text style={styles.headerTitle}>Refrigerantes 🥤</Text>
       </View>
 
-      {/* LISTA */}
       <FlatList
         data={refrigerantes}
         renderItem={({ item }) => (
@@ -94,34 +91,29 @@ export default function Refrigerantes({ navigation }) {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
-// ESTILOS
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
-
   header: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#7B0909",
-    paddingVertical: 15,
+    paddingBottom: 15,
     paddingHorizontal: 10,
     elevation: 4,
   },
   backButton: { padding: 5, marginRight: 15 },
   backButtonText: { color: "#FFFFFF", fontSize: 24, fontWeight: "bold" },
   headerTitle: { color: "#FFFFFF", fontSize: 22, fontWeight: "bold" },
-
   listContainer: { padding: 16 },
-
   card: {
     backgroundColor: "#FFF",
     borderRadius: 16,
     marginBottom: 20,
     overflow: "hidden",
-
     elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
@@ -142,7 +134,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   price: { fontSize: 16, fontWeight: "bold", color: "#7B0909" },
-
   buttonsContainer: { flexDirection: "row", alignItems: "center" },
   detailsButton: {
     backgroundColor: "#f0f0f0",
@@ -156,7 +147,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#0288D1", // azul para diferenciar dos botões de pizza
+    backgroundColor: "#0288D1",
     justifyContent: "center",
     alignItems: "center",
   },

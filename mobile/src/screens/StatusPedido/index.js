@@ -1,23 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TouchableOpacity, 
+  ScrollView,
+  StatusBar
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../services/supabase';
- 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 const StatusItem = ({ icon, label, isCompleted }) => (
-<View style={styles.statusItem}>
-<View style={[styles.statusIconContainer, isCompleted && styles.statusIconCompleted]}>
-<Ionicons name={icon} size={24} color={isCompleted ? '#FFF' : '#7B0909'} />
-</View>
-<Text style={[styles.statusLabel, isCompleted && styles.statusLabelCompleted]}>{label}</Text>
-</View>
+  <View style={styles.statusItem}>
+    <View style={[styles.statusIconContainer, isCompleted && styles.statusIconCompleted]}>
+      <Ionicons name={icon} size={24} color={isCompleted ? '#FFF' : '#7B0909'} />
+    </View>
+    <Text style={[styles.statusLabel, isCompleted && styles.statusLabelCompleted]}>{label}</Text>
+  </View>
 );
- 
+
 export default function StatusPedido({ navigation, route }) {
   const { pedido: pedidoInicial } = route.params;
   const [dadosDoPedido, setDadosDoPedido] = useState(pedidoInicial);
- 
+  const insets = useSafeAreaInsets();
+
   useEffect(() => {
-    // Escuta por atualizações na tabela 'orders' para o ID do nosso pedido
     const subscription = supabase
       .channel(`pedido-status-${dadosDoPedido.id}`)
       .on(
@@ -34,72 +42,82 @@ export default function StatusPedido({ navigation, route }) {
         }
       )
       .subscribe();
- 
-    // Quando o usuário sair da tela, a inscrição é removida para não gastar recursos
+
     return () => {
       supabase.removeChannel(subscription);
     };
   }, [dadosDoPedido.id]);
- 
-  // Adapte esta lista se os nomes dos status no seu banco forem diferentes
+
   const statusList = ['Na Fila', 'Em Preparo', 'Pronto!'];
   const currentStatusIndex = statusList.indexOf(dadosDoPedido.status);
   const isReady = dadosDoPedido.status === 'Pronto!';
- 
+
   return (
-<SafeAreaView style={styles.safeArea}>
-<View style={styles.header}>
-<TouchableOpacity onPress={() => navigation.navigate('HomeScreen')} style={styles.backButton}>
-<Text style={styles.backButtonText}>{'<'} Início</Text>
-</TouchableOpacity>
-<Text style={styles.headerTitle}>Status do Pedido</Text>
-</View>
-<ScrollView contentContainerStyle={styles.container}>
-<Text style={styles.orderId}>Senha do Pedido</Text>
-<Text style={styles.orderNumber}>{dadosDoPedido.id.substring(0, 8)}</Text>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')} style={styles.backButton}>
+          <Text style={styles.backButtonText}>{'<'} Início</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Status do Pedido</Text>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Text style={styles.orderId}>Senha do Pedido</Text>
+        <Text style={styles.orderNumber}>{dadosDoPedido.id.substring(0, 8)}</Text>
+        
         {isReady && (
-<View style={styles.readyCard}>
-<Ionicons name="checkmark-circle" size={40} color="#FFF" />
-<Text style={styles.readyText}>Seu pedido está pronto para retirada!</Text>
-</View>
+          <View style={styles.readyCard}>
+            <Ionicons name="checkmark-circle" size={40} color="#FFF" />
+            <Text style={styles.readyText}>Seu pedido está pronto para retirada!</Text>
+          </View>
         )}
-<View style={styles.statusTracker}>
-<StatusItem icon="hourglass-outline" label="Na Fila" isCompleted={currentStatusIndex >= 0} />
-<View style={styles.statusLine} />
-<StatusItem icon="pizza-outline" label="Em Preparo" isCompleted={currentStatusIndex >= 1} />
-<View style={styles.statusLine} />
-<StatusItem icon="checkmark-done-outline" label="Pronto!" isCompleted={currentStatusIndex >= 2} />
-</View>
-<View style={styles.summaryCard}>
-<Text style={styles.summaryTitle}>Resumo da Compra</Text>
+        
+        <View style={styles.statusTracker}>
+          <StatusItem icon="hourglass-outline" label="Na Fila" isCompleted={currentStatusIndex >= 0} />
+          <View style={styles.statusLine} />
+          <StatusItem icon="pizza-outline" label="Em Preparo" isCompleted={currentStatusIndex >= 1} />
+          <View style={styles.statusLine} />
+          <StatusItem icon="checkmark-done-outline" label="Pronto!" isCompleted={currentStatusIndex >= 2} />
+        </View>
+
+        <View style={styles.summaryCard}>
+          <Text style={styles.summaryTitle}>Resumo da Compra</Text>
           {dadosDoPedido.itens.map((item, index) => (
-<Text key={index} style={styles.summaryItem}>
+            <Text key={index} style={styles.summaryItem}>
               {item.qtd}x {item.nome}
-</Text>
+            </Text>
           ))}
-<View style={styles.divider} />
-<Text style={styles.summaryTotal}>Total: R$ {dadosDoPedido.total.toFixed(2)}</Text>
-</View>
+          <View style={styles.divider} />
+          <Text style={styles.summaryTotal}>Total: R$ {dadosDoPedido.total.toFixed(2)}</Text>
+        </View>
+        
         {isReady && (
-<TouchableOpacity 
+          <TouchableOpacity 
             style={styles.evaluateButton} 
             onPress={() => navigation.navigate('Avaliacao')}
->
-<Text style={styles.evaluateButtonText}>Avaliar Pedido</Text>
-</TouchableOpacity>
+          >
+            <Text style={styles.evaluateButtonText}>Avaliar Pedido</Text>
+          </TouchableOpacity>
         )}
-</ScrollView>
-</SafeAreaView>
+      </ScrollView>
+    </View>
   );
 }
- 
+
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#f5f5f5' },
-  header: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#7B0909', paddingVertical: 15, paddingHorizontal: 10 },
+  container: { flex: 1, backgroundColor: '#f5f5f5' },
+  header: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: '#7B0909', 
+    paddingBottom: 15, 
+    paddingHorizontal: 10 
+  },
   backButton: { padding: 5, marginRight: 15 },
   backButtonText: { color: '#FFFFFF', fontSize: 18, fontWeight: 'bold' },
   headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
-  container: { padding: 20, paddingBottom: 40 },
+  scrollContent: { padding: 20, paddingBottom: 40 },
   orderId: { fontSize: 22, fontWeight: '600', textAlign: 'center', color: '#555' },
   orderNumber: { fontSize: 80, fontWeight: 'bold', textAlign: 'center', color: '#7B0909', marginBottom: 20 },
   readyCard: { backgroundColor: '#4CAF50', borderRadius: 12, padding: 20, flexDirection: 'row', alignItems: 'center', elevation: 4, marginBottom: 30 },

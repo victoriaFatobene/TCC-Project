@@ -1,38 +1,44 @@
-// src/screens/ProductDetails/index.js
 import React from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   StyleSheet,
   Image,
   TouchableOpacity,
   ScrollView,
+  StatusBar,
+  Alert, // <-- A CORREÇÃO ESTÁ AQUI
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProductDetails({ route, navigation }) {
   const { product } = route.params;
   const { addToCart } = useCart();
+  const insets = useSafeAreaInsets();
+
+  const handleAddToCart = () => {
+    addToCart({ ...product, quantidade: 1 });
+    // Agora o Alert vai funcionar
+    // Alert.alert("Sucesso!", `${product.nome} foi adicionado ao carrinho.`);
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
         >
           <Text style={styles.backButtonText}>{"<"}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{product.nome}</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>{product.nome}</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Imagem */}
         <Image source={{ uri: product.imagem }} style={styles.productImage} />
 
-        {/* Detalhes */}
         <View style={styles.detailsContainer}>
           <Text style={styles.productName}>{product.nome}</Text>
           <Text style={styles.productPrice}>R$ {product.preco.toFixed(2)}</Text>
@@ -41,15 +47,14 @@ export default function ProductDetails({ route, navigation }) {
           </Text>
         </View>
 
-        {/* Botão Carrinho */}
         <TouchableOpacity
           style={styles.cartButton}
-          onPress={() => addToCart(product)}
+          onPress={handleAddToCart}
         >
           <Text style={styles.cartButtonText}>Adicionar ao Carrinho</Text>
         </TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -60,7 +65,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#7B0909",
-    paddingVertical: 15,
+    paddingBottom: 15,
     paddingHorizontal: 10,
     elevation: 4,
   },
@@ -73,7 +78,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  content: { padding: 20 },
+  content: { padding: 20, paddingBottom: 40 },
 
   productImage: {
     width: "100%",
@@ -103,7 +108,7 @@ const styles = StyleSheet.create({
   productDescription: { fontSize: 16, color: "#666", lineHeight: 22 },
 
   cartButton: {
-    backgroundColor: "#7B0909",
+    backgroundColor: "#4CAF50",
     paddingVertical: 15,
     borderRadius: 12,
     alignItems: "center",

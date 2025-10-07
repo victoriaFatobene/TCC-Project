@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  SafeAreaView,
   View,
   Text,
   Image,
@@ -9,13 +8,23 @@ import {
   ScrollView,
   StatusBar,
 } from 'react-native';
+// 1. Importamos a ferramenta para medir a área segura
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TelaInicial({ navigation }) {
+  // 2. Pegamos o valor do espaçamento seguro (principalmente o do topo)
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFF8F0" />
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.header}>
+    // Usamos uma View normal como container principal
+    <View style={styles.container}>
+      {/* 3. A StatusBar agora fica com o fundo vermelho e ícones claros */}
+      <StatusBar barStyle="light-content" backgroundColor="#B02A30" />
+
+      {/* 4. O ScrollView volta a englobar tudo */}
+      <ScrollView>
+        {/* 5. A MÁGICA: Aplicamos o espaçamento do topo DINAMICAMENTE no estilo do header */}
+        <View style={[styles.header, { paddingTop: insets.top + 5 }]}>
           <Text style={styles.headerTitle}>🍕 Cardápio</Text>
         </View>
 
@@ -51,22 +60,21 @@ export default function TelaInicial({ navigation }) {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  // Trocamos SafeAreaView por View aqui
+  container: {
     flex: 1,
-    backgroundColor: '#FFF8F0', // fundo bege claro, aconchegante
-  },
-  scrollView: {
-    flex: 1,
+    backgroundColor: '#FFF8F0',
   },
   header: {
     alignItems: 'center',
-    backgroundColor: '#B02A30', // vermelho mais suave
-    paddingVertical: 20,
+    backgroundColor: '#B02A30',
+    // O paddingTop será adicionado dinamicamente, mas mantemos o padding de baixo
+    paddingBottom: 20, 
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
     elevation: 4,

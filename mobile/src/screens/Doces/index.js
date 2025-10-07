@@ -1,31 +1,30 @@
 // src/screens/Doces/index.js
 import React from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   StyleSheet,
   FlatList,
   Image,
   TouchableOpacity,
+  StatusBar,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const doces = [
   {
     id: "do1",
     nome: "Pudim de Leite",
     preco: 12.0,
-    imagem:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2x_c_n0f0A_z_e_l_b_j-f_e_r_k_q_w_z_q&s",
+    imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2x_c_n0f0A_z_e_l_b_j-f_e_r_k_q_w_z_q&s",
     ingredientes: "Pudim de leite condensado com calda de caramelo.",
   },
   {
     id: "do2",
     nome: "Mousse de Maracujá",
     preco: 10.0,
-    imagem:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_w-l_z-f_e-r_k-q_w-z_q-f_e-r_k-q_w-z&s",
+    imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_w-l_z-f_e-r_k-q_w-z_q-f_e-r_k-q_w-z&s",
     ingredientes: "Mousse aerado com polpa natural de maracujá.",
   },
 ];
@@ -38,7 +37,6 @@ const DoceItem = ({ item, navigation }) => {
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
-
         <View style={styles.footer}>
           <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
           <View style={styles.buttonsContainer}>
@@ -52,7 +50,7 @@ const DoceItem = ({ item, navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.addBtn}
-              onPress={() => addToCart(item)}
+              onPress={() => addToCart({ ...item, quantidade: 1 })}
             >
               <Text style={styles.addBtnText}>+</Text>
             </TouchableOpacity>
@@ -64,10 +62,12 @@ const DoceItem = ({ item, navigation }) => {
 };
 
 export default function Doces({ navigation }) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
@@ -76,8 +76,6 @@ export default function Doces({ navigation }) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Doces 🍬</Text>
       </View>
-
-      {/* LISTA */}
       <FlatList
         data={doces}
         renderItem={({ item }) => (
@@ -86,34 +84,29 @@ export default function Doces({ navigation }) {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
-// ESTILOS
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
-
   header: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#7B0909",
-    paddingVertical: 15,
+    paddingBottom: 15,
     paddingHorizontal: 10,
     elevation: 4,
   },
   backButton: { padding: 5, marginRight: 15 },
   backButtonText: { color: "#FFFFFF", fontSize: 24, fontWeight: "bold" },
   headerTitle: { color: "#FFFFFF", fontSize: 22, fontWeight: "bold" },
-
   listContainer: { padding: 16 },
-
   card: {
     backgroundColor: "#FFF",
     borderRadius: 16,
     marginBottom: 20,
     overflow: "hidden",
-
     elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
@@ -127,14 +120,18 @@ const styles = StyleSheet.create({
   },
   cardContent: { padding: 12 },
   name: { fontSize: 18, fontWeight: "bold", color: "#333" },
-  ingredients: { fontSize: 14, color: "#777", marginTop: 4, marginBottom: 10 },
+  ingredients: {
+    fontSize: 14,
+    color: "#777",
+    marginTop: 4,
+    marginBottom: 10,
+  },
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   price: { fontSize: 16, fontWeight: "bold", color: "#7B0909" },
-
   buttonsContainer: { flexDirection: "row", alignItems: "center" },
   detailsButton: {
     backgroundColor: "#f0f0f0",

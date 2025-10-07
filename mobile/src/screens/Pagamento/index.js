@@ -1,60 +1,84 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-// MODIFICAÇÃO: Importamos o useCart completo
+import { 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  StyleSheet, 
+  FlatList,
+  Alert,
+  ActivityIndicator,
+  StatusBar
+} from 'react-native';
 import { useCart } from '../../contexts/CartContext';
 import { Ionicons } from '@expo/vector-icons';
- 
+import { supabase } from '../../services/supabase';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 export default function Pagamento({ navigation, route }) {
-  // MODIFICAÇÃO: Pegamos os itens, o subtotal e a função de limpar do carrinho
   const { cartItems, clearCart } = useCart();
-  const subtotal = cartItems.reduce((total, item) => total + item.preco * item.quantidade, 0);
- 
+  const subtotal = cartItems.reduce((total, item) => total + (item.preco || 0) * (item.quantidade || 1), 0);
+  
   const [metodo, setMetodo] = useState('dinheiro');
   const [cartoes, setCartoes] = useState([
     { id: '1', final: '1234', nome: 'Meu Cartão Fictício' },
   ]);
   const [cartaoSelecionado, setCartaoSelecionado] = useState(null);
- 
+  const [loading, setLoading] = useState(false);
+  const insets = useSafeAreaInsets();
+
   useEffect(() => {
     if (route.params?.novoCartao) {
       setCartoes(listaAnterior => [...listaAnterior, route.params.novoCartao]);
     }
   }, [route.params?.novoCartao]);
- 
-  const handleFinalizarPedido = () => {
+
+  const handleFinalizarPedido = async () => {
     if (metodo === 'cartao' && !cartaoSelecionado) {
-      alert('Por favor, selecione um cartão.');
+      Alert.alert('Atenção', 'Por favor, selecione um cartão.');
       return;
     }
- 
-    // MODIFICAÇÃO: Criamos um objeto com os dados REAIS do pedido
-    const pedidoFinalizado = {
-      id: Math.floor(Math.random() * 1000).toString(), // Gera uma senha/ID aleatória
-      status: 'Na Fila', // O pedido sempre começa "Na Fila"
-      itens: cartItems.map(item => ({ nome: item.nome, qtd: item.quantidade })),
-      total: subtotal,
-    };
-   
-    // Limpamos o carrinho
-    clearCart();
- 
-    // MODIFICAÇÃO: Enviamos o objeto 'pedidoFinalizado' para a próxima tela
-    navigation.navigate('StatusPedido', { pedido: pedidoFinalizado });
+
+    setLoading(true);
+
+    const novoPedido = { status: 'Na Fila' };
+
+    const { data: pedidoCriado, error } = await supabase
+      .from('orders')
+      .insert(novoPedido)
+      .select()
+      .single();
+
+    setLoading(false);
+
+    if (error) {
+      console.error("Erro ao criar pedido:", error);
+      Alert.alert("Erro", `Não foi possível criar o pedido. Mensagem: ${error.message}`);
+    } else {
+      clearCart();
+      
+      const dadosParaStatus = {
+        ...pedidoCriado,
+        itens: cartItems.map(item => ({ nome: item.nome, qtd: item.quantidade })),
+        total: subtotal,
+      };
+      
+      navigation.navigate('StatusPedido', { pedido: dadosParaStatus });
+    }
   };
- 
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* O resto do seu código de Pagamento continua aqui, sem alterações... */}
-      <View style={styles.header}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backButtonText}>{'<'}</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Pagamento</Text>
       </View>
- 
+
       <View style={styles.content}>
         <Text style={styles.title}>Escolha a forma de pagamento</Text>
- 
+
         <View style={styles.methodSelector}>
           <TouchableOpacity
             style={[styles.methodButton, metodo === 'dinheiro' && styles.methodSelected]}
@@ -69,7 +93,7 @@ export default function Pagamento({ navigation, route }) {
             <Text style={[styles.methodText, metodo === 'cartao' && styles.methodTextSelected]}>Cartão</Text>
           </TouchableOpacity>
         </View>
- 
+
         {metodo === 'cartao' && (
           <View style={styles.cardSection}>
             <Text style={styles.sectionTitle}>Meus Cartões</Text>
@@ -77,7 +101,7 @@ export default function Pagamento({ navigation, route }) {
               data={cartoes}
               keyExtractor={item => item.id}
               renderItem={({ item }) => (
-                <TouchableOpacity
+                <TouchableOpacity 
                   style={[styles.cardItem, cartaoSelecionado?.id === item.id && styles.cardSelected]}
                   onPress={() => setCartaoSelecionado(item)}
                 >
@@ -92,18 +116,28 @@ export default function Pagamento({ navigation, route }) {
             </TouchableOpacity>
           </View>
         )}
- 
-        <TouchableOpacity style={styles.confirmButton} onPress={handleFinalizarPedido}>
-          <Text style={styles.confirmButtonText}>Finalizar Pedido</Text>
+
+        <TouchableOpacity style={styles.confirmButton} onPress={handleFinalizarPedido} disabled={loading}>
+          {loading ? (
+            <ActivityIndicator color="#FFF" />
+          ) : (
+            <Text style={styles.confirmButtonText}>Finalizar Pedido</Text>
+          )}
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
- 
+
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#f5f5f5' },
-    header: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#7B0909', paddingVertical: 15, paddingHorizontal: 15 },
+    header: { 
+      flexDirection: 'row', 
+      alignItems: 'center', 
+      backgroundColor: '#7B0909', 
+      paddingBottom: 15, 
+      paddingHorizontal: 15 
+    },
     backButtonText: { color: '#FFFFFF', fontSize: 24, fontWeight: 'bold', marginRight: 20 },
     headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
     content: { flex: 1, padding: 20 },
