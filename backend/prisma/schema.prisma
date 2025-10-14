@@ -54,7 +54,7 @@ model Product {
   imageUrl String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
- 
+
   // Relação com a categoria
   category Category @relation(fields: [categoryId], references: [id])
   categoryId String
@@ -64,7 +64,11 @@ model Product {
  
   // Relação com Item pedidos
   items Item[]
- 
+
+  // Relação com status
+  statusId   Int
+  status     Status   @relation(fields: [statusId], references: [id])
+
   @@map("products")
 }
  
@@ -199,6 +203,12 @@ model ItemModification {
  
   @@map("item_modifications")
 }
+  
+model Status {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  products Product[]
+}
 
 // Tabela de pagamentos - apresenta o tipo de pagamento do pedido
 model Payment {
@@ -239,6 +249,6 @@ model Review{
 
   client Client @relation(fields: [clientId], references: [id])
   clientId String 
-  
-  @@map("reviews")  
+
+  @@map("reviews")
 }

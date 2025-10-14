@@ -3,17 +3,11 @@ import prismaClient from "../../prisma";
 interface ProductRequest {
     category_id: string
 }
-
-class ListByCategoryService {
-    async execute({ category_id }: ProductRequest) {
-
-        const findByCategory = await prismaClient.product.findMany({
-            where: {
-                category_id: category_id
-            }
-        })
-        return findByCategory
-    }
+export class ListByCategoryService {
+  async execute(categoryId: string) {
+    const products = await prismaClient.product.findMany({
+      where: { categoryId },
+    });
+    return products;
+  }
 }
-
-export {ListByCategoryService}

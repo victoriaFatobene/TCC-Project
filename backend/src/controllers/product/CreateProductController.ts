@@ -8,17 +8,20 @@ class CreateProductController {
         const createProductService = new CreateProductService();
 
         if (!req.file) {
-            throw new Error("error upload file")
+            throw new Error("error upload file");
         } else {
+            const { filename: banner } = req.file;
 
-            const { originalname, filename: banner } = req.file;
+            // 🔑 Converte price para número (Float)
+            const numericPrice = Number(price);
 
             const product = await createProductService.execute({
                 name,
-                price,
+                price: numericPrice,
                 description,
                 banner,
-                category_id
+                category_id,
+                imageUrl: `${process.env.APP_URL}/files/${banner}`
             });
 
             res.json(product);
