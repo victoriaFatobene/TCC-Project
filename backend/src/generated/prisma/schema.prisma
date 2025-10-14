@@ -24,23 +24,21 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  // Relação com CategoryView
   categoryViews CategoryView[]
 
   @@map("users")
 }
 
-//Categorias(mostra o tipo do produto)
+//Tabela Categorias - mostra as categorias do cardápio
 model Category {
   id         String   @id @default(uuid())
   name       String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  // Relações
   products      Product[]
   categoryViews CategoryView[]
-  menuItems     MenuItem[] // Relação com a tabela MenuItem
+  menuItems     MenuItem[]
 
   @@map("categories")
 }
@@ -55,18 +53,14 @@ model Product {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  // Relação com a categoria
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId String
 
-  // Relação com a tabela de ingredientes
   productIngredients ProductIngredient[]
 
-  // Relação com Item pedidos
   items Item[]
 
-  // Relação com status
-  statusId Int
+  statusId String
   status   Status @relation(fields: [statusId], references: [id])
 
   @@map("products")
@@ -82,14 +76,9 @@ model Order {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  // Relação com Item
-  items Item[]
-
-  // Relação com Payment
+  items    Item[]
   payments Payment[]
-
-  // Relação com Review
-  review Review?
+  review   Review?
 
   @@map("orders")
 }
@@ -101,15 +90,12 @@ model Item {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  // Relação com Order e chave estrangeira
   order   Order  @relation(fields: [orderId], references: [id])
   orderId String
 
-  // Relação com Product e chave estrangeira
   product   Product @relation(fields: [productId], references: [id])
   productId String
 
-  // Relação com modif icações de item
   modifications ItemModification[]
 
   @@map("items")
@@ -122,11 +108,9 @@ model CategoryView {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  // Relação com o User, que representa o cliente
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  // Relação com a categoria que foi visualizada
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId String
 
@@ -160,7 +144,6 @@ model ProductIngredient {
   product    Product    @relation(fields: [productId], references: [id])
   ingredient Ingredient @relation(fields: [ingredientId], references: [id])
 
-  // Para garantir que não haja ingredientes duplicados para o mesmo produto
   @@unique([productId, ingredientId])
   @@map("product_ingredients")
 }
@@ -173,7 +156,6 @@ model Ingredient {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  //se relaciona com produtos e modificações de item
   productIngredients ProductIngredient[]
   itemModifications  ItemModification[]
 
@@ -186,21 +168,24 @@ model ItemModification {
   type      String
   createdAt DateTime @default(now())
 
-  // Relação com o Item do pedido
   item   Item   @relation(fields: [itemId], references: [id])
   itemId String
 
-  // Relação com o ingrediente que foi modificado
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   ingredientId String
 
   @@map("item_modifications")
 }
 
+// tabela status - apresenta os status do pedido
 model Status {
-  id       Int       @id @default(autoincrement())
-  name     String    @unique
+  id   String @id @default(uuid())
+  name String @unique
+
+  payments Payment[]
   products Product[]
+
+  @@map("statuses")
 }
 
 // Tabela de pagamentos - apresenta o tipo de pagamento do pedido
@@ -209,10 +194,12 @@ model Payment {
   paymentDate DateTime @default(now())
   amount      Decimal
   paymentType String
-  status      String
 
   order   Order?  @relation(fields: [orderId], references: [id])
   orderId String?
+
+  status   Status @relation(fields: [statusId], references: [id])
+  statusId String
 
   @@map("payments")
 }
@@ -230,7 +217,7 @@ model Client {
   @@map("clients")
 }
 
-// Tabela de Avaliação do site- salva as informações da pesquisa
+// Tabela de Avaliação - salva as informações da pesquisa
 model Review {
   id       String   @id @default(uuid())
   rating   Int

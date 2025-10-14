@@ -399,8 +399,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.15.0
-   * Query Engine version: 85179d7826409ee107a6ba334b5e305ae3fba9fb
+   * Prisma Client JS version: 6.16.1
+   * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
    */
   export type PrismaVersion = {
     client: string
@@ -1929,6 +1929,10 @@ export namespace Prisma {
       isolationLevel?: Prisma.TransactionIsolationLevel
     }
     /**
+     * Instance of a Driver Adapter, e.g., like one provided by `@prisma/adapter-planetscale`
+     */
+    adapter?: runtime.SqlDriverAdapterFactory | null
+    /**
      * Global configuration for omitting model fields by default.
      * 
      * @example
@@ -2270,10 +2274,12 @@ export namespace Prisma {
    */
 
   export type StatusCountOutputType = {
+    payments: number
     products: number
   }
 
   export type StatusCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    payments?: boolean | StatusCountOutputTypeCountPaymentsArgs
     products?: boolean | StatusCountOutputTypeCountProductsArgs
   }
 
@@ -2286,6 +2292,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the StatusCountOutputType
      */
     select?: StatusCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * StatusCountOutputType without action
+   */
+  export type StatusCountOutputTypeCountPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentWhereInput
   }
 
   /**
@@ -4541,12 +4554,10 @@ export namespace Prisma {
 
   export type ProductAvgAggregateOutputType = {
     price: number | null
-    statusId: number | null
   }
 
   export type ProductSumAggregateOutputType = {
     price: number | null
-    statusId: number | null
   }
 
   export type ProductMinAggregateOutputType = {
@@ -4558,7 +4569,7 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     categoryId: string | null
-    statusId: number | null
+    statusId: string | null
   }
 
   export type ProductMaxAggregateOutputType = {
@@ -4570,7 +4581,7 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     categoryId: string | null
-    statusId: number | null
+    statusId: string | null
   }
 
   export type ProductCountAggregateOutputType = {
@@ -4589,12 +4600,10 @@ export namespace Prisma {
 
   export type ProductAvgAggregateInputType = {
     price?: true
-    statusId?: true
   }
 
   export type ProductSumAggregateInputType = {
     price?: true
-    statusId?: true
   }
 
   export type ProductMinAggregateInputType = {
@@ -4729,7 +4738,7 @@ export namespace Prisma {
     created_at: Date
     updated_at: Date
     categoryId: string
-    statusId: number
+    statusId: string
     _count: ProductCountAggregateOutputType | null
     _avg: ProductAvgAggregateOutputType | null
     _sum: ProductSumAggregateOutputType | null
@@ -4842,7 +4851,7 @@ export namespace Prisma {
       created_at: Date
       updated_at: Date
       categoryId: string
-      statusId: number
+      statusId: string
     }, ExtArgs["result"]["product"]>
     composites: {}
   }
@@ -5278,7 +5287,7 @@ export namespace Prisma {
     readonly created_at: FieldRef<"Product", 'DateTime'>
     readonly updated_at: FieldRef<"Product", 'DateTime'>
     readonly categoryId: FieldRef<"Product", 'String'>
-    readonly statusId: FieldRef<"Product", 'Int'>
+    readonly statusId: FieldRef<"Product", 'String'>
   }
     
 
@@ -13506,27 +13515,17 @@ export namespace Prisma {
 
   export type AggregateStatus = {
     _count: StatusCountAggregateOutputType | null
-    _avg: StatusAvgAggregateOutputType | null
-    _sum: StatusSumAggregateOutputType | null
     _min: StatusMinAggregateOutputType | null
     _max: StatusMaxAggregateOutputType | null
   }
 
-  export type StatusAvgAggregateOutputType = {
-    id: number | null
-  }
-
-  export type StatusSumAggregateOutputType = {
-    id: number | null
-  }
-
   export type StatusMinAggregateOutputType = {
-    id: number | null
+    id: string | null
     name: string | null
   }
 
   export type StatusMaxAggregateOutputType = {
-    id: number | null
+    id: string | null
     name: string | null
   }
 
@@ -13536,14 +13535,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type StatusAvgAggregateInputType = {
-    id?: true
-  }
-
-  export type StatusSumAggregateInputType = {
-    id?: true
-  }
 
   export type StatusMinAggregateInputType = {
     id?: true
@@ -13599,18 +13590,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: StatusAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: StatusSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: StatusMinAggregateInputType
@@ -13641,18 +13620,14 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: StatusCountAggregateInputType | true
-    _avg?: StatusAvgAggregateInputType
-    _sum?: StatusSumAggregateInputType
     _min?: StatusMinAggregateInputType
     _max?: StatusMaxAggregateInputType
   }
 
   export type StatusGroupByOutputType = {
-    id: number
+    id: string
     name: string
     _count: StatusCountAggregateOutputType | null
-    _avg: StatusAvgAggregateOutputType | null
-    _sum: StatusSumAggregateOutputType | null
     _min: StatusMinAggregateOutputType | null
     _max: StatusMaxAggregateOutputType | null
   }
@@ -13674,6 +13649,7 @@ export namespace Prisma {
   export type StatusSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    payments?: boolean | Status$paymentsArgs<ExtArgs>
     products?: boolean | Status$productsArgs<ExtArgs>
     _count?: boolean | StatusCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["status"]>
@@ -13695,6 +13671,7 @@ export namespace Prisma {
 
   export type StatusOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name", ExtArgs["result"]["status"]>
   export type StatusInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    payments?: boolean | Status$paymentsArgs<ExtArgs>
     products?: boolean | Status$productsArgs<ExtArgs>
     _count?: boolean | StatusCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -13704,10 +13681,11 @@ export namespace Prisma {
   export type $StatusPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Status"
     objects: {
+      payments: Prisma.$PaymentPayload<ExtArgs>[]
       products: Prisma.$ProductPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
-      id: number
+      id: string
       name: string
     }, ExtArgs["result"]["status"]>
     composites: {}
@@ -14103,6 +14081,7 @@ export namespace Prisma {
    */
   export interface Prisma__StatusClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    payments<T extends Status$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, Status$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     products<T extends Status$productsArgs<ExtArgs> = {}>(args?: Subset<T, Status$productsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -14133,7 +14112,7 @@ export namespace Prisma {
    * Fields of the Status model
    */
   interface StatusFieldRefs {
-    readonly id: FieldRef<"Status", 'Int'>
+    readonly id: FieldRef<"Status", 'String'>
     readonly name: FieldRef<"Status", 'String'>
   }
     
@@ -14523,6 +14502,30 @@ export namespace Prisma {
   }
 
   /**
+   * Status.payments
+   */
+  export type Status$paymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    where?: PaymentWhereInput
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    cursor?: PaymentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PaymentScalarFieldEnum | PaymentScalarFieldEnum[]
+  }
+
+  /**
    * Status.products
    */
   export type Status$productsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14590,8 +14593,8 @@ export namespace Prisma {
     paymentDate: Date | null
     amount: Decimal | null
     paymentType: string | null
-    status: string | null
     orderId: string | null
+    statusId: string | null
   }
 
   export type PaymentMaxAggregateOutputType = {
@@ -14599,8 +14602,8 @@ export namespace Prisma {
     paymentDate: Date | null
     amount: Decimal | null
     paymentType: string | null
-    status: string | null
     orderId: string | null
+    statusId: string | null
   }
 
   export type PaymentCountAggregateOutputType = {
@@ -14608,8 +14611,8 @@ export namespace Prisma {
     paymentDate: number
     amount: number
     paymentType: number
-    status: number
     orderId: number
+    statusId: number
     _all: number
   }
 
@@ -14627,8 +14630,8 @@ export namespace Prisma {
     paymentDate?: true
     amount?: true
     paymentType?: true
-    status?: true
     orderId?: true
+    statusId?: true
   }
 
   export type PaymentMaxAggregateInputType = {
@@ -14636,8 +14639,8 @@ export namespace Prisma {
     paymentDate?: true
     amount?: true
     paymentType?: true
-    status?: true
     orderId?: true
+    statusId?: true
   }
 
   export type PaymentCountAggregateInputType = {
@@ -14645,8 +14648,8 @@ export namespace Prisma {
     paymentDate?: true
     amount?: true
     paymentType?: true
-    status?: true
     orderId?: true
+    statusId?: true
     _all?: true
   }
 
@@ -14741,8 +14744,8 @@ export namespace Prisma {
     paymentDate: Date
     amount: Decimal
     paymentType: string
-    status: string
     orderId: string | null
+    statusId: string
     _count: PaymentCountAggregateOutputType | null
     _avg: PaymentAvgAggregateOutputType | null
     _sum: PaymentSumAggregateOutputType | null
@@ -14769,9 +14772,10 @@ export namespace Prisma {
     paymentDate?: boolean
     amount?: boolean
     paymentType?: boolean
-    status?: boolean
     orderId?: boolean
+    statusId?: boolean
     order?: boolean | Payment$orderArgs<ExtArgs>
+    status?: boolean | StatusDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
 
   export type PaymentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14779,9 +14783,10 @@ export namespace Prisma {
     paymentDate?: boolean
     amount?: boolean
     paymentType?: boolean
-    status?: boolean
     orderId?: boolean
+    statusId?: boolean
     order?: boolean | Payment$orderArgs<ExtArgs>
+    status?: boolean | StatusDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
 
   export type PaymentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14789,9 +14794,10 @@ export namespace Prisma {
     paymentDate?: boolean
     amount?: boolean
     paymentType?: boolean
-    status?: boolean
     orderId?: boolean
+    statusId?: boolean
     order?: boolean | Payment$orderArgs<ExtArgs>
+    status?: boolean | StatusDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
 
   export type PaymentSelectScalar = {
@@ -14799,33 +14805,37 @@ export namespace Prisma {
     paymentDate?: boolean
     amount?: boolean
     paymentType?: boolean
-    status?: boolean
     orderId?: boolean
+    statusId?: boolean
   }
 
-  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "paymentDate" | "amount" | "paymentType" | "status" | "orderId", ExtArgs["result"]["payment"]>
+  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "paymentDate" | "amount" | "paymentType" | "orderId" | "statusId", ExtArgs["result"]["payment"]>
   export type PaymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | Payment$orderArgs<ExtArgs>
+    status?: boolean | StatusDefaultArgs<ExtArgs>
   }
   export type PaymentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | Payment$orderArgs<ExtArgs>
+    status?: boolean | StatusDefaultArgs<ExtArgs>
   }
   export type PaymentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | Payment$orderArgs<ExtArgs>
+    status?: boolean | StatusDefaultArgs<ExtArgs>
   }
 
   export type $PaymentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Payment"
     objects: {
       order: Prisma.$OrderPayload<ExtArgs> | null
+      status: Prisma.$StatusPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       paymentDate: Date
       amount: Prisma.Decimal
       paymentType: string
-      status: string
       orderId: string | null
+      statusId: string
     }, ExtArgs["result"]["payment"]>
     composites: {}
   }
@@ -15221,6 +15231,7 @@ export namespace Prisma {
   export interface Prisma__PaymentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     order<T extends Payment$orderArgs<ExtArgs> = {}>(args?: Subset<T, Payment$orderArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    status<T extends StatusDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StatusDefaultArgs<ExtArgs>>): Prisma__StatusClient<$Result.GetResult<Prisma.$StatusPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -15254,8 +15265,8 @@ export namespace Prisma {
     readonly paymentDate: FieldRef<"Payment", 'DateTime'>
     readonly amount: FieldRef<"Payment", 'Decimal'>
     readonly paymentType: FieldRef<"Payment", 'String'>
-    readonly status: FieldRef<"Payment", 'String'>
     readonly orderId: FieldRef<"Payment", 'String'>
+    readonly statusId: FieldRef<"Payment", 'String'>
   }
     
 
@@ -18017,8 +18028,8 @@ export namespace Prisma {
     paymentDate: 'paymentDate',
     amount: 'amount',
     paymentType: 'paymentType',
-    status: 'status',
-    orderId: 'orderId'
+    orderId: 'orderId',
+    statusId: 'statusId'
   };
 
   export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
@@ -18284,7 +18295,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Product"> | Date | string
     updated_at?: DateTimeFilter<"Product"> | Date | string
     categoryId?: StringFilter<"Product"> | string
-    statusId?: IntFilter<"Product"> | number
+    statusId?: StringFilter<"Product"> | string
     category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
     productIngredients?: ProductIngredientListRelationFilter
     items?: ItemListRelationFilter
@@ -18319,7 +18330,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Product"> | Date | string
     updated_at?: DateTimeFilter<"Product"> | Date | string
     categoryId?: StringFilter<"Product"> | string
-    statusId?: IntFilter<"Product"> | number
+    statusId?: StringFilter<"Product"> | string
     category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
     productIngredients?: ProductIngredientListRelationFilter
     items?: ItemListRelationFilter
@@ -18355,7 +18366,7 @@ export namespace Prisma {
     created_at?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     categoryId?: StringWithAggregatesFilter<"Product"> | string
-    statusId?: IntWithAggregatesFilter<"Product"> | number
+    statusId?: StringWithAggregatesFilter<"Product"> | string
   }
 
   export type OrderWhereInput = {
@@ -18800,23 +18811,26 @@ export namespace Prisma {
     AND?: StatusWhereInput | StatusWhereInput[]
     OR?: StatusWhereInput[]
     NOT?: StatusWhereInput | StatusWhereInput[]
-    id?: IntFilter<"Status"> | number
+    id?: StringFilter<"Status"> | string
     name?: StringFilter<"Status"> | string
+    payments?: PaymentListRelationFilter
     products?: ProductListRelationFilter
   }
 
   export type StatusOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    payments?: PaymentOrderByRelationAggregateInput
     products?: ProductOrderByRelationAggregateInput
   }
 
   export type StatusWhereUniqueInput = Prisma.AtLeast<{
-    id?: number
+    id?: string
     name?: string
     AND?: StatusWhereInput | StatusWhereInput[]
     OR?: StatusWhereInput[]
     NOT?: StatusWhereInput | StatusWhereInput[]
+    payments?: PaymentListRelationFilter
     products?: ProductListRelationFilter
   }, "id" | "name">
 
@@ -18824,17 +18838,15 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     _count?: StatusCountOrderByAggregateInput
-    _avg?: StatusAvgOrderByAggregateInput
     _max?: StatusMaxOrderByAggregateInput
     _min?: StatusMinOrderByAggregateInput
-    _sum?: StatusSumOrderByAggregateInput
   }
 
   export type StatusScalarWhereWithAggregatesInput = {
     AND?: StatusScalarWhereWithAggregatesInput | StatusScalarWhereWithAggregatesInput[]
     OR?: StatusScalarWhereWithAggregatesInput[]
     NOT?: StatusScalarWhereWithAggregatesInput | StatusScalarWhereWithAggregatesInput[]
-    id?: IntWithAggregatesFilter<"Status"> | number
+    id?: StringWithAggregatesFilter<"Status"> | string
     name?: StringWithAggregatesFilter<"Status"> | string
   }
 
@@ -18846,9 +18858,10 @@ export namespace Prisma {
     paymentDate?: DateTimeFilter<"Payment"> | Date | string
     amount?: DecimalFilter<"Payment"> | Decimal | DecimalJsLike | number | string
     paymentType?: StringFilter<"Payment"> | string
-    status?: StringFilter<"Payment"> | string
     orderId?: StringNullableFilter<"Payment"> | string | null
+    statusId?: StringFilter<"Payment"> | string
     order?: XOR<OrderNullableScalarRelationFilter, OrderWhereInput> | null
+    status?: XOR<StatusScalarRelationFilter, StatusWhereInput>
   }
 
   export type PaymentOrderByWithRelationInput = {
@@ -18856,9 +18869,10 @@ export namespace Prisma {
     paymentDate?: SortOrder
     amount?: SortOrder
     paymentType?: SortOrder
-    status?: SortOrder
     orderId?: SortOrderInput | SortOrder
+    statusId?: SortOrder
     order?: OrderOrderByWithRelationInput
+    status?: StatusOrderByWithRelationInput
   }
 
   export type PaymentWhereUniqueInput = Prisma.AtLeast<{
@@ -18869,9 +18883,10 @@ export namespace Prisma {
     paymentDate?: DateTimeFilter<"Payment"> | Date | string
     amount?: DecimalFilter<"Payment"> | Decimal | DecimalJsLike | number | string
     paymentType?: StringFilter<"Payment"> | string
-    status?: StringFilter<"Payment"> | string
     orderId?: StringNullableFilter<"Payment"> | string | null
+    statusId?: StringFilter<"Payment"> | string
     order?: XOR<OrderNullableScalarRelationFilter, OrderWhereInput> | null
+    status?: XOR<StatusScalarRelationFilter, StatusWhereInput>
   }, "id">
 
   export type PaymentOrderByWithAggregationInput = {
@@ -18879,8 +18894,8 @@ export namespace Prisma {
     paymentDate?: SortOrder
     amount?: SortOrder
     paymentType?: SortOrder
-    status?: SortOrder
     orderId?: SortOrderInput | SortOrder
+    statusId?: SortOrder
     _count?: PaymentCountOrderByAggregateInput
     _avg?: PaymentAvgOrderByAggregateInput
     _max?: PaymentMaxOrderByAggregateInput
@@ -18896,8 +18911,8 @@ export namespace Prisma {
     paymentDate?: DateTimeWithAggregatesFilter<"Payment"> | Date | string
     amount?: DecimalWithAggregatesFilter<"Payment"> | Decimal | DecimalJsLike | number | string
     paymentType?: StringWithAggregatesFilter<"Payment"> | string
-    status?: StringWithAggregatesFilter<"Payment"> | string
     orderId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
+    statusId?: StringWithAggregatesFilter<"Payment"> | string
   }
 
   export type ClientWhereInput = {
@@ -19171,7 +19186,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     categoryId: string
-    statusId: number
+    statusId: string
     productIngredients?: ProductIngredientUncheckedCreateNestedManyWithoutProductInput
     items?: ItemUncheckedCreateNestedManyWithoutProductInput
   }
@@ -19199,7 +19214,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     categoryId?: StringFieldUpdateOperationsInput | string
-    statusId?: IntFieldUpdateOperationsInput | number
+    statusId?: StringFieldUpdateOperationsInput | string
     productIngredients?: ProductIngredientUncheckedUpdateManyWithoutProductNestedInput
     items?: ItemUncheckedUpdateManyWithoutProductNestedInput
   }
@@ -19213,7 +19228,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     categoryId: string
-    statusId: number
+    statusId: string
   }
 
   export type ProductUpdateManyMutationInput = {
@@ -19235,7 +19250,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     categoryId?: StringFieldUpdateOperationsInput | string
-    statusId?: IntFieldUpdateOperationsInput | number
+    statusId?: StringFieldUpdateOperationsInput | string
   }
 
   export type OrderCreateInput = {
@@ -19674,38 +19689,45 @@ export namespace Prisma {
   }
 
   export type StatusCreateInput = {
+    id?: string
     name: string
+    payments?: PaymentCreateNestedManyWithoutStatusInput
     products?: ProductCreateNestedManyWithoutStatusInput
   }
 
   export type StatusUncheckedCreateInput = {
-    id?: number
+    id?: string
     name: string
+    payments?: PaymentUncheckedCreateNestedManyWithoutStatusInput
     products?: ProductUncheckedCreateNestedManyWithoutStatusInput
   }
 
   export type StatusUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    payments?: PaymentUpdateManyWithoutStatusNestedInput
     products?: ProductUpdateManyWithoutStatusNestedInput
   }
 
   export type StatusUncheckedUpdateInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    payments?: PaymentUncheckedUpdateManyWithoutStatusNestedInput
     products?: ProductUncheckedUpdateManyWithoutStatusNestedInput
   }
 
   export type StatusCreateManyInput = {
-    id?: number
+    id?: string
     name: string
   }
 
   export type StatusUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
   }
 
   export type StatusUncheckedUpdateManyInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
   }
 
@@ -19714,8 +19736,8 @@ export namespace Prisma {
     paymentDate?: Date | string
     amount: Decimal | DecimalJsLike | number | string
     paymentType: string
-    status: string
     order?: OrderCreateNestedOneWithoutPaymentsInput
+    status: StatusCreateNestedOneWithoutPaymentsInput
   }
 
   export type PaymentUncheckedCreateInput = {
@@ -19723,8 +19745,8 @@ export namespace Prisma {
     paymentDate?: Date | string
     amount: Decimal | DecimalJsLike | number | string
     paymentType: string
-    status: string
     orderId?: string | null
+    statusId: string
   }
 
   export type PaymentUpdateInput = {
@@ -19732,8 +19754,8 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paymentType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
     order?: OrderUpdateOneWithoutPaymentsNestedInput
+    status?: StatusUpdateOneRequiredWithoutPaymentsNestedInput
   }
 
   export type PaymentUncheckedUpdateInput = {
@@ -19741,8 +19763,8 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paymentType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
     orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    statusId?: StringFieldUpdateOperationsInput | string
   }
 
   export type PaymentCreateManyInput = {
@@ -19750,8 +19772,8 @@ export namespace Prisma {
     paymentDate?: Date | string
     amount: Decimal | DecimalJsLike | number | string
     paymentType: string
-    status: string
     orderId?: string | null
+    statusId: string
   }
 
   export type PaymentUpdateManyMutationInput = {
@@ -19759,7 +19781,6 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paymentType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
   }
 
   export type PaymentUncheckedUpdateManyInput = {
@@ -19767,8 +19788,8 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paymentType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
     orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    statusId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ClientCreateInput = {
@@ -20039,17 +20060,6 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type CategoryScalarRelationFilter = {
     is?: CategoryWhereInput
     isNot?: CategoryWhereInput
@@ -20094,7 +20104,6 @@ export namespace Prisma {
 
   export type ProductAvgOrderByAggregateInput = {
     price?: SortOrder
-    statusId?: SortOrder
   }
 
   export type ProductMaxOrderByAggregateInput = {
@@ -20123,7 +20132,6 @@ export namespace Prisma {
 
   export type ProductSumOrderByAggregateInput = {
     price?: SortOrder
-    statusId?: SortOrder
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -20142,7 +20150,7 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+  export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
     notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -20150,12 +20158,7 @@ export namespace Prisma {
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -20234,6 +20237,22 @@ export namespace Prisma {
 
   export type OrderSumOrderByAggregateInput = {
     table?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -20481,10 +20500,6 @@ export namespace Prisma {
     name?: SortOrder
   }
 
-  export type StatusAvgOrderByAggregateInput = {
-    id?: SortOrder
-  }
-
   export type StatusMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -20493,10 +20508,6 @@ export namespace Prisma {
   export type StatusMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-  }
-
-  export type StatusSumOrderByAggregateInput = {
-    id?: SortOrder
   }
 
   export type DecimalFilter<$PrismaModel = never> = {
@@ -20520,8 +20531,8 @@ export namespace Prisma {
     paymentDate?: SortOrder
     amount?: SortOrder
     paymentType?: SortOrder
-    status?: SortOrder
     orderId?: SortOrder
+    statusId?: SortOrder
   }
 
   export type PaymentAvgOrderByAggregateInput = {
@@ -20533,8 +20544,8 @@ export namespace Prisma {
     paymentDate?: SortOrder
     amount?: SortOrder
     paymentType?: SortOrder
-    status?: SortOrder
     orderId?: SortOrder
+    statusId?: SortOrder
   }
 
   export type PaymentMinOrderByAggregateInput = {
@@ -20542,8 +20553,8 @@ export namespace Prisma {
     paymentDate?: SortOrder
     amount?: SortOrder
     paymentType?: SortOrder
-    status?: SortOrder
     orderId?: SortOrder
+    statusId?: SortOrder
   }
 
   export type PaymentSumOrderByAggregateInput = {
@@ -20908,14 +20919,6 @@ export namespace Prisma {
     update?: XOR<XOR<StatusUpdateToOneWithWhereWithoutProductsInput, StatusUpdateWithoutProductsInput>, StatusUncheckedUpdateWithoutProductsInput>
   }
 
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type ProductIngredientUncheckedUpdateManyWithoutProductNestedInput = {
     create?: XOR<ProductIngredientCreateWithoutProductInput, ProductIngredientUncheckedCreateWithoutProductInput> | ProductIngredientCreateWithoutProductInput[] | ProductIngredientUncheckedCreateWithoutProductInput[]
     connectOrCreate?: ProductIngredientCreateOrConnectWithoutProductInput | ProductIngredientCreateOrConnectWithoutProductInput[]
@@ -20982,6 +20985,14 @@ export namespace Prisma {
     create?: XOR<ReviewCreateWithoutOrderInput, ReviewUncheckedCreateWithoutOrderInput>
     connectOrCreate?: ReviewCreateOrConnectWithoutOrderInput
     connect?: ReviewWhereUniqueInput
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -21320,6 +21331,13 @@ export namespace Prisma {
     update?: XOR<XOR<IngredientUpdateToOneWithWhereWithoutItemModificationsInput, IngredientUpdateWithoutItemModificationsInput>, IngredientUncheckedUpdateWithoutItemModificationsInput>
   }
 
+  export type PaymentCreateNestedManyWithoutStatusInput = {
+    create?: XOR<PaymentCreateWithoutStatusInput, PaymentUncheckedCreateWithoutStatusInput> | PaymentCreateWithoutStatusInput[] | PaymentUncheckedCreateWithoutStatusInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutStatusInput | PaymentCreateOrConnectWithoutStatusInput[]
+    createMany?: PaymentCreateManyStatusInputEnvelope
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+  }
+
   export type ProductCreateNestedManyWithoutStatusInput = {
     create?: XOR<ProductCreateWithoutStatusInput, ProductUncheckedCreateWithoutStatusInput> | ProductCreateWithoutStatusInput[] | ProductUncheckedCreateWithoutStatusInput[]
     connectOrCreate?: ProductCreateOrConnectWithoutStatusInput | ProductCreateOrConnectWithoutStatusInput[]
@@ -21327,11 +21345,32 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
   }
 
+  export type PaymentUncheckedCreateNestedManyWithoutStatusInput = {
+    create?: XOR<PaymentCreateWithoutStatusInput, PaymentUncheckedCreateWithoutStatusInput> | PaymentCreateWithoutStatusInput[] | PaymentUncheckedCreateWithoutStatusInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutStatusInput | PaymentCreateOrConnectWithoutStatusInput[]
+    createMany?: PaymentCreateManyStatusInputEnvelope
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+  }
+
   export type ProductUncheckedCreateNestedManyWithoutStatusInput = {
     create?: XOR<ProductCreateWithoutStatusInput, ProductUncheckedCreateWithoutStatusInput> | ProductCreateWithoutStatusInput[] | ProductUncheckedCreateWithoutStatusInput[]
     connectOrCreate?: ProductCreateOrConnectWithoutStatusInput | ProductCreateOrConnectWithoutStatusInput[]
     createMany?: ProductCreateManyStatusInputEnvelope
     connect?: ProductWhereUniqueInput | ProductWhereUniqueInput[]
+  }
+
+  export type PaymentUpdateManyWithoutStatusNestedInput = {
+    create?: XOR<PaymentCreateWithoutStatusInput, PaymentUncheckedCreateWithoutStatusInput> | PaymentCreateWithoutStatusInput[] | PaymentUncheckedCreateWithoutStatusInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutStatusInput | PaymentCreateOrConnectWithoutStatusInput[]
+    upsert?: PaymentUpsertWithWhereUniqueWithoutStatusInput | PaymentUpsertWithWhereUniqueWithoutStatusInput[]
+    createMany?: PaymentCreateManyStatusInputEnvelope
+    set?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    disconnect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    delete?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    update?: PaymentUpdateWithWhereUniqueWithoutStatusInput | PaymentUpdateWithWhereUniqueWithoutStatusInput[]
+    updateMany?: PaymentUpdateManyWithWhereWithoutStatusInput | PaymentUpdateManyWithWhereWithoutStatusInput[]
+    deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
   }
 
   export type ProductUpdateManyWithoutStatusNestedInput = {
@@ -21346,6 +21385,20 @@ export namespace Prisma {
     update?: ProductUpdateWithWhereUniqueWithoutStatusInput | ProductUpdateWithWhereUniqueWithoutStatusInput[]
     updateMany?: ProductUpdateManyWithWhereWithoutStatusInput | ProductUpdateManyWithWhereWithoutStatusInput[]
     deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
+  }
+
+  export type PaymentUncheckedUpdateManyWithoutStatusNestedInput = {
+    create?: XOR<PaymentCreateWithoutStatusInput, PaymentUncheckedCreateWithoutStatusInput> | PaymentCreateWithoutStatusInput[] | PaymentUncheckedCreateWithoutStatusInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutStatusInput | PaymentCreateOrConnectWithoutStatusInput[]
+    upsert?: PaymentUpsertWithWhereUniqueWithoutStatusInput | PaymentUpsertWithWhereUniqueWithoutStatusInput[]
+    createMany?: PaymentCreateManyStatusInputEnvelope
+    set?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    disconnect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    delete?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    update?: PaymentUpdateWithWhereUniqueWithoutStatusInput | PaymentUpdateWithWhereUniqueWithoutStatusInput[]
+    updateMany?: PaymentUpdateManyWithWhereWithoutStatusInput | PaymentUpdateManyWithWhereWithoutStatusInput[]
+    deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
   }
 
   export type ProductUncheckedUpdateManyWithoutStatusNestedInput = {
@@ -21368,6 +21421,12 @@ export namespace Prisma {
     connect?: OrderWhereUniqueInput
   }
 
+  export type StatusCreateNestedOneWithoutPaymentsInput = {
+    create?: XOR<StatusCreateWithoutPaymentsInput, StatusUncheckedCreateWithoutPaymentsInput>
+    connectOrCreate?: StatusCreateOrConnectWithoutPaymentsInput
+    connect?: StatusWhereUniqueInput
+  }
+
   export type DecimalFieldUpdateOperationsInput = {
     set?: Decimal | DecimalJsLike | number | string
     increment?: Decimal | DecimalJsLike | number | string
@@ -21384,6 +21443,14 @@ export namespace Prisma {
     delete?: OrderWhereInput | boolean
     connect?: OrderWhereUniqueInput
     update?: XOR<XOR<OrderUpdateToOneWithWhereWithoutPaymentsInput, OrderUpdateWithoutPaymentsInput>, OrderUncheckedUpdateWithoutPaymentsInput>
+  }
+
+  export type StatusUpdateOneRequiredWithoutPaymentsNestedInput = {
+    create?: XOR<StatusCreateWithoutPaymentsInput, StatusUncheckedCreateWithoutPaymentsInput>
+    connectOrCreate?: StatusCreateOrConnectWithoutPaymentsInput
+    upsert?: StatusUpsertWithoutPaymentsInput
+    connect?: StatusWhereUniqueInput
+    update?: XOR<XOR<StatusUpdateToOneWithWhereWithoutPaymentsInput, StatusUpdateWithoutPaymentsInput>, StatusUncheckedUpdateWithoutPaymentsInput>
   }
 
   export type ReviewCreateNestedManyWithoutClientInput = {
@@ -21550,22 +21617,6 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -21583,6 +21634,22 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -21717,7 +21784,7 @@ export namespace Prisma {
     imageUrl: string
     created_at?: Date | string
     updated_at?: Date | string
-    statusId: number
+    statusId: string
     productIngredients?: ProductIngredientUncheckedCreateNestedManyWithoutProductInput
     items?: ItemUncheckedCreateNestedManyWithoutProductInput
   }
@@ -21812,7 +21879,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Product"> | Date | string
     updated_at?: DateTimeFilter<"Product"> | Date | string
     categoryId?: StringFilter<"Product"> | string
-    statusId?: IntFilter<"Product"> | number
+    statusId?: StringFilter<"Product"> | string
   }
 
   export type CategoryViewUpsertWithWhereUniqueWithoutCategoryInput = {
@@ -21935,12 +22002,15 @@ export namespace Prisma {
   }
 
   export type StatusCreateWithoutProductsInput = {
+    id?: string
     name: string
+    payments?: PaymentCreateNestedManyWithoutStatusInput
   }
 
   export type StatusUncheckedCreateWithoutProductsInput = {
-    id?: number
+    id?: string
     name: string
+    payments?: PaymentUncheckedCreateNestedManyWithoutStatusInput
   }
 
   export type StatusCreateOrConnectWithoutProductsInput = {
@@ -22043,12 +22113,15 @@ export namespace Prisma {
   }
 
   export type StatusUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    payments?: PaymentUpdateManyWithoutStatusNestedInput
   }
 
   export type StatusUncheckedUpdateWithoutProductsInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    payments?: PaymentUncheckedUpdateManyWithoutStatusNestedInput
   }
 
   export type ItemCreateWithoutOrderInput = {
@@ -22084,7 +22157,7 @@ export namespace Prisma {
     paymentDate?: Date | string
     amount: Decimal | DecimalJsLike | number | string
     paymentType: string
-    status: string
+    status: StatusCreateNestedOneWithoutPaymentsInput
   }
 
   export type PaymentUncheckedCreateWithoutOrderInput = {
@@ -22092,7 +22165,7 @@ export namespace Prisma {
     paymentDate?: Date | string
     amount: Decimal | DecimalJsLike | number | string
     paymentType: string
-    status: string
+    statusId: string
   }
 
   export type PaymentCreateOrConnectWithoutOrderInput = {
@@ -22166,8 +22239,8 @@ export namespace Prisma {
     paymentDate?: DateTimeFilter<"Payment"> | Date | string
     amount?: DecimalFilter<"Payment"> | Decimal | DecimalJsLike | number | string
     paymentType?: StringFilter<"Payment"> | string
-    status?: StringFilter<"Payment"> | string
     orderId?: StringNullableFilter<"Payment"> | string | null
+    statusId?: StringFilter<"Payment"> | string
   }
 
   export type ReviewUpsertWithoutOrderInput = {
@@ -22248,7 +22321,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     categoryId: string
-    statusId: number
+    statusId: string
     productIngredients?: ProductIngredientUncheckedCreateNestedManyWithoutProductInput
   }
 
@@ -22349,7 +22422,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     categoryId?: StringFieldUpdateOperationsInput | string
-    statusId?: IntFieldUpdateOperationsInput | number
+    statusId?: StringFieldUpdateOperationsInput | string
     productIngredients?: ProductIngredientUncheckedUpdateManyWithoutProductNestedInput
   }
 
@@ -22558,7 +22631,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     categoryId: string
-    statusId: number
+    statusId: string
     items?: ItemUncheckedCreateNestedManyWithoutProductInput
   }
 
@@ -22623,7 +22696,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     categoryId?: StringFieldUpdateOperationsInput | string
-    statusId?: IntFieldUpdateOperationsInput | number
+    statusId?: StringFieldUpdateOperationsInput | string
     items?: ItemUncheckedUpdateManyWithoutProductNestedInput
   }
 
@@ -22838,6 +22911,32 @@ export namespace Prisma {
     productIngredients?: ProductIngredientUncheckedUpdateManyWithoutIngredientNestedInput
   }
 
+  export type PaymentCreateWithoutStatusInput = {
+    id?: string
+    paymentDate?: Date | string
+    amount: Decimal | DecimalJsLike | number | string
+    paymentType: string
+    order?: OrderCreateNestedOneWithoutPaymentsInput
+  }
+
+  export type PaymentUncheckedCreateWithoutStatusInput = {
+    id?: string
+    paymentDate?: Date | string
+    amount: Decimal | DecimalJsLike | number | string
+    paymentType: string
+    orderId?: string | null
+  }
+
+  export type PaymentCreateOrConnectWithoutStatusInput = {
+    where: PaymentWhereUniqueInput
+    create: XOR<PaymentCreateWithoutStatusInput, PaymentUncheckedCreateWithoutStatusInput>
+  }
+
+  export type PaymentCreateManyStatusInputEnvelope = {
+    data: PaymentCreateManyStatusInput | PaymentCreateManyStatusInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProductCreateWithoutStatusInput = {
     id?: string
     name: string
@@ -22872,6 +22971,22 @@ export namespace Prisma {
   export type ProductCreateManyStatusInputEnvelope = {
     data: ProductCreateManyStatusInput | ProductCreateManyStatusInput[]
     skipDuplicates?: boolean
+  }
+
+  export type PaymentUpsertWithWhereUniqueWithoutStatusInput = {
+    where: PaymentWhereUniqueInput
+    update: XOR<PaymentUpdateWithoutStatusInput, PaymentUncheckedUpdateWithoutStatusInput>
+    create: XOR<PaymentCreateWithoutStatusInput, PaymentUncheckedCreateWithoutStatusInput>
+  }
+
+  export type PaymentUpdateWithWhereUniqueWithoutStatusInput = {
+    where: PaymentWhereUniqueInput
+    data: XOR<PaymentUpdateWithoutStatusInput, PaymentUncheckedUpdateWithoutStatusInput>
+  }
+
+  export type PaymentUpdateManyWithWhereWithoutStatusInput = {
+    where: PaymentScalarWhereInput
+    data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyWithoutStatusInput>
   }
 
   export type ProductUpsertWithWhereUniqueWithoutStatusInput = {
@@ -22919,6 +23034,23 @@ export namespace Prisma {
     create: XOR<OrderCreateWithoutPaymentsInput, OrderUncheckedCreateWithoutPaymentsInput>
   }
 
+  export type StatusCreateWithoutPaymentsInput = {
+    id?: string
+    name: string
+    products?: ProductCreateNestedManyWithoutStatusInput
+  }
+
+  export type StatusUncheckedCreateWithoutPaymentsInput = {
+    id?: string
+    name: string
+    products?: ProductUncheckedCreateNestedManyWithoutStatusInput
+  }
+
+  export type StatusCreateOrConnectWithoutPaymentsInput = {
+    where: StatusWhereUniqueInput
+    create: XOR<StatusCreateWithoutPaymentsInput, StatusUncheckedCreateWithoutPaymentsInput>
+  }
+
   export type OrderUpsertWithoutPaymentsInput = {
     update: XOR<OrderUpdateWithoutPaymentsInput, OrderUncheckedUpdateWithoutPaymentsInput>
     create: XOR<OrderCreateWithoutPaymentsInput, OrderUncheckedCreateWithoutPaymentsInput>
@@ -22952,6 +23084,29 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: ItemUncheckedUpdateManyWithoutOrderNestedInput
     review?: ReviewUncheckedUpdateOneWithoutOrderNestedInput
+  }
+
+  export type StatusUpsertWithoutPaymentsInput = {
+    update: XOR<StatusUpdateWithoutPaymentsInput, StatusUncheckedUpdateWithoutPaymentsInput>
+    create: XOR<StatusCreateWithoutPaymentsInput, StatusUncheckedCreateWithoutPaymentsInput>
+    where?: StatusWhereInput
+  }
+
+  export type StatusUpdateToOneWithWhereWithoutPaymentsInput = {
+    where?: StatusWhereInput
+    data: XOR<StatusUpdateWithoutPaymentsInput, StatusUncheckedUpdateWithoutPaymentsInput>
+  }
+
+  export type StatusUpdateWithoutPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    products?: ProductUpdateManyWithoutStatusNestedInput
+  }
+
+  export type StatusUncheckedUpdateWithoutPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    products?: ProductUncheckedUpdateManyWithoutStatusNestedInput
   }
 
   export type ReviewCreateWithoutClientInput = {
@@ -23152,7 +23307,7 @@ export namespace Prisma {
     imageUrl: string
     created_at?: Date | string
     updated_at?: Date | string
-    statusId: number
+    statusId: string
   }
 
   export type CategoryViewCreateManyCategoryInput = {
@@ -23192,7 +23347,7 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    statusId?: IntFieldUpdateOperationsInput | number
+    statusId?: StringFieldUpdateOperationsInput | string
     productIngredients?: ProductIngredientUncheckedUpdateManyWithoutProductNestedInput
     items?: ItemUncheckedUpdateManyWithoutProductNestedInput
   }
@@ -23205,7 +23360,7 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    statusId?: IntFieldUpdateOperationsInput | number
+    statusId?: StringFieldUpdateOperationsInput | string
   }
 
   export type CategoryViewUpdateWithoutCategoryInput = {
@@ -23327,7 +23482,7 @@ export namespace Prisma {
     paymentDate?: Date | string
     amount: Decimal | DecimalJsLike | number | string
     paymentType: string
-    status: string
+    statusId: string
   }
 
   export type ItemUpdateWithoutOrderInput = {
@@ -23361,7 +23516,7 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paymentType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    status?: StatusUpdateOneRequiredWithoutPaymentsNestedInput
   }
 
   export type PaymentUncheckedUpdateWithoutOrderInput = {
@@ -23369,7 +23524,7 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paymentType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    statusId?: StringFieldUpdateOperationsInput | string
   }
 
   export type PaymentUncheckedUpdateManyWithoutOrderInput = {
@@ -23377,7 +23532,7 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paymentType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    statusId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ItemModificationCreateManyItemInput = {
@@ -23460,6 +23615,14 @@ export namespace Prisma {
     itemId?: StringFieldUpdateOperationsInput | string
   }
 
+  export type PaymentCreateManyStatusInput = {
+    id?: string
+    paymentDate?: Date | string
+    amount: Decimal | DecimalJsLike | number | string
+    paymentType: string
+    orderId?: string | null
+  }
+
   export type ProductCreateManyStatusInput = {
     id?: string
     name: string
@@ -23469,6 +23632,30 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     categoryId: string
+  }
+
+  export type PaymentUpdateWithoutStatusInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentType?: StringFieldUpdateOperationsInput | string
+    order?: OrderUpdateOneWithoutPaymentsNestedInput
+  }
+
+  export type PaymentUncheckedUpdateWithoutStatusInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentType?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PaymentUncheckedUpdateManyWithoutStatusInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentType?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProductUpdateWithoutStatusInput = {
