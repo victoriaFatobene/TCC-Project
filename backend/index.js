@@ -212,7 +212,7 @@ app.listen(PORT, () => {
 console.log(`Servidor rodando na porta ${PORT}`);
 });
 
-// Rota do payments
+// Rota do payments(pagamentos)
 app.post('/api/payments', async (req, res) => {
       try{
     const {orderId, amount, paym,entType} = req.body;
@@ -230,7 +230,7 @@ app.post('/api/payments', async (req, res) => {
     }
 });
 
-// Rota do reviews
+// Rota do reviews(avaliações)
 app.post('/api/reviews', async(req, res) => {
     try{
         const {userId, productId, rating, comment} = req.body;
