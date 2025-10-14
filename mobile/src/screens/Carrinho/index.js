@@ -26,8 +26,8 @@ function Carrinho({ navigation }) {
         { 
           text: "Confirmar", 
           // --- A CORREÇÃO ESTÁ AQUI ---
-          // Navega para a aba 'Menu', e dentro dela, para a tela 'Pagamento'
-          onPress: () => navigation.navigate('Menu', { screen: 'Pagamento' })
+          // Com o novo App.tsx, a navegação para Pagamento é direta
+          onPress: () => navigation.navigate('Pagamento') 
         },
       ]
     );
@@ -60,7 +60,7 @@ function Carrinho({ navigation }) {
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
       
       <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('Menu')} style={styles.backButton}>
           <Text style={styles.backButtonText}>{'<'}</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Meu Carrinho 🛒</Text>
@@ -69,7 +69,7 @@ function Carrinho({ navigation }) {
       {cartItems.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Seu carrinho está vazio.</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Menu', { screen: 'HomeScreen' })}>
             <Text style={styles.browseText}>Navegar pelo cardápio</Text>
           </TouchableOpacity>
         </View>
@@ -78,7 +78,7 @@ function Carrinho({ navigation }) {
           <FlatList
             data={cartItems}
             renderItem={renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.id.toString()}
             contentContainerStyle={styles.scrollContainer}
           />
           <View style={styles.footer}>
