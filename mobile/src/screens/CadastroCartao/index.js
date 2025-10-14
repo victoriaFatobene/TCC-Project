@@ -1,32 +1,47 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { 
+  // MODIFICAÇÃO 1: Trocamos SafeAreaView por View e adicionamos os outros
+  View, 
+  Text, 
+  TextInput, 
+  StyleSheet, 
+  TouchableOpacity, 
+  Alert,
+  StatusBar 
+} from 'react-native';
+// MODIFICAÇÃO 2: Importamos o hook
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function CadastroCartao({ navigation }) {
   const [numero, setNumero] = useState('');
   const [nome, setNome] = useState('');
   const [validade, setValidade] = useState('');
   const [cvv, setCvv] = useState('');
+  // MODIFICAÇÃO 3: Usamos o hook
+  const insets = useSafeAreaInsets();
 
   const handleSalvar = () => {
-    // Validação simples para garantir que os campos não estão vazios
     if (!numero || !nome || !validade || !cvv) {
       Alert.alert("Erro", "Por favor, preencha todos os campos.");
       return;
     }
 
     const novoCartao = {
-      id: Date.now().toString(), // ID único baseado no tempo atual
-      final: numero.slice(-4), // Pega apenas os 4 últimos dígitos
+      id: Date.now().toString(),
+      final: numero.slice(-4),
       nome: nome,
     };
 
-    // Navega de volta para a tela de Pagamento e envia o 'novoCartao' como parâmetro
     navigation.navigate('Pagamento', { novoCartao: novoCartao });
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+    // MODIFICAÇÃO 4: Usamos uma View normal como container
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+
+      {/* MODIFICAÇÃO 5: Aplicamos o padding dinâmico */}
+      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backButtonText}>{'<'}</Text>
         </TouchableOpacity>
@@ -82,13 +97,20 @@ export default function CadastroCartao({ navigation }) {
           <Text style={styles.saveButtonText}>Salvar Cartão</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#f5f5f5' },
-    header: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#7B0909', paddingVertical: 15, paddingHorizontal: 15 },
+    // MODIFICAÇÃO 6: Ajustamos o estilo do header
+    header: { 
+      flexDirection: 'row', 
+      alignItems: 'center', 
+      backgroundColor: '#7B0909', 
+      paddingBottom: 15, 
+      paddingHorizontal: 15 
+    },
     backButtonText: { color: '#FFFFFF', fontSize: 24, fontWeight: 'bold', marginRight: 20 },
     headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
     form: { padding: 20 },

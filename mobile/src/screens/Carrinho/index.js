@@ -1,13 +1,22 @@
-// src/screens/Carrinho/index.js
 import React from 'react';
-import { SafeAreaView, View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  Alert, 
+  FlatList, 
+  Image, 
+  TouchableOpacity,
+  StatusBar
+} from 'react-native';
 import { useCart } from '../../contexts/CartContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function Carrinho({ navigation }) {
-  const { cartItems, addToCart, decreaseQuantity, removeFromCart, clearCart } = useCart();
-  const subtotal = cartItems.reduce((total, p) => total + p.preco * p.quantidade, 0);
+  const { cartItems, addToCart, decreaseQuantity, removeFromCart } = useCart();
+  const subtotal = cartItems.reduce((total, p) => total + (p.preco || 0) * (p.quantidade || 0), 0);
+  const insets = useSafeAreaInsets();
 
-  // --- FUNÇÃO MODIFICADA ---
   const finalizarPedido = () => {
     Alert.alert(
       "Confirmar Pedido",
@@ -16,33 +25,14 @@ function Carrinho({ navigation }) {
         { text: "Cancelar", style: "cancel" },
         { 
           text: "Confirmar", 
-          onPress: () => {
-            // AÇÃO CORRIGIDA:
-            // 1. Removemos o clearCart() daqui. O carrinho só deve ser limpo APÓS o pagamento.
-            // 2. Navegamos para a tela de Pagamento.
-            navigation.navigate('Menu', { screen: 'Pagamento' });
-          } 
+          // --- A CORREÇÃO ESTÁ AQUI ---
+          // Navega para a aba 'Menu', e dentro dela, para a tela 'Pagamento'
+          onPress: () => navigation.navigate('Menu', { screen: 'Pagamento' })
         },
       ]
     );
   };
 
-  // Se o carrinho estiver vazio, mostra uma mensagem amigável
-  if (cartItems.length === 0) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.title}>Meu Carrinho 🛒</Text>
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Seu carrinho está vazio.</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Menu')}>
-            <Text style={styles.browseText}>Navegar pelo cardápio</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  // Renderiza um item da lista
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       <Image source={{ uri: item.imagem }} style={styles.image} />
@@ -66,30 +56,57 @@ function Carrinho({ navigation }) {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Meu Carrinho 🛒</Text>
-      <FlatList
-        data={cartItems}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.scrollContainer}
-      />
-      <View style={styles.footer}>
-        <Text style={styles.subtotal}>Subtotal: R$ {subtotal.toFixed(2)}</Text>
-        <TouchableOpacity style={styles.checkoutButton} onPress={finalizarPedido}>
-          <Text style={styles.checkoutText}>Finalizar Pedido</Text>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+      
+      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Text style={styles.backButtonText}>{'<'}</Text>
         </TouchableOpacity>
+        <Text style={styles.headerTitle}>Meu Carrinho 🛒</Text>
       </View>
-    </SafeAreaView>
+
+      {cartItems.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Seu carrinho está vazio.</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
+            <Text style={styles.browseText}>Navegar pelo cardápio</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <>
+          <FlatList
+            data={cartItems}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+            contentContainerStyle={styles.scrollContainer}
+          />
+          <View style={styles.footer}>
+            <Text style={styles.subtotal}>Subtotal: R$ {subtotal.toFixed(2)}</Text>
+            <TouchableOpacity style={styles.checkoutButton} onPress={finalizarPedido}>
+              <Text style={styles.checkoutText}>Finalizar Pedido</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
+    </View>
   );
 }
 
-// Seus estilos (sem alterações)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
-  title: { fontSize: 28, fontWeight: "bold", textAlign: "center", color: "#4CAF50", marginVertical: 20 },
-  scrollContainer: { paddingHorizontal: 20, paddingBottom: 20 },
-  card: { flexDirection: "row", backgroundColor: "#FFF", borderRadius: 15, padding: 15, marginBottom: 15, alignItems: "center", shadowColor: "#000", shadowOpacity: 0.1, shadowOffset: { width: 0, height: 2 }, shadowRadius: 5, elevation: 3 },
+  header: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: '#7B0909', 
+    paddingBottom: 15, 
+    paddingHorizontal: 15 
+  },
+  backButton: { padding: 5, marginRight: 15 },
+  backButtonText: { color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' },
+  headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
+  scrollContainer: { padding: 20, paddingBottom: 20 },
+  card: { flexDirection: "row", backgroundColor: "#FFF", borderRadius: 15, padding: 15, marginBottom: 15, alignItems: "center", elevation: 3 },
   image: { width: 70, height: 70, borderRadius: 12, marginRight: 15 },
   cardContent: { flex: 1 },
   name: { fontSize: 18, fontWeight: "600" },
@@ -103,9 +120,9 @@ const styles = StyleSheet.create({
   subtotal: { fontSize: 20, fontWeight: "600", marginBottom: 15 },
   checkoutButton: { backgroundColor: "#4CAF50", paddingVertical: 15, borderRadius: 12, alignItems: "center" },
   checkoutText: { color: "#FFF", fontSize: 18, fontWeight: "600" },
-  emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  emptyText: { fontSize: 22, color: '#333', marginBottom: 20 },
-  browseText: { fontSize: 18, color: '#4CAF50', textDecorationLine: 'underline' },
+  emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
+  emptyText: { fontSize: 22, color: '#333', marginBottom: 20, textAlign: 'center' },
+  browseText: { fontSize: 18, color: '#7B0909', textDecorationLine: 'underline', fontWeight: 'bold' },
 });
 
 export default Carrinho;

@@ -1,17 +1,20 @@
 import React from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
+  StatusBar,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Pizzas({ navigation }) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
@@ -21,7 +24,6 @@ export default function Pizzas({ navigation }) {
         <Text style={styles.headerTitle}>Pizzas 🍕</Text>
       </View>
 
-      {/* CONTENT */}
       <View style={styles.content}>
         <TouchableOpacity
           style={[styles.menuButton, styles.salgada]}
@@ -44,7 +46,7 @@ export default function Pizzas({ navigation }) {
           <Text style={styles.menuButtonText}>🍫 Pizzas Doces</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -55,7 +57,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#7B0909",
-    paddingVertical: 15,
+    paddingBottom: 15,
     paddingHorizontal: 10,
     elevation: 4,
   },

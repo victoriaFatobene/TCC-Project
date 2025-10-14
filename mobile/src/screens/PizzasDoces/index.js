@@ -1,15 +1,15 @@
-// src/screens/PizzasDoces/index.js
 import React from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   FlatList,
   Image,
   TouchableOpacity,
   StyleSheet,
+  StatusBar,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const pizzasDoces = [
   {
@@ -68,7 +68,7 @@ const PizzaDoceItem = ({ item, navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.addBtn}
-              onPress={() => addToCart(item)}
+              onPress={() => addToCart({ ...item, quantidade: 1 })}
             >
               <Text style={styles.addBtnText}>+</Text>
             </TouchableOpacity>
@@ -80,10 +80,12 @@ const PizzaDoceItem = ({ item, navigation }) => {
 };
 
 export default function PizzasDoces({ navigation }) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
@@ -92,8 +94,6 @@ export default function PizzasDoces({ navigation }) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Pizzas Doces 🍫</Text>
       </View>
-
-      {/* LISTA */}
       <FlatList
         data={pizzasDoces}
         renderItem={({ item }) => (
@@ -102,11 +102,10 @@ export default function PizzasDoces({ navigation }) {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
-// ESTILOS
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
 
@@ -114,7 +113,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#7B0909",
-    paddingVertical: 15,
+    paddingBottom: 15,
     paddingHorizontal: 10,
     elevation: 4,
   },

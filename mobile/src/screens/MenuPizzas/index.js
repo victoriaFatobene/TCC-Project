@@ -1,70 +1,62 @@
 import React from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   FlatList,
   Image,
   TouchableOpacity,
   StyleSheet,
+  StatusBar,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
-import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const pizzasSalgadas = [
   {
     id: "1",
     nome: "Calabresa",
-    ingredientes: "Molho de tomate, calabresa, cebola e mussarela.",
-    preco: 42.9,
+    ingredientes: "Molho de tomate, mussarela, calabresa fatiada e cebola.",
+    preco: 45.9,
     imagem:
-      "https://images.unsplash.com/photo-1628840042765-3561f65e1b6f?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1594007654729-407eedc4be65?q=80&w=1928&auto=format&fit=crop",
   },
   {
     id: "2",
-    nome: "Frango com Catupiry",
-    ingredientes: "Molho de tomate, frango desfiado e catupiry.",
-    preco: 45.9,
+    nome: "Margherita",
+    ingredientes:
+      "Molho de tomate, mussarela, fatias de tomate fresco e manjericão.",
+    preco: 42.5,
     imagem:
-      "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1598021680133-eb3a73319420?q=80&w=2148&auto=format&fit=crop",
   },
   {
     id: "3",
-    nome: "Quatro Queijos",
-    ingredientes: "Mussarela, provolone, parmesão e gorgonzola.",
-    preco: 48.9,
+    nome: "Frango com Catupiry",
+    ingredientes: "Molho de tomate, mussarela, frango desfiado e catupiry.",
+    preco: 48.0,
     imagem:
-      "https://images.unsplash.com/photo-1615297928064-2492f5641e86?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1604382354936-07c5d9983d34?q=80&w=2070&auto=format&fit=crop",
   },
   {
     id: "4",
     nome: "Portuguesa",
-    ingredientes: "Presunto, ovos, cebola, azeitona e mussarela.",
-    preco: 49.9,
+    ingredientes:
+      "Molho, mussarela, presunto, ovos, cebola, pimentão e azeitonas.",
+    preco: 52.0,
     imagem:
-      "https://images.unsplash.com/photo-1618213837799-8d4d2f4e4e6c?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    id: "5",
-    nome: "Pepperoni",
-    ingredientes: "Molho de tomate, pepperoni e mussarela.",
-    preco: 47.9,
-    imagem:
-      "https://images.unsplash.com/photo-1601924928376-3e7d7f3a4f82?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1981&auto=format&fit=crop",
   },
 ];
 
-const PizzaSalgadaItem = ({ item, navigation }) => {
+const PizzaItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
 
   return (
     <View style={styles.card}>
       <Image source={{ uri: item.imagem }} style={styles.image} />
-
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
-
         <View style={styles.footer}>
           <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
           <View style={styles.buttonsContainer}>
@@ -74,14 +66,13 @@ const PizzaSalgadaItem = ({ item, navigation }) => {
                 navigation.navigate("ProductDetails", { product: item })
               }
             >
-              <Text style={styles.detailsButtonText}>Ver Mais</Text>
+              <Text style={styles.detailsButtonText}>🍴 Ver Mais</Text>
             </TouchableOpacity>
-
             <TouchableOpacity
               style={styles.addBtn}
-              onPress={() => addToCart(item)}
+              onPress={() => addToCart({ ...item, quantidade: 1 })}
             >
-              <Ionicons name="add" size={20} color="#FFF" />
+              <Text style={styles.addBtnText}>➕</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -90,85 +81,96 @@ const PizzaSalgadaItem = ({ item, navigation }) => {
   );
 };
 
-export default function Pizzas({ navigation }) {
+export default function MenuPizzas({ navigation }) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={26} color="#fff" />
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#B22222" />
+
+      <View style={[styles.header, { paddingTop: insets.top + 18 }]}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
+          <Text style={styles.backButtonText}>{"←"}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Pizzas Salgadas 🍕</Text>
+        <Text style={styles.headerTitle}>🍕 Pizzas Salgadas</Text>
       </View>
 
-      {/* LISTA */}
       <FlatList
         data={pizzasSalgadas}
         renderItem={({ item }) => (
-          <PizzaSalgadaItem item={item} navigation={navigation} />
+          <PizzaItem item={item} navigation={navigation} />
         )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
-// ESTILOS — mesmo design da tela vegana
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFFDF8" },
-
+  container: { flex: 1, backgroundColor: "#FFF8F0" },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#7B0909",
-    paddingVertical: 18,
-    paddingHorizontal: 15,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    backgroundColor: "#B22222",
+    paddingBottom: 18,
+    paddingHorizontal: 12,
+    elevation: 6,
   },
-  backButton: { marginRight: 15 },
-  headerTitle: { color: "#fff", fontSize: 22, fontWeight: "bold", letterSpacing: 0.5 },
-
-  listContainer: { padding: 16 },
-
+  backButton: { padding: 5, marginRight: 15 },
+  backButtonText: { color: "#FFD700", fontSize: 26, fontWeight: "bold" },
+  headerTitle: { color: "#FFD700", fontSize: 24, fontWeight: "bold" },
+  listContainer: { padding: 18 },
   card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 18,
-    marginBottom: 20,
+    backgroundColor: "#FFF",
+    borderRadius: 20,
+    marginBottom: 22,
     overflow: "hidden",
-    elevation: 5,
+    elevation: 6,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 6,
   },
-  image: { width: "100%", height: 190, resizeMode: "cover" },
+  image: {
+    width: "100%",
+    height: 200,
+    resizeMode: "cover",
+  },
   cardContent: { padding: 14 },
-  name: { fontSize: 18, fontWeight: "bold", color: "#333" },
-  ingredients: { fontSize: 14, color: "#666", marginTop: 4, marginBottom: 12 },
-  footer: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  price: { fontSize: 16, fontWeight: "bold", color: "#7B0909" },
-
+  name: { fontSize: 20, fontWeight: "bold", color: "#B22222" },
+  ingredients: {
+    fontSize: 14,
+    color: "#555",
+    marginTop: 6,
+    marginBottom: 12,
+    fontStyle: "italic",
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  price: { fontSize: 18, fontWeight: "bold", color: "#2E8B57" },
   buttonsContainer: { flexDirection: "row", alignItems: "center" },
   detailsButton: {
-    backgroundColor: "#f4f4f4",
-    paddingVertical: 6,
+    backgroundColor: "#FFD700",
+    paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: 25,
     marginRight: 10,
   },
-  detailsButtonText: { color: "#333", fontWeight: "600", fontSize: 13 },
+  detailsButtonText: { color: "#B22222", fontWeight: "bold", fontSize: 13 },
   addBtn: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: "#B02A30",
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#B22222",
     justifyContent: "center",
     alignItems: "center",
   },
+  addBtnText: { color: "#FFD700", fontSize: 22, fontWeight: "bold" },
 });
-

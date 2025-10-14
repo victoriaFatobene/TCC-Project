@@ -1,41 +1,38 @@
-// src/screens/Vinhos/index.js
 import React from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   FlatList,
   Image,
   TouchableOpacity,
   StyleSheet,
+  StatusBar,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const vinhos = [
-  {
-    id: "v1",
-    nome: "Vinho Tinto Seco",
-    ingredientes: "Garrafa 750ml, ideal para carnes.",
-    preco: 89.9,
-    imagem:
-      "https://images.unsplash.com/photo-1603052875690-2f3a85b9f3a0?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    id: "v2",
-    nome: "Vinho Branco",
-    ingredientes: "Garrafa 750ml, perfeito para peixes e frutos do mar.",
-    preco: 79.9,
-    imagem:
-      "https://images.unsplash.com/photo-1601925260365-1d67c493b3db?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    id: "v3",
-    nome: "Espumante Brut",
-    ingredientes: "Garrafa 750ml, refrescante e festivo.",
-    preco: 120.0,
-    imagem:
-      "https://images.unsplash.com/photo-1617196039897-c7ff28099148?q=80&w=2070&auto=format&fit=crop",
-  },
+    {
+        id: "v1",
+        nome: "Vinho Tinto Seco",
+        ingredientes: "Garrafa 750ml, ideal para carnes.",
+        preco: 89.9,
+        imagem: "https://images.unsplash.com/photo-1603052875690-2f3a85b9f3a0?q=80&w=2070&auto=format&fit=crop",
+    },
+    {
+        id: "v2",
+        nome: "Vinho Branco",
+        ingredientes: "Garrafa 750ml, perfeito para peixes e frutos do mar.",
+        preco: 79.9,
+        imagem: "https://images.unsplash.com/photo-1601925260365-1d67c493b3db?q=80&w=2070&auto=format&fit=crop",
+    },
+    {
+        id: "v3",
+        nome: "Espumante Brut",
+        ingredientes: "Garrafa 750ml, refrescante e festivo.",
+        preco: 120.0,
+        imagem: "https://images.unsplash.com/photo-1617196039897-c7ff28099148?q=80&w=2070&auto=format&fit=crop",
+    },
 ];
 
 const VinhoItem = ({ item, navigation }) => {
@@ -46,7 +43,6 @@ const VinhoItem = ({ item, navigation }) => {
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
-
         <View style={styles.footer}>
           <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
           <View style={styles.buttonsContainer}>
@@ -60,7 +56,7 @@ const VinhoItem = ({ item, navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.addBtn}
-              onPress={() => addToCart(item)}
+              onPress={() => addToCart({ ...item, quantidade: 1 })}
             >
               <Text style={styles.addBtnText}>+</Text>
             </TouchableOpacity>
@@ -72,10 +68,12 @@ const VinhoItem = ({ item, navigation }) => {
 };
 
 export default function Vinhos({ navigation }) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
@@ -84,8 +82,6 @@ export default function Vinhos({ navigation }) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Vinhos 🍷</Text>
       </View>
-
-      {/* LISTA */}
       <FlatList
         data={vinhos}
         renderItem={({ item }) => (
@@ -94,34 +90,29 @@ export default function Vinhos({ navigation }) {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
-// ESTILOS
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
-
   header: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#7B0909",
-    paddingVertical: 15,
+    paddingBottom: 15,
     paddingHorizontal: 10,
     elevation: 4,
   },
   backButton: { padding: 5, marginRight: 15 },
   backButtonText: { color: "#FFFFFF", fontSize: 24, fontWeight: "bold" },
   headerTitle: { color: "#FFFFFF", fontSize: 22, fontWeight: "bold" },
-
   listContainer: { padding: 16 },
-
   card: {
     backgroundColor: "#FFF",
     borderRadius: 16,
     marginBottom: 20,
     overflow: "hidden",
-
     elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
@@ -142,7 +133,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   price: { fontSize: 16, fontWeight: "bold", color: "#7B0909" },
-
   buttonsContainer: { flexDirection: "row", alignItems: "center" },
   detailsButton: {
     backgroundColor: "#f0f0f0",
