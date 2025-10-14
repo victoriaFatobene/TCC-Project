@@ -190,6 +190,7 @@ model Status {
 
   @@map("statuses")
 }
+// ...existing code...
 
 // Tabela de pagamentos - apresenta o tipo de pagamento do pedido
 model Payment {
@@ -234,4 +235,5 @@ model Review{
   clientId String
 
   @@map("reviews")
+// ...existing code...
 }
