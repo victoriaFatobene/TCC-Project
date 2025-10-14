@@ -213,25 +213,39 @@ app.post('/ingredients', async (req, res) => {
   }
 });
  
+
 // Rota para registrar um Pagamento
 app.post('/api/payments', async (req, res) => {
-
   const { orderId, amount, paymentType } = req.body;
-  try {
+  
+  const initialStatusName = 'Na fila';
+  // ['Na fila', 'Em preparo' , 'Pronto!'];
+
+  try{
+    const initialStatus = await prisma.status.findUnique({
+      where:{name: initialStatusName},
+      select:{id:true}
+    });
+    if(!initialStatus){
+      return res.status(500).json({error: `O Status inicial ${initialStatusName} não foi encontrado no banco de dados.`});
+    }
+
     const newPayment = await prisma.payment.create({
-      data: {
+      data:{
         orderId,
         amount,
         paymentType,
-        status: 'Pagamento aprovado', // Status padrão
+        statusId: initialStatus.id,
       }
     });
+
     res.status(201).json(newPayment);
-  } catch (error) {
+  }catch(error){
     console.error("Falha ao processar o pagamento:", error);
-    res.status(500).json({ error: 'Falha ao processar o pagamento' });
+    res.status(500).json({error: 'Falha ao processar o pagamento.'});
   }
 });
+
  
 // Rota para criar uma nova Avaliação (Review)
 app.post('/api/reviews', async (req, res) => {
@@ -249,6 +263,7 @@ app.post('/api/reviews', async (req, res) => {
         comment: comment || '',
       }
     });
+
     res.status(201).json(newReview);
   } catch (error) {
     console.error("Erro ao criar avaliação:", error);
