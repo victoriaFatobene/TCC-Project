@@ -213,6 +213,32 @@ exports.Prisma.StatusScalarFieldEnum = {
   name: 'name'
 };
 
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  paymentDate: 'paymentDate',
+  amount: 'amount',
+  paymentType: 'paymentType',
+  status: 'status',
+  orderId: 'orderId'
+};
+
+exports.Prisma.ClientScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  rating: 'rating',
+  comment: 'comment',
+  createAt: 'createAt',
+  orderId: 'orderId',
+  clientId: 'clientId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -240,7 +266,10 @@ exports.Prisma.ModelName = {
   ProductIngredient: 'ProductIngredient',
   Ingredient: 'Ingredient',
   ItemModification: 'ItemModification',
-  Status: 'Status'
+  Status: 'Status',
+  Payment: 'Payment',
+  Client: 'Client',
+  Review: 'Review'
 };
 
 /**
