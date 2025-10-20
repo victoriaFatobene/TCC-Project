@@ -17,14 +17,14 @@ const doces = [
     id: "do1",
     nome: "Pudim de Leite",
     preco: 12.0,
-    imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2x_c_n0f0A_z_e_l_b_j-f_e_r_k_q_w_z_q&s",
+     imagem: require("../../assets/images/pudim.webp"),
     ingredientes: "Pudim de leite condensado com calda de caramelo.",
   },
   {
     id: "do2",
     nome: "Mousse de Maracujá",
     preco: 10.0,
-    imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_w-l_z-f_e-r_k-q_w-z_q-f_e-r_k-q_w-z&s",
+     imagem: require("../../assets/images/mousse.jpg"),
     ingredientes: "Mousse aerado com polpa natural de maracujá.",
   },
 ];
