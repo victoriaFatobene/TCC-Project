@@ -1,3 +1,4 @@
+// src/screens/Sorvetes/index.tsx
 import React from "react";
 import {
   View,
@@ -11,6 +12,7 @@ import {
 import { useCart } from "../../contexts/CartContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+// --- Dados dos sorvetes ---
 const sorvetes = [
   {
     id: "s1",
@@ -42,11 +44,12 @@ const sorvetes = [
   },
 ];
 
+// --- Componente do item ---
 const SorveteItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
+
   return (
     <View style={styles.card}>
-      {/* 👇 Aqui está a correção principal */}
       <Image source={item.imagem} style={styles.image} />
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
@@ -75,6 +78,7 @@ const SorveteItem = ({ item, navigation }) => {
   );
 };
 
+// --- Tela principal ---
 export default function Sorvetes({ navigation }) {
   const insets = useSafeAreaInsets();
 
@@ -82,19 +86,14 @@ export default function Sorvetes({ navigation }) {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
       <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        >
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>{"<"}</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Sorvetes 🍨</Text>
       </View>
       <FlatList
         data={sorvetes}
-        renderItem={({ item }) => (
-          <SorveteItem item={item} navigation={navigation} />
-        )}
+        renderItem={({ item }) => <SorveteItem item={item} navigation={navigation} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
@@ -102,6 +101,7 @@ export default function Sorvetes({ navigation }) {
   );
 }
 
+// --- Estilos ---
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
   header: {
@@ -127,19 +127,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
   },
-  image: {
-    width: "100%",
-    height: 180,
-    resizeMode: "cover",
-  },
+  image: { width: "100%", height: 180, resizeMode: "cover" },
   cardContent: { padding: 12 },
   name: { fontSize: 18, fontWeight: "bold", color: "#333" },
   ingredients: { fontSize: 14, color: "#777", marginTop: 4, marginBottom: 10 },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+  footer: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   price: { fontSize: 16, fontWeight: "bold", color: "#7B0909" },
   buttonsContainer: { flexDirection: "row", alignItems: "center" },
   detailsButton: {
