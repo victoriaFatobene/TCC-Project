@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useCart } from '../../contexts/CartContext';
 import { Ionicons } from '@expo/vector-icons';
-import { supabase } from '../../services/supabase';
+import { supabase } from '../../services/supabase'; 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Pagamento({ navigation, route }) {
@@ -32,6 +32,7 @@ export default function Pagamento({ navigation, route }) {
     }
   }, [route.params?.novoCartao]);
 
+  // --- FUNÇÃO DE FINALIZAR PEDIDO (A VERSÃO FINALMENTE CORRETA) ---
   const handleFinalizarPedido = async () => {
     if (metodo === 'cartao' && !cartaoSelecionado) {
       Alert.alert('Atenção', 'Por favor, selecione um cartão.');
@@ -40,32 +41,88 @@ export default function Pagamento({ navigation, route }) {
 
     setLoading(true);
 
-    const novoPedido = { status: 'Na Fila' };
+    try {
+      // --- PASSO 1: CRIAR O PEDIDO (COM O SCHEMA CORRETO) ---
+      
+      // O seu banco de dados NÃO TEM 'status: boolean'.
+      // Ele tem uma tabela 'statuses' (como prova sua imagem image_3b7224.png).
+      // Vamos assumir que o ID 1 é "Na Fila" ou "Pendente".
+      // Se você não tiver um status com ID 1, ESTE PASSO VAI FALHAR.
+      
+      const ID_STATUS_INICIAL = 1; // <--- CONFIRME SE 1 EXISTE NA SUA TABELA 'statuses'
 
-    const { data: pedidoCriado, error } = await supabase
-      .from('orders')
-      .insert(novoPedido)
-      .select()
-      .single();
+      const pedidoData = { 
+        table: 1, // Campo obrigatório que descobrimos
+        status_id: ID_STATUS_INICIAL, // <-- A CORREÇÃO! Usando a chave estrangeira
+        // Removido 'status' e 'draft' (booleanos) que não existem.
+      };
 
-    setLoading(false);
+      // Insere o pedido na tabela 'orders'
+      const { data: pedidoCriado, error: errorPedido } = await supabase
+        .from('orders')
+        .insert(pedidoData)
+        .select()
+        .single(); 
 
-    if (error) {
-      console.error("Erro ao criar pedido:", error);
-      Alert.alert("Erro", `Não foi possível criar o pedido. Mensagem: ${error.message}`);
-    } else {
+      if (errorPedido || !pedidoCriado) {
+        // A imagem 'image_3bdede.png' prova que o erro é aqui
+        console.error('ERRO NO PASSO 1 (orders):', errorPedido);
+        throw errorPedido;
+      }
+
+      // --- PASSO 2: SALVAR OS ITENS DO PEDIDO (COM TODAS AS CORREÇÕES) ---
+      
+      const itensParaInserir = cartItems.map(item => ({
+        order_id: pedidoCriado.id, 
+        product_id: item.id,      
+        amount: item.quantidade,
+      }));
+
+      // Nome da tabela 'items' (plural), como prova sua imagem image_3b7586.png
+      const { error: errorItens } = await supabase
+        .from('items') 
+        .insert(itensParaInserir);
+
+      if (errorItens) {
+        console.error('ERRO NO PASSO 2 (items):', errorItens);
+        throw errorItens;
+      }
+
+      // --- PASSO 3: SUCESSO! ---
+      
+      setLoading(false);
       clearCart();
       
       const dadosParaStatus = {
-        ...pedidoCriado,
+        ...pedidoCriado, 
         itens: cartItems.map(item => ({ nome: item.nome, qtd: item.quantidade })),
         total: subtotal,
+        // Precisamos passar o status_id para a proxima tela
+        status_id: pedidoCriado.status_id 
       };
       
       navigation.navigate('StatusPedido', { pedido: dadosParaStatus });
+
+    } catch (error) {
+      setLoading(false);
+      console.error("Erro ao finalizar pedido (Supabase):", error);
+      
+      if (error.message.includes('Network request failed')) {
+         Alert.alert(
+          "Erro de Rede", 
+          "Não foi possível se conectar ao Supabase. Verifique sua internet."
+        );
+      } else {
+         Alert.alert(
+          "Erro", 
+          `Não foi possível criar o pedido. Mensagem: ${error.message}`
+        );
+      }
     }
   };
+  // --- FIM DA FUNÇÃO CORRIGIDA ---
 
+  // ... (o resto do seu componente return() fica igual)
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
@@ -130,7 +187,7 @@ export default function Pagamento({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#f5f5f5' },
+    container: { flex: 1, backgroundColor: '#f5f5ff' },
     header: { 
       flexDirection: 'row', 
       alignItems: 'center', 
