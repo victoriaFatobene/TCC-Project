@@ -13,6 +13,7 @@ import { useCart } from '../../contexts/CartContext';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../services/supabase'; 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Crypto from 'expo-crypto'; // <-- PASSO 1: IMPORTAR A BIBLIOTECA
 
 export default function Pagamento({ navigation, route }) {
   const { cartItems, clearCart } = useCart();
@@ -44,12 +45,12 @@ export default function Pagamento({ navigation, route }) {
     try {
       // --- PASSO 1: CRIAR O PEDIDO (COM TODAS AS CORREÇÕES) ---
       
-      // A SUA IMAGEM (image_309c82.png) PROVA QUE ESTE É O FORMATO:
       const pedidoData = { 
-        table: 1,      // <-- O campo obrigatório (int4)
-        status: false, // <-- O campo booleano (bool)
-        draft: false,  // <-- O campo booleano (bool)
-        name: "Cliente App" // O campo de texto (text)
+        id: Crypto.randomUUID(), // <-- PASSO 2: A CORREÇÃO FINAL!
+        table: 1,      
+        status: false, 
+        draft: false,  
+        name: "Cliente App" 
       };
 
       // Insere o pedido na tabela 'orders'
@@ -67,12 +68,11 @@ export default function Pagamento({ navigation, route }) {
       // --- PASSO 2: SALVAR OS ITENS DO PEDIDO (COM TODAS AS CORREÇÕES) ---
       
       const itensParaInserir = cartItems.map(item => ({
-        order_id: pedidoCriado.id, // Correção do snake_case
-        product_id: item.id,      // Correção do snake_case
+        order_id: pedidoCriado.id, 
+        product_id: item.id,      
         amount: item.quantidade,
       }));
 
-      // Correção do nome da tabela (plural)
       const { error: errorItens } = await supabase
         .from('items') 
         .insert(itensParaInserir);
@@ -88,7 +88,7 @@ export default function Pagamento({ navigation, route }) {
       clearCart();
       
       const dadosParaStatus = {
-        ...pedidoCriado, // Contém id, table, status (false), draft (false)
+        ...pedidoCriado, 
         itens: cartItems.map(item => ({ nome: item.nome, qtd: item.quantidade })),
         total: subtotal,
       };
