@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useCart } from '../../contexts/CartContext';
 import { Ionicons } from '@expo/vector-icons';
-import { supabase } from '../../services/supabase';
+import { supabase } from '../../services/supabase'; 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Pagamento({ navigation, route }) {
@@ -32,6 +32,7 @@ export default function Pagamento({ navigation, route }) {
     }
   }, [route.params?.novoCartao]);
 
+  // --- FUNÇÃO DE FINALIZAR PEDIDO (A VERSÃO FINAL) ---
   const handleFinalizarPedido = async () => {
     if (metodo === 'cartao' && !cartaoSelecionado) {
       Alert.alert('Atenção', 'Por favor, selecione um cartão.');
@@ -40,32 +41,80 @@ export default function Pagamento({ navigation, route }) {
 
     setLoading(true);
 
-    const novoPedido = { status: 'Na Fila' };
+    try {
+      // --- PASSO 1: CRIAR O PEDIDO (COM TODAS AS CORREÇÕES) ---
+      
+      // A SUA IMAGEM (image_309c82.png) PROVA QUE ESTE É O FORMATO:
+      const pedidoData = { 
+        table: 1,      // <-- O campo obrigatório (int4)
+        status: false, // <-- O campo booleano (bool)
+        draft: false,  // <-- O campo booleano (bool)
+        name: "Cliente App" // O campo de texto (text)
+      };
 
-    const { data: pedidoCriado, error } = await supabase
-      .from('orders')
-      .insert(novoPedido)
-      .select()
-      .single();
+      // Insere o pedido na tabela 'orders'
+      const { data: pedidoCriado, error: errorPedido } = await supabase
+        .from('orders')
+        .insert(pedidoData)
+        .select()
+        .single(); 
 
-    setLoading(false);
+      if (errorPedido || !pedidoCriado) {
+        console.error('ERRO NO PASSO 1 (orders):', errorPedido);
+        throw errorPedido;
+      }
 
-    if (error) {
-      console.error("Erro ao criar pedido:", error);
-      Alert.alert("Erro", `Não foi possível criar o pedido. Mensagem: ${error.message}`);
-    } else {
+      // --- PASSO 2: SALVAR OS ITENS DO PEDIDO (COM TODAS AS CORREÇÕES) ---
+      
+      const itensParaInserir = cartItems.map(item => ({
+        order_id: pedidoCriado.id, // Correção do snake_case
+        product_id: item.id,      // Correção do snake_case
+        amount: item.quantidade,
+      }));
+
+      // Correção do nome da tabela (plural)
+      const { error: errorItens } = await supabase
+        .from('items') 
+        .insert(itensParaInserir);
+
+      if (errorItens) {
+        console.error('ERRO NO PASSO 2 (items):', errorItens);
+        throw errorItens;
+      }
+
+      // --- PASSO 3: SUCESSO! ---
+      
+      setLoading(false);
       clearCart();
       
       const dadosParaStatus = {
-        ...pedidoCriado,
+        ...pedidoCriado, // Contém id, table, status (false), draft (false)
         itens: cartItems.map(item => ({ nome: item.nome, qtd: item.quantidade })),
         total: subtotal,
       };
       
       navigation.navigate('StatusPedido', { pedido: dadosParaStatus });
+
+    } catch (error) {
+      setLoading(false);
+      console.error("Erro ao finalizar pedido (Supabase):", error);
+      
+      if (error.message.includes('Network request failed')) {
+         Alert.alert(
+          "Erro de Rede", 
+          "Não foi possível se conectar ao Supabase. Verifique sua internet."
+        );
+      } else {
+         Alert.alert(
+          "Erro", 
+          `Não foi possível criar o pedido. Mensagem: ${error.message}`
+        );
+      }
     }
   };
+  // --- FIM DA FUNÇÃO CORRIGIDA ---
 
+  // ... (o resto do seu componente return() fica igual)
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
@@ -130,7 +179,7 @@ export default function Pagamento({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#f5f5f5' },
+    container: { flex: 1, backgroundColor: '#f5f5ff' },
     header: { 
       flexDirection: 'row', 
       alignItems: 'center', 

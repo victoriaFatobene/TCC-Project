@@ -11,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../services/supabase';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+// Componente auxiliar (está perfeito, sem mudanças)
 const StatusItem = ({ icon, label, isCompleted }) => (
   <View style={styles.statusItem}>
     <View style={[styles.statusIconContainer, isCompleted && styles.statusIconCompleted]}>
@@ -25,6 +26,7 @@ export default function StatusPedido({ navigation, route }) {
   const [dadosDoPedido, setDadosDoPedido] = useState(pedidoInicial);
   const insets = useSafeAreaInsets();
 
+  // Esta parte de atualização em tempo real está perfeita!
   useEffect(() => {
     const subscription = supabase
       .channel(`pedido-status-${dadosDoPedido.id}`)
@@ -37,6 +39,8 @@ export default function StatusPedido({ navigation, route }) {
           filter: `id=eq.${dadosDoPedido.id}`
         },
         (payload) => {
+          // Quando o status mudar no banco (de false para true),
+          // o app atualiza sozinho!
           console.log('Recebi uma atualização no pedido!', payload.new);
           setDadosDoPedido(estadoAnterior => ({ ...estadoAnterior, ...payload.new }));
         }
@@ -48,15 +52,41 @@ export default function StatusPedido({ navigation, route }) {
     };
   }, [dadosDoPedido.id]);
 
-  const statusList = ['Na Fila', 'Em Preparo', 'Pronto!'];
-  const currentStatusIndex = statusList.indexOf(dadosDoPedido.status);
-  const isReady = dadosDoPedido.status === 'Pronto!';
+  // --- A LÓGICA DE TRADUÇÃO CORRETA COMEÇA AQUI ---
+
+  // 1. Pega os valores booleanos do pedido
+  //    (O pedido inicial virá com draft: false, status: false)
+  const isDraft = dadosDoPedido.draft;
+  const isStatusPronto = dadosDoPedido.status; // false = "Não Pronto", true = "Pronto"
+
+  // 2. Define o "índice" do status para o tracker visual
+  //    (Na Fila = 0, Em Preparo = 1, Pronto! = 2)
+  let currentStatusIndex = -1; // Padrão: Rascunho (nada completo)
+  
+  if (isDraft === false && isStatusPronto === false) {
+    // Pedido finalizado, mas não pronto.
+    // O seu banco não diferencia "Na Fila" de "Em Preparo".
+    // Vamos assumir que "Em Preparo" (índice 1) é o estado ativo.
+    // Isso fará "Na Fila" (>=0) e "Em Preparo" (>=1) acenderem.
+    currentStatusIndex = 1; 
+  } else if (isDraft === false && isStatusPronto === true) {
+    // Pedido finalizado E pronto
+    currentStatusIndex = 2; // Todos os 3 (>=0, >=1, >=2) acenderão.
+  }
+
+  // 3. Variável de conveniência para mostrar/esconder botões
+  const isPedidoPronto = (currentStatusIndex === 2);
+
+  // --- FIM DA CORREÇÃO ---
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
       <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
-        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')} style={styles.backButton}>
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('Menu', { screen: 'HomeScreen' })} 
+          style={styles.backButton}
+        >
           <Text style={styles.backButtonText}>{'<'} Início</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Status do Pedido</Text>
@@ -66,7 +96,8 @@ export default function StatusPedido({ navigation, route }) {
         <Text style={styles.orderId}>Senha do Pedido</Text>
         <Text style={styles.orderNumber}>{dadosDoPedido.id.substring(0, 8)}</Text>
         
-        {isReady && (
+        {/* Usando a nova variável 'isPedidoPronto' */}
+        {isPedidoPronto && (
           <View style={styles.readyCard}>
             <Ionicons name="checkmark-circle" size={40} color="#FFF" />
             <Text style={styles.readyText}>Seu pedido está pronto para retirada!</Text>
@@ -74,10 +105,11 @@ export default function StatusPedido({ navigation, route }) {
         )}
         
         <View style={styles.statusTracker}>
+          {/* A lógica do 'isCompleted' agora funciona perfeitamente */}
           <StatusItem icon="hourglass-outline" label="Na Fila" isCompleted={currentStatusIndex >= 0} />
-          <View style={styles.statusLine} />
+          <View style={[styles.statusLine, currentStatusIndex >= 1 && styles.statusLineCompleted]} />
           <StatusItem icon="pizza-outline" label="Em Preparo" isCompleted={currentStatusIndex >= 1} />
-          <View style={styles.statusLine} />
+          <View style={[styles.statusLine, currentStatusIndex >= 2 && styles.statusLineCompleted]} />
           <StatusItem icon="checkmark-done-outline" label="Pronto!" isCompleted={currentStatusIndex >= 2} />
         </View>
 
@@ -92,7 +124,8 @@ export default function StatusPedido({ navigation, route }) {
           <Text style={styles.summaryTotal}>Total: R$ {dadosDoPedido.total.toFixed(2)}</Text>
         </View>
         
-        {isReady && (
+        {/* Usando a nova variável 'isPedidoPronto' */}
+        {isPedidoPronto && (
           <TouchableOpacity 
             style={styles.evaluateButton} 
             onPress={() => navigation.navigate('Avaliacao')}
@@ -105,6 +138,7 @@ export default function StatusPedido({ navigation, route }) {
   );
 }
 
+// Adicionei a cor da linha completada nos estilos
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
   header: { 
@@ -129,6 +163,7 @@ const styles = StyleSheet.create({
   statusLabel: { marginTop: 8, color: '#666', fontWeight: '600', textAlign: 'center' },
   statusLabelCompleted: { color: '#7B0909' },
   statusLine: { flex: 1, height: 4, backgroundColor: '#e0e0e0', marginHorizontal: -15, top: 23, zIndex: -1 },
+  statusLineCompleted: { backgroundColor: '#7B0909' }, // <-- Estilo que faltava
   summaryCard: { backgroundColor: '#fff', borderRadius: 10, padding: 20, elevation: 2, marginBottom: 30 },
   summaryTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 15 },
   summaryItem: { fontSize: 16, color: '#444', marginBottom: 5 },
