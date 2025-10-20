@@ -17,14 +17,14 @@ const doces = [
     id: "do1",
     nome: "Pudim de Leite",
     preco: 12.0,
-     imagem: require("../../assets/images/pudim.webp"),
+    imagem: require("../../assets/images/pudim.webp"),
     ingredientes: "Pudim de leite condensado com calda de caramelo.",
   },
   {
     id: "do2",
     nome: "Mousse de Maracujá",
     preco: 10.0,
-     imagem: require("../../assets/images/mousse.jpg"),
+    imagem: require("../../assets/images/mousse.jpg"),
     ingredientes: "Mousse aerado com polpa natural de maracujá.",
   },
 ];
@@ -33,7 +33,7 @@ const DoceItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
   return (
     <View style={styles.card}>
-      <Image source={{ uri: item.imagem }} style={styles.image} />
+      <Image source={item.imagem} style={styles.image} />
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
