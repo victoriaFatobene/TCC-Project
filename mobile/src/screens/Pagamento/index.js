@@ -32,7 +32,7 @@ export default function Pagamento({ navigation, route }) {
     }
   }, [route.params?.novoCartao]);
 
-  // --- FUNÇÃO DE FINALIZAR PEDIDO (A VERSÃO FINALMENTE CORRETA) ---
+  // --- FUNÇÃO DE FINALIZAR PEDIDO (A VERSÃO FINAL) ---
   const handleFinalizarPedido = async () => {
     if (metodo === 'cartao' && !cartaoSelecionado) {
       Alert.alert('Atenção', 'Por favor, selecione um cartão.');
@@ -42,19 +42,14 @@ export default function Pagamento({ navigation, route }) {
     setLoading(true);
 
     try {
-      // --- PASSO 1: CRIAR O PEDIDO (COM O SCHEMA CORRETO) ---
+      // --- PASSO 1: CRIAR O PEDIDO (COM TODAS AS CORREÇÕES) ---
       
-      // O seu banco de dados NÃO TEM 'status: boolean'.
-      // Ele tem uma tabela 'statuses' (como prova sua imagem image_3b7224.png).
-      // Vamos assumir que o ID 1 é "Na Fila" ou "Pendente".
-      // Se você não tiver um status com ID 1, ESTE PASSO VAI FALHAR.
-      
-      const ID_STATUS_INICIAL = 1; // <--- CONFIRME SE 1 EXISTE NA SUA TABELA 'statuses'
-
+      // A SUA IMAGEM (image_309c82.png) PROVA QUE ESTE É O FORMATO:
       const pedidoData = { 
-        table: 1, // Campo obrigatório que descobrimos
-        status_id: ID_STATUS_INICIAL, // <-- A CORREÇÃO! Usando a chave estrangeira
-        // Removido 'status' e 'draft' (booleanos) que não existem.
+        table: 1,      // <-- O campo obrigatório (int4)
+        status: false, // <-- O campo booleano (bool)
+        draft: false,  // <-- O campo booleano (bool)
+        name: "Cliente App" // O campo de texto (text)
       };
 
       // Insere o pedido na tabela 'orders'
@@ -65,7 +60,6 @@ export default function Pagamento({ navigation, route }) {
         .single(); 
 
       if (errorPedido || !pedidoCriado) {
-        // A imagem 'image_3bdede.png' prova que o erro é aqui
         console.error('ERRO NO PASSO 1 (orders):', errorPedido);
         throw errorPedido;
       }
@@ -73,12 +67,12 @@ export default function Pagamento({ navigation, route }) {
       // --- PASSO 2: SALVAR OS ITENS DO PEDIDO (COM TODAS AS CORREÇÕES) ---
       
       const itensParaInserir = cartItems.map(item => ({
-        order_id: pedidoCriado.id, 
-        product_id: item.id,      
+        order_id: pedidoCriado.id, // Correção do snake_case
+        product_id: item.id,      // Correção do snake_case
         amount: item.quantidade,
       }));
 
-      // Nome da tabela 'items' (plural), como prova sua imagem image_3b7586.png
+      // Correção do nome da tabela (plural)
       const { error: errorItens } = await supabase
         .from('items') 
         .insert(itensParaInserir);
@@ -94,11 +88,9 @@ export default function Pagamento({ navigation, route }) {
       clearCart();
       
       const dadosParaStatus = {
-        ...pedidoCriado, 
+        ...pedidoCriado, // Contém id, table, status (false), draft (false)
         itens: cartItems.map(item => ({ nome: item.nome, qtd: item.quantidade })),
         total: subtotal,
-        // Precisamos passar o status_id para a proxima tela
-        status_id: pedidoCriado.status_id 
       };
       
       navigation.navigate('StatusPedido', { pedido: dadosParaStatus });
