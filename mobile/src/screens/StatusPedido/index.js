@@ -55,20 +55,20 @@ export default function StatusPedido({ navigation, route }) {
   // --- A LÓGICA DE TRADUÇÃO CORRETA COMEÇA AQUI ---
 
   // 1. Pega os valores booleanos do pedido
-  //    (O pedido inicial virá com draft: false, status: false)
   const isDraft = dadosDoPedido.draft;
   const isStatusPronto = dadosDoPedido.status; // false = "Não Pronto", true = "Pronto"
 
   // 2. Define o "índice" do status para o tracker visual
-  //    (Na Fila = 0, Em Preparo = 1, Pronto! = 2)
   let currentStatusIndex = -1; // Padrão: Rascunho (nada completo)
   
   if (isDraft === false && isStatusPronto === false) {
     // Pedido finalizado, mas não pronto.
-    // O seu banco não diferencia "Na Fila" de "Em Preparo".
-    // Vamos assumir que "Em Preparo" (índice 1) é o estado ativo.
-    // Isso fará "Na Fila" (>=0) e "Em Preparo" (>=1) acenderem.
-    currentStatusIndex = 1; 
+    // Começa no índice 0 ("Na Fila")
+    
+    // *** ESTA É A CORREÇÃO ***
+    currentStatusIndex = 0; 
+    // *** FIM DA CORREÇÃO ***
+
   } else if (isDraft === false && isStatusPronto === true) {
     // Pedido finalizado E pronto
     currentStatusIndex = 2; // Todos os 3 (>=0, >=1, >=2) acenderão.
@@ -115,12 +115,14 @@ export default function StatusPedido({ navigation, route }) {
 
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>Resumo da Compra</Text>
+          {/* AQUI MOSTRA OS ITENS */}
           {dadosDoPedido.itens.map((item, index) => (
             <Text key={index} style={styles.summaryItem}>
               {item.qtd}x {item.nome}
             </Text>
           ))}
           <View style={styles.divider} />
+          {/* AQUI MOSTRA O TOTAL */}
           <Text style={styles.summaryTotal}>Total: R$ {dadosDoPedido.total.toFixed(2)}</Text>
         </View>
         

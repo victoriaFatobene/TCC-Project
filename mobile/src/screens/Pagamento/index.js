@@ -13,7 +13,7 @@ import { useCart } from '../../contexts/CartContext';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../services/supabase'; 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Crypto from 'expo-crypto'; // <-- O IMPORT VAI FUNCIONAR AGORA
+import * as Crypto from 'expo-crypto'; // ESTÁ FUNCIONANDO!
 
 export default function Pagamento({ navigation, route }) {
   const { cartItems, clearCart } = useCart();
@@ -43,17 +43,20 @@ export default function Pagamento({ navigation, route }) {
     setLoading(true);
 
     try {
-      // --- PASSO 1: CRIAR O PEDIDO (COM TODAS AS CORREÇÕES) ---
+      // --- PASSO 1: CRIAR O PEDIDO (JÁ ESTÁ FUNCIONANDO!) ---
       
+      const timestamp = new Date().toISOString(); 
+
       const pedidoData = { 
-        id: Crypto.randomUUID(), // <-- A CORREÇÃO FINAL!
+        id: Crypto.randomUUID(), 
         table: 1,      
         status: false, 
         draft: false,  
-        name: "Cliente App" 
+        name: "Cliente App",
+        created_at: timestamp, 
+        updated_at: timestamp  
       };
 
-      // Insere o pedido na tabela 'orders'
       const { data: pedidoCriado, error: errorPedido } = await supabase
         .from('orders')
         .insert(pedidoData)
@@ -65,12 +68,16 @@ export default function Pagamento({ navigation, route }) {
         throw errorPedido;
       }
 
-      // --- PASSO 2: SALVAR OS ITENS DO PEDIDO (COM TODAS AS CORREÇÕES) ---
+      // --- PASSO 2: SALVAR OS ITENS DO PEDIDO (A CORREÇÃO FINAL) ---
       
+      // As suas imagens (cd7b99 e cd7b61) PROVAM que o formato é este:
       const itensParaInserir = cartItems.map(item => ({
-        order_id: pedidoCriado.id, 
-        product_id: item.id,      
+        id: Crypto.randomUUID(),    // <-- Correção para o erro 'null id'
+        orderId: pedidoCriado.id,  // <-- Correção para o erro 'order_id'
+        productId: item.id,       
         amount: item.quantidade,
+        created_at: timestamp,    // <-- Correção para o erro 'null created_at'
+        updated_at: timestamp     // <-- CORREÇÃO PARA O ERRO ATUAL
       }));
 
       const { error: errorItens } = await supabase
