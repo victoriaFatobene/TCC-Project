@@ -13,7 +13,7 @@ import { useCart } from '../../contexts/CartContext';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../services/supabase'; 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Crypto from 'expo-crypto'; // <-- PASSO 1: IMPORTAR A BIBLIOTECA
+import * as Crypto from 'expo-crypto'; // <-- O IMPORT VAI FUNCIONAR AGORA
 
 export default function Pagamento({ navigation, route }) {
   const { cartItems, clearCart } = useCart();
@@ -46,7 +46,7 @@ export default function Pagamento({ navigation, route }) {
       // --- PASSO 1: CRIAR O PEDIDO (COM TODAS AS CORREÇÕES) ---
       
       const pedidoData = { 
-        id: Crypto.randomUUID(), // <-- PASSO 2: A CORREÇÃO FINAL!
+        id: Crypto.randomUUID(), // <-- A CORREÇÃO FINAL!
         table: 1,      
         status: false, 
         draft: false,  
