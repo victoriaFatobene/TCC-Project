@@ -17,21 +17,21 @@ const refrigerantes = [
     nome: "Coca-Cola",
     ingredientes: "Lata 350ml gelada.",
     preco: 5.0,
-    imagem: "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?q=80&w=1932&auto=format&fit=crop",
+    imagem: require("../../assets/images/cocacola.jpg"),
   },
   {
     id: "r2",
     nome: "Guaraná Antarctica",
     ingredientes: "Lata 350ml gelada.",
     preco: 5.0,
-    imagem: "https://images.unsplash.com/photo-1628557114185-6e2e9a97ab62?q=80&w=1887&auto=format&fit=crop",
+    imagem: require("../../assets/images/guarana.webp"),
   },
   {
     id: "r3",
     nome: "Sprite",
     ingredientes: "Lata 350ml gelada.",
     preco: 5.0,
-    imagem: "https://images.unsplash.com/photo-1603126857599-1ecdf8d4e755?q=80&w=1887&auto=format&fit=crop",
+    imagem: require("../../assets/images/sprite.webp"),
   },
 ];
 
@@ -39,10 +39,13 @@ const RefrigeranteItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
   return (
     <View style={styles.card}>
-      <Image source={{ uri: item.imagem }} style={styles.image} />
+      {/* 🔧 Correção principal: imagem local, sem { uri: ... } */}
+      <Image source={item.imagem} style={styles.image} />
+
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
+
         <View style={styles.footer}>
           <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
           <View style={styles.buttonsContainer}>
@@ -73,6 +76,7 @@ export default function Refrigerantes({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+
       <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}

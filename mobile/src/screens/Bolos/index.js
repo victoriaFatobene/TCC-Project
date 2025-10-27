@@ -1,18 +1,15 @@
 // src/screens/Bolos/index.js
 import React from "react";
 import {
-  // MODIFICAÇÃO 1: Trocamos SafeAreaView por View e adicionamos StatusBar
   View,
   Text,
   StyleSheet,
   FlatList,
   Image,
   TouchableOpacity,
-  Platform,
   StatusBar,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
-// MODIFICAÇÃO 2: Importamos o hook da área segura
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const bolos = [
@@ -20,33 +17,32 @@ const bolos = [
     id: "bo1",
     nome: "Bolo de Chocolate",
     preco: 15.0,
-    imagem:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9f-y_o-4w_z-Y7X7l2p_xX5y_j8W6e8z8w&s",
+    imagem: require("../../assets/images/bolochocolate.webp"),
     ingredientes: "Fatia generosa de bolo de chocolate com cobertura cremosa.",
   },
   {
     id: "bo2",
     nome: "Torta Holandesa",
     preco: 18.0,
-    imagem:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-q-j8c_w-l6Z-X6Y-y_r4Z_xV-c_o7d7bQ&s",
+    imagem: require("../../assets/images/tortaholandesa.webp"),
     ingredientes: "Base de biscoito, creme holandês e cobertura de ganache.",
   },
   {
     id: "bo3",
     nome: "Cheesecake de Frutas",
     preco: 20.0,
-    imagem:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-v-H5X_x_f-D_w_e-j5F_x_y-L6Z&s",
+    imagem: require("../../assets/images/cheesecake.jpg"),
     ingredientes: "Cheesecake cremoso com calda de frutas vermelhas.",
   },
 ];
 
 const BoloItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
+
   return (
     <View style={styles.card}>
-      <Image source={{ uri: item.imagem }} style={styles.image} />
+      {/* ✅ CORRIGIDO: imagem local não usa { uri } */}
+      <Image source={item.imagem} style={styles.image} />
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
@@ -75,16 +71,13 @@ const BoloItem = ({ item, navigation }) => {
 };
 
 export default function Bolos({ navigation }) {
-  // MODIFICAÇÃO 3: Pegamos os valores da área segura
   const insets = useSafeAreaInsets();
 
   return (
-    // MODIFICAÇÃO 4: Usamos uma View normal como container
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
 
       {/* HEADER */}
-      {/* MODIFICAÇÃO 5: Aplicamos o padding do topo dinamicamente */}
       <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -108,7 +101,6 @@ export default function Bolos({ navigation }) {
   );
 }
 
-// ESTILOS
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
 
@@ -116,7 +108,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#7B0909",
-    // MODIFICAÇÃO 6: Trocamos paddingVertical por paddingBottom
     paddingBottom: 15,
     paddingHorizontal: 10,
     elevation: 4,
@@ -143,9 +134,7 @@ const styles = StyleSheet.create({
     height: 160,
     resizeMode: "cover",
   },
-  cardContent: {
-    padding: 12,
-  },
+  cardContent: { padding: 12 },
   name: { fontSize: 18, fontWeight: "bold", color: "#333" },
   ingredients: {
     fontSize: 14,

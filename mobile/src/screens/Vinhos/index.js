@@ -12,39 +12,43 @@ import { useCart } from "../../contexts/CartContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const vinhos = [
-    {
-        id: "v1",
-        nome: "Vinho Tinto Seco",
-        ingredientes: "Garrafa 750ml, ideal para carnes.",
-        preco: 89.9,
-        imagem: "https://images.unsplash.com/photo-1603052875690-2f3a85b9f3a0?q=80&w=2070&auto=format&fit=crop",
-    },
-    {
-        id: "v2",
-        nome: "Vinho Branco",
-        ingredientes: "Garrafa 750ml, perfeito para peixes e frutos do mar.",
-        preco: 79.9,
-        imagem: "https://images.unsplash.com/photo-1601925260365-1d67c493b3db?q=80&w=2070&auto=format&fit=crop",
-    },
-    {
-        id: "v3",
-        nome: "Espumante Brut",
-        ingredientes: "Garrafa 750ml, refrescante e festivo.",
-        preco: 120.0,
-        imagem: "https://images.unsplash.com/photo-1617196039897-c7ff28099148?q=80&w=2070&auto=format&fit=crop",
-    },
+  {
+    id: "v1",
+    nome: "Vinho Tinto Seco",
+    ingredientes: "Garrafa 750ml, ideal para carnes.",
+    preco: 89.9,
+    imagem: require("../../assets/images/vinhoseco.jpg"),
+  },
+  {
+    id: "v2",
+    nome: "Vinho Branco",
+    ingredientes: "Garrafa 750ml, perfeito para peixes e frutos do mar.",
+    preco: 79.9,
+    imagem: require("../../assets/images/vinhobranco.png"), // ✅ corrigido caminho
+  },
+  {
+    id: "v3",
+    nome: "Espumante Brut",
+    ingredientes: "Garrafa 750ml, refrescante e festivo.",
+    preco: 120.0,
+    imagem: require("../../assets/images/espumante.webp"),
+  },
 ];
 
 const VinhoItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
+
   return (
     <View style={styles.card}>
-      <Image source={{ uri: item.imagem }} style={styles.image} />
+      {/* ✅ Correção: remover { uri: ... } */}
+      <Image source={item.imagem} style={styles.image} />
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
+
         <View style={styles.footer}>
           <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
+
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={styles.detailsButton}
@@ -54,6 +58,7 @@ const VinhoItem = ({ item, navigation }) => {
             >
               <Text style={styles.detailsButtonText}>Ver Mais</Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.addBtn}
               onPress={() => addToCart({ ...item, quantidade: 1 })}
@@ -82,6 +87,7 @@ export default function Vinhos({ navigation }) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Vinhos 🍷</Text>
       </View>
+
       <FlatList
         data={vinhos}
         renderItem={({ item }) => (
@@ -108,6 +114,7 @@ const styles = StyleSheet.create({
   backButtonText: { color: "#FFFFFF", fontSize: 24, fontWeight: "bold" },
   headerTitle: { color: "#FFFFFF", fontSize: 22, fontWeight: "bold" },
   listContainer: { padding: 16 },
+
   card: {
     backgroundColor: "#FFF",
     borderRadius: 16,

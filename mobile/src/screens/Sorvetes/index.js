@@ -1,3 +1,4 @@
+// src/screens/Sorvetes/index.tsx
 import React from "react";
 import {
   View,
@@ -11,42 +12,45 @@ import {
 import { useCart } from "../../contexts/CartContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+// --- Dados dos sorvetes ---
 const sorvetes = [
   {
     id: "s1",
     nome: "Sorvete de Chocolate",
     ingredientes: "Cremoso, feito com cacau puro.",
     preco: 12.9,
-    imagem: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=2070&auto=format&fit=crop",
+    imagem: require("../../assets/images/sorvetechoco.webp"),
   },
   {
     id: "s2",
     nome: "Sorvete de Morango",
     ingredientes: "Natural com pedaços de morango fresco.",
     preco: 11.5,
-    imagem: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?q=80&w=2070&auto=format&fit=crop",
+    imagem: require("../../assets/images/sorvetemorango.jpg"),
   },
   {
     id: "s3",
     nome: "Sorvete de Creme",
     ingredientes: "Tradicional, sabor leve e clássico.",
     preco: 10.0,
-    imagem: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop",
+    imagem: require("../../assets/images/sorvetecreme.webp"),
   },
   {
     id: "s4",
     nome: "Açaí na Tigela",
     ingredientes: "Com granola e banana.",
     preco: 14.0,
-    imagem: "https://images.unsplash.com/photo-1625944226811-f5ecaeffbe67?q=80&w=2070&auto=format&fit=crop",
+    imagem: require("../../assets/images/acai.webp"),
   },
 ];
 
+// --- Componente do item ---
 const SorveteItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
+
   return (
     <View style={styles.card}>
-      <Image source={{ uri: item.imagem }} style={styles.image} />
+      <Image source={item.imagem} style={styles.image} />
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
@@ -74,6 +78,7 @@ const SorveteItem = ({ item, navigation }) => {
   );
 };
 
+// --- Tela principal ---
 export default function Sorvetes({ navigation }) {
   const insets = useSafeAreaInsets();
 
@@ -81,19 +86,14 @@ export default function Sorvetes({ navigation }) {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
       <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        >
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>{"<"}</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Sorvetes 🍨</Text>
       </View>
       <FlatList
         data={sorvetes}
-        renderItem={({ item }) => (
-          <SorveteItem item={item} navigation={navigation} />
-        )}
+        renderItem={({ item }) => <SorveteItem item={item} navigation={navigation} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
@@ -101,6 +101,7 @@ export default function Sorvetes({ navigation }) {
   );
 }
 
+// --- Estilos ---
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
   header: {
@@ -126,19 +127,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
   },
-  image: {
-    width: "100%",
-    height: 180,
-    resizeMode: "cover",
-  },
+  image: { width: "100%", height: 180, resizeMode: "cover" },
   cardContent: { padding: 12 },
   name: { fontSize: 18, fontWeight: "bold", color: "#333" },
   ingredients: { fontSize: 14, color: "#777", marginTop: 4, marginBottom: 10 },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+  footer: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   price: { fontSize: 16, fontWeight: "bold", color: "#7B0909" },
   buttonsContainer: { flexDirection: "row", alignItems: "center" },
   detailsButton: {

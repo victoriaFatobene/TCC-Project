@@ -17,21 +17,21 @@ const sucos = [
     nome: "Suco de Laranja",
     ingredientes: "Natural, 300ml.",
     preco: 7.5,
-    imagem: "https://images.unsplash.com/photo-1617196039897-0ec90ffb47d4?q=80&w=1887&auto=format&fit=crop",
+    imagem: require("../../assets/images/sucolaranja.jpg"),
   },
   {
     id: "s2",
     nome: "Suco de Uva",
     ingredientes: "Integral, 300ml.",
     preco: 8.0,
-    imagem: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?q=80&w=1887&auto=format&fit=crop",
+    imagem: require("../../assets/images/sucouva.jpg"),
   },
   {
     id: "s3",
     nome: "Suco de Abacaxi",
     ingredientes: "Natural, 300ml.",
     preco: 7.5,
-    imagem: "https://images.unsplash.com/photo-1623065427557-d7c2a2dff7e3?q=80&w=1887&auto=format&fit=crop",
+    imagem: require("../../assets/images/sucoabacaxi.webp"),
   },
 ];
 
@@ -39,12 +39,16 @@ const SucoItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
   return (
     <View style={styles.card}>
-      <Image source={{ uri: item.imagem }} style={styles.image} />
+      {/* 🔧 Correção: imagem local, sem { uri: ... } */}
+      <Image source={item.imagem} style={styles.image} />
+
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
+
         <View style={styles.footer}>
           <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
+
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={styles.detailsButton}
@@ -54,6 +58,7 @@ const SucoItem = ({ item, navigation }) => {
             >
               <Text style={styles.detailsButtonText}>Ver Mais</Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.addBtn}
               onPress={() => addToCart({ ...item, quantidade: 1 })}
@@ -73,6 +78,7 @@ export default function Sucos({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+
       <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -82,9 +88,12 @@ export default function Sucos({ navigation }) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Sucos 🧃</Text>
       </View>
+
       <FlatList
         data={sucos}
-        renderItem={({ item }) => <SucoItem item={item} navigation={navigation} />}
+        renderItem={({ item }) => (
+          <SucoItem item={item} navigation={navigation} />
+        )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
