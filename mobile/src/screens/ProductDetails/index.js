@@ -8,6 +8,7 @@ import {
   ScrollView,
   StatusBar,
   Alert,
+  TextInput,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -17,7 +18,6 @@ export default function ProductDetails({ route, navigation }) {
   const { addToCart } = useCart();
   const insets = useSafeAreaInsets();
 
-  // --- Ingredientes extras disponíveis ---
   const ingredientesExtras = [
     { id: "1", nome: "Bacon", preco: 4.0 },
     { id: "2", nome: "Catupiry", preco: 3.5 },
@@ -27,14 +27,13 @@ export default function ProductDetails({ route, navigation }) {
   ];
 
   const [extrasSelecionados, setExtrasSelecionados] = useState([]);
+  const [observacoes, setObservacoes] = useState(""); // novo estado para observações
 
-  // --- Calcula o preço total ---
   const precoTotal = (
     product.preco +
     extrasSelecionados.reduce((acc, item) => acc + item.preco, 0)
   ).toFixed(2);
 
-  // --- Alterna ingredientes ---
   const toggleIngrediente = (ingrediente) => {
     const jaSelecionado = extrasSelecionados.find((i) => i.id === ingrediente.id);
     if (jaSelecionado) {
@@ -48,6 +47,7 @@ export default function ProductDetails({ route, navigation }) {
     addToCart({
       ...product,
       extras: extrasSelecionados,
+      observacoes, // adiciona observações ao carrinho
       quantidade: 1,
       precoFinal: parseFloat(precoTotal),
     });
@@ -75,7 +75,6 @@ export default function ProductDetails({ route, navigation }) {
       <ScrollView contentContainerStyle={styles.content}>
         <Image source={{ uri: product.imagem }} style={styles.productImage} />
 
-        {/* DETALHES DA PIZZA */}
         <View style={styles.detailsContainer}>
           <Text style={styles.productName}>{product.nome}</Text>
           <Text style={styles.productPrice}>R$ {product.preco.toFixed(2)}</Text>
@@ -84,7 +83,6 @@ export default function ProductDetails({ route, navigation }) {
           </Text>
         </View>
 
-        {/* LISTA DE INGREDIENTES EXTRAS */}
         <View style={styles.extrasContainer}>
           <Text style={styles.subtitulo}>Adicione ou remova ingredientes</Text>
           {ingredientesExtras.map((item) => {
@@ -103,13 +101,23 @@ export default function ProductDetails({ route, navigation }) {
           })}
         </View>
 
-        {/* TOTAL */}
+        {/* OBSERVAÇÕES */}
+        <View style={styles.observacoesContainer}>
+          <Text style={styles.subtitulo}>Observações</Text>
+          <TextInput
+            style={styles.observacoesInput}
+            placeholder="Ex: Sem cebola, borda recheada..."
+            multiline
+            value={observacoes}
+            onChangeText={setObservacoes}
+          />
+        </View>
+
         <View style={styles.totalContainer}>
           <Text style={styles.totalTexto}>Total:</Text>
           <Text style={styles.totalPreco}>R$ {precoTotal}</Text>
         </View>
 
-        {/* BOTÃO ADICIONAR AO CARRINHO */}
         <TouchableOpacity style={styles.cartButton} onPress={handleAddToCart}>
           <Text style={styles.cartButtonText}>Adicionar ao Carrinho</Text>
         </TouchableOpacity>
@@ -135,12 +143,7 @@ const styles = StyleSheet.create({
 
   content: { padding: 20, paddingBottom: 40 },
 
-  productImage: {
-    width: "100%",
-    height: 280,
-    borderRadius: 20,
-    marginBottom: 20,
-  },
+  productImage: { width: "100%", height: 280, borderRadius: 20, marginBottom: 20 },
 
   detailsContainer: {
     backgroundColor: "#FFF",
@@ -167,24 +170,24 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     marginBottom: 10,
   },
-  ingredienteSelecionado: {
-    backgroundColor: "#d9fdd3",
-    borderColor: "#4CAF50",
-  },
+  ingredienteSelecionado: { backgroundColor: "#d9fdd3", borderColor: "#4CAF50" },
   nomeIngrediente: { fontSize: 16, fontWeight: "500", color: "#333" },
   precoIngrediente: { fontSize: 14, color: "#666", marginTop: 4 },
-  acaoIngrediente: {
-    marginTop: 6,
-    fontWeight: "bold",
-    color: "#7B0909",
-    textAlign: "right",
+  acaoIngrediente: { marginTop: 6, fontWeight: "bold", color: "#7B0909", textAlign: "right" },
+
+  observacoesContainer: { marginBottom: 25 },
+  observacoesInput: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    padding: 15,
+    fontSize: 16,
+    textAlignVertical: "top",
+    minHeight: 80,
   },
 
-  totalContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 15,
-  },
+  totalContainer: { flexDirection: "row", justifyContent: "space-between", marginBottom: 15 },
   totalTexto: { fontSize: 18, fontWeight: "600" },
   totalPreco: { fontSize: 20, fontWeight: "bold", color: "#7B0909" },
 
