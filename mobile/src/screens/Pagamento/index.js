@@ -13,7 +13,7 @@ import { useCart } from '../../contexts/CartContext';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../services/supabase'; 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Crypto from 'expo-crypto'; // ESTÁ FUNCIONANDO!
+import * as Crypto from 'expo-crypto';
 
 export default function Pagamento({ navigation, route }) {
   const { cartItems, clearCart } = useCart();
@@ -33,7 +33,6 @@ export default function Pagamento({ navigation, route }) {
     }
   }, [route.params?.novoCartao]);
 
-  // --- FUNÇÃO DE FINALIZAR PEDIDO (A VERSÃO FINAL) ---
   const handleFinalizarPedido = async () => {
     if (metodo === 'cartao' && !cartaoSelecionado) {
       Alert.alert('Atenção', 'Por favor, selecione um cartão.');
@@ -64,20 +63,19 @@ export default function Pagamento({ navigation, route }) {
         .single(); 
 
       if (errorPedido || !pedidoCriado) {
-        console.error('ERRO NO PASSO 1 (orders):', errorPedido);
+        console.error('ERRO NO PASSO 1 (orders):', errorPedido.message); // Correção aqui
         throw errorPedido;
       }
 
       // --- PASSO 2: SALVAR OS ITENS DO PEDIDO (A CORREÇÃO FINAL) ---
       
-      // As suas imagens (cd7b99 e cd7b61) PROVAM que o formato é este:
       const itensParaInserir = cartItems.map(item => ({
-        id: Crypto.randomUUID(),    // <-- Correção para o erro 'null id'
-        orderId: pedidoCriado.id,  // <-- Correção para o erro 'order_id'
+        id: Crypto.randomUUID(),    
+        orderId: pedidoCriado.id, 
         productId: item.id,       
         amount: item.quantidade,
-        created_at: timestamp,    // <-- Correção para o erro 'null created_at'
-        updated_at: timestamp     // <-- CORREÇÃO PARA O ERRO ATUAL
+        created_at: timestamp,    
+        updated_at: timestamp    
       }));
 
       const { error: errorItens } = await supabase
@@ -85,7 +83,7 @@ export default function Pagamento({ navigation, route }) {
         .insert(itensParaInserir);
 
       if (errorItens) {
-        console.error('ERRO NO PASSO 2 (items):', errorItens);
+        console.error('ERRO NO PASSO 2 (items):', errorItens.message); // Correção aqui
         throw errorItens;
       }
 
@@ -104,24 +102,28 @@ export default function Pagamento({ navigation, route }) {
 
     } catch (error) {
       setLoading(false);
-      console.error("Erro ao finalizar pedido (Supabase):", error);
+      
+      // --- A CORREÇÃO PRINCIPAL ESTÁ AQUI ---
+      // Antes: console.error("...", error);
+      // Agora: console.error("...", error.message);
+      console.error("Erro ao finalizar pedido (Supabase):", error.message); 
       
       if (error.message.includes('Network request failed')) {
          Alert.alert(
-          "Erro de Rede", 
-          "Não foi possível se conectar ao Supabase. Verifique sua internet."
-        );
+           "Erro de Rede", 
+           "Não foi possível se conectar ao Supabase. Verifique sua internet."
+         );
       } else {
          Alert.alert(
-          "Erro", 
-          `Não foi possível criar o pedido. Mensagem: ${error.message}`
-        );
+           "Erro", 
+           `Não foi possível criar o pedido. Mensagem: ${error.message}`
+         );
       }
     }
   };
-  // --- FIM DA FUNÇÃO CORRIGIDA ---
-
-  // ... (o resto do seu componente return() fica igual)
+  
+  // O resto do seu código (return, styles) está perfeito.
+  // ... (return e styles permanecem iguais)
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />

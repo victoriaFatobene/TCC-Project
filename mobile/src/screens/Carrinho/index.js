@@ -25,8 +25,6 @@ function Carrinho({ navigation }) {
         { text: "Cancelar", style: "cancel" },
         { 
           text: "Confirmar", 
-          // --- A CORREÇÃO ESTÁ AQUI ---
-          // Com o novo App.tsx, a navegação para Pagamento é direta
           onPress: () => navigation.navigate('Pagamento') 
         },
       ]
@@ -35,7 +33,13 @@ function Carrinho({ navigation }) {
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
-      <Image source={{ uri: item.imagem }} style={styles.image} />
+      
+      {/* --- A CORREÇÃO ESTÁ AQUI --- */}
+      {/* Antes estava: item.imagem
+        O correto é:  item.imageUrl (como definimos no Supabase)
+      */}
+      <Image source={{ uri: item.imageUrl }} style={styles.image} />
+      
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
