@@ -39,16 +39,12 @@ export default function StatusPedido({ navigation, route }) {
           filter: `id=eq.${dadosDoPedido.id}`
         },
         (payload) => {
-          // *** SE VOCÊ VIR ESTA MENSAGEM, O PROBLEMA ESTÁ RESOLVIDO ***
           console.log('--- SINAL DO SUPABASE RECEBIDO! ATUALIZANDO TELA! ---');
           console.log('Novos dados:', payload.new);
-          // *** FIM DA MENSAGEM DE SUCESSO ***
-
           setDadosDoPedido(estadoAnterior => ({ ...estadoAnterior, ...payload.new }));
         }
       )
       .subscribe((status) => {
-        // Este "sensor" nos diz se a conexão com o canal foi bem-sucedida
         if (status === 'SUBSCRIBED') {
           console.log('--- CONEXÃO DE TEMPO REAL ESTABELECIDA COM SUCESSO! ---');
         } else {
@@ -80,10 +76,15 @@ export default function StatusPedido({ navigation, route }) {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
       <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
+        
+        {/* --- A CORREÇÃO ESTÁ AQUI --- */}
+        {/* Usamos popToTop() para voltar à primeira tela da pilha (sua tela inicial) */}
         <TouchableOpacity 
-          onPress={() => navigation.navigate('Menu', { screen: 'HomeScreen' })} 
+          onPress={() => navigation.popToTop()} 
           style={styles.backButton}
         >
+        {/* --- FIM DA CORREÇÃO --- */}
+
           <Text style={styles.backButtonText}>{'<'} Início</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Status do Pedido</Text>
