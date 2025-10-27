@@ -27,7 +27,7 @@ export default function ProductDetails({ route, navigation }) {
   ];
 
   const [extrasSelecionados, setExtrasSelecionados] = useState([]);
-  const [observacoes, setObservacoes] = useState(""); // novo estado para observações
+  const [observacoes, setObservacoes] = useState("");
 
   const precoTotal = (
     product.preco +
@@ -47,7 +47,7 @@ export default function ProductDetails({ route, navigation }) {
     addToCart({
       ...product,
       extras: extrasSelecionados,
-      observacoes, // adiciona observações ao carrinho
+      observacoes,
       quantidade: 1,
       precoFinal: parseFloat(precoTotal),
     });
@@ -73,7 +73,11 @@ export default function ProductDetails({ route, navigation }) {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <Image source={{ uri: product.imagem }} style={styles.productImage} />
+        
+        {/* --- A CORREÇÃO ESTÁ AQUI --- */}
+        {/* Antes: <Image source={{ uri: product.imagem }} ... /> */}
+        {/* Correto (para imagens locais): */}
+        <Image source={product.imagem} style={styles.productImage} />
 
         <View style={styles.detailsContainer}>
           <Text style={styles.productName}>{product.nome}</Text>
@@ -126,6 +130,7 @@ export default function ProductDetails({ route, navigation }) {
   );
 }
 
+// Seus estilos aqui (estão corretos, não precisa mudar)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
 
