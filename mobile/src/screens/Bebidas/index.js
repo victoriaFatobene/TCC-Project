@@ -1,91 +1,191 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   StatusBar,
+  TextInput,
+  FlatList,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Bebidas({ navigation }) {
   const insets = useSafeAreaInsets();
+  const [search, setSearch] = useState("");
+
+  // Categorias de bebidas
+  const categorias = [
+    {
+      id: "1",
+      nome: "Refrigerantes",
+      emoji: "🥤",
+      cor: "#0288D1",
+      tela: "Refrigerantes",
+    },
+    {
+      id: "2",
+      nome: "Sucos",
+      emoji: "🍊",
+      cor: "#F9A825",
+      tela: "Sucos",
+    },
+    {
+      id: "3",
+      nome: "Alcoólicas",
+      emoji: "🍺",
+      cor: "#6D4C41",
+      tela: "Alcoolicas",
+    },
+    {
+      id: "4",
+      nome: "Vinhos",
+      emoji: "🍷",
+      cor: "#8E24AA",
+      tela: "Vinhos",
+    },
+  ];
+
+  // Filtro da barra de pesquisa
+  const filtradas = categorias.filter((cat) =>
+    cat.nome.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
-      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
+      <StatusBar barStyle="light-content" backgroundColor="#B02A30" />
+
+      {/* Cabeçalho */}
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
         >
-          <Text style={styles.backButtonText}>{"<"}</Text>
+          <Ionicons name="chevron-back" size={26} color="#FFF" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Bebidas 🥤</Text>
       </View>
 
-      <View style={styles.content}>
-        <TouchableOpacity
-          style={[styles.menuButton, styles.refrigerante]}
-          onPress={() => navigation.navigate("Refrigerantes")}
-        >
-          <Text style={styles.menuButtonText}>🥤 Refrigerantes</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.menuButton, styles.suco]}
-          onPress={() => navigation.navigate("Sucos")}
-        >
-          <Text style={styles.menuButtonText}>🍊 Sucos</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.menuButton, styles.alcoolica]}
-          // --- A CORREÇÃO ESTÁ AQUI ---
-          onPress={() => navigation.navigate("Alcoolicas")}
-        >
-          <Text style={styles.menuButtonText}>🍺 Alcoólicas</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.menuButton, styles.vinho]}
-          onPress={() => navigation.navigate("Vinhos")}
-        >
-          <Text style={styles.menuButtonText}>🍷 Vinhos</Text>
-        </TouchableOpacity>
+      {/* Barra de pesquisa */}
+      <View style={styles.searchContainer}>
+        <Ionicons name="search" size={22} color="#B02A30" />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar bebida..."
+          placeholderTextColor="#999"
+          value={search}
+          onChangeText={setSearch}
+        />
       </View>
+
+      {/* Lista de categorias */}
+      <FlatList
+        data={filtradas}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.content}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={[styles.card, { backgroundColor: item.cor }]}
+            onPress={() => navigation.navigate(item.tela)}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.emoji}>{item.emoji}</Text>
+            <Text style={styles.cardText}>{item.nome}</Text>
+          </TouchableOpacity>
+        )}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>Nenhuma bebida encontrada 😕</Text>
+        }
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FAFAFA" },
+  container: { flex: 1, backgroundColor: "#FFF8F0" },
+
   header: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#7B0909",
-    paddingBottom: 15,
+    backgroundColor: "#B02A30",
+    paddingBottom: 20,
     paddingHorizontal: 10,
-    elevation: 4,
-  },
-  backButton: { padding: 5, marginRight: 15 },
-  backButtonText: { color: "#FFFFFF", fontSize: 24, fontWeight: "bold" },
-  headerTitle: { color: "#FFFFFF", fontSize: 22, fontWeight: "bold" },
-  content: { flex: 1, justifyContent: "center", padding: 20 },
-  menuButton: {
-    padding: 22,
-    borderRadius: 18,
-    alignItems: "center",
-    marginBottom: 20,
-    elevation: 4,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    elevation: 6,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+  },
+  backButton: {
+    padding: 8,
+    borderRadius: 50,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    marginRight: 8,
+  },
+  headerTitle: {
+    color: "#FFF8F0",
+    fontSize: 30,
+    fontWeight: "bold",
+    letterSpacing: 0.8,
+  },
+
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    elevation: 3,
+    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
   },
-  menuButtonText: { fontSize: 20, fontWeight: "bold", color: "#fff" },
-  refrigerante: { backgroundColor: "#0288D1" },
-  suco: { backgroundColor: "#F9A825" },
-  alcoolica: { backgroundColor: "#6D4C41" },
-  vinho: { backgroundColor: "#8E24AA" },
+  searchInput: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 16,
+    color: "#333",
+  },
+
+  content: {
+    paddingHorizontal: 20,
+    paddingTop: 30,
+    paddingBottom: 40,
+  },
+
+  card: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    borderRadius: 18,
+    paddingVertical: 22,
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+  },
+  emoji: {
+    fontSize: 38,
+    marginRight: 20,
+  },
+  cardText: {
+    color: "#FFF",
+    fontSize: 22,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+  },
+
+  emptyText: {
+    textAlign: "center",
+    color: "#777",
+    fontSize: 16,
+    marginTop: 40,
+  },
 });
