@@ -1,5 +1,4 @@
-// src/screens/MenuPizzas/index.js
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   StatusBar,
+  TextInput,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -50,7 +50,6 @@ const PizzaItem = ({ item, navigation }) => {
 
   return (
     <View style={styles.card}>
-      {/* 🔧 Correção: use source={item.imagem} */}
       <Image source={item.imagem} style={styles.image} />
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
@@ -81,11 +80,18 @@ const PizzaItem = ({ item, navigation }) => {
 
 export default function MenuPizzas({ navigation }) {
   const insets = useSafeAreaInsets();
+  const [searchText, setSearchText] = useState("");
+
+  // Filtra as pizzas pelo texto da pesquisa
+  const filteredPizzas = pizzasSalgadas.filter((pizza) =>
+    pizza.nome.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#B22222" />
 
+      {/* Cabeçalho */}
       <View style={[styles.header, { paddingTop: insets.top + 18 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -96,13 +102,28 @@ export default function MenuPizzas({ navigation }) {
         <Text style={styles.headerTitle}>🍕 Pizzas Salgadas</Text>
       </View>
 
+      {/* Barra de pesquisa */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar pizza..."
+          placeholderTextColor="#999"
+          value={searchText}
+          onChangeText={setSearchText}
+        />
+      </View>
+
+      {/* Lista de pizzas */}
       <FlatList
-        data={pizzasSalgadas}
+        data={filteredPizzas}
         renderItem={({ item }) => (
           <PizzaItem item={item} navigation={navigation} />
         )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
+        ListEmptyComponent={
+          <Text style={styles.notFoundText}>Nenhuma pizza encontrada 😕</Text>
+        }
       />
     </View>
   );
@@ -121,6 +142,24 @@ const styles = StyleSheet.create({
   backButton: { padding: 5, marginRight: 15 },
   backButtonText: { color: "#FFD700", fontSize: 26, fontWeight: "bold" },
   headerTitle: { color: "#FFD700", fontSize: 24, fontWeight: "bold" },
+
+  searchContainer: {
+    backgroundColor: "#FFF",
+    marginHorizontal: 16,
+    marginTop: 16,
+    borderRadius: 14,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  searchInput: {
+    fontSize: 16,
+    color: "#333",
+  },
+
   listContainer: { padding: 18 },
   card: {
     backgroundColor: "#FFF",
@@ -133,11 +172,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 6,
   },
-  image: {
-    width: "100%",
-    height: 200,
-    resizeMode: "cover",
-  },
+  image: { width: "100%", height: 200, resizeMode: "cover" },
   cardContent: { padding: 14 },
   name: { fontSize: 20, fontWeight: "bold", color: "#B22222" },
   ingredients: {
@@ -171,4 +206,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addBtnText: { color: "#FFD700", fontSize: 22, fontWeight: "bold" },
+  notFoundText: {
+    textAlign: "center",
+    color: "#777",
+    fontSize: 16,
+    marginTop: 40,
+  },
 });

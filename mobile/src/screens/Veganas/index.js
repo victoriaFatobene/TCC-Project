@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   StatusBar,
+  TextInput,
 } from "react-native";
 import { useCart } from "../../contexts/CartContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -59,13 +60,13 @@ const PizzaVeganaItem = ({ item, navigation }) => {
                 navigation.navigate("ProductDetails", { product: item })
               }
             >
-              <Text style={styles.detailsButtonText}>Ver Mais</Text>
+              <Text style={styles.detailsButtonText}>🍴 Ver Mais</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.addBtn}
               onPress={() => addToCart({ ...item, quantidade: 1 })}
             >
-              <Text style={styles.addBtnText}>+</Text>
+              <Text style={styles.addBtnText}>➕</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -76,9 +77,18 @@ const PizzaVeganaItem = ({ item, navigation }) => {
 
 export default function PizzasVeganas({ navigation }) {
   const insets = useSafeAreaInsets();
+  const [searchText, setSearchText] = useState("");
+
+  // Filtra as pizzas veganas pelo nome
+  const filteredPizzas = pizzasVeganas.filter((pizza) =>
+    pizza.nome.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+
+      {/* Cabeçalho */}
       <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -88,13 +98,29 @@ export default function PizzasVeganas({ navigation }) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Pizzas Veganas 🌱</Text>
       </View>
+
+      {/* Barra de pesquisa */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar pizza vegana..."
+          placeholderTextColor="#999"
+          value={searchText}
+          onChangeText={setSearchText}
+        />
+      </View>
+
+      {/* Lista de pizzas */}
       <FlatList
-        data={pizzasVeganas}
+        data={filteredPizzas}
         renderItem={({ item }) => (
           <PizzaVeganaItem item={item} navigation={navigation} />
         )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
+        ListEmptyComponent={
+          <Text style={styles.notFoundText}>Nenhuma pizza encontrada 😕</Text>
+        }
       />
     </View>
   );
@@ -111,8 +137,23 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   backButton: { padding: 5, marginRight: 15 },
-  backButtonText: { color: "#FFFFFF", fontSize: 24, fontWeight: "bold" },
-  headerTitle: { color: "#FFFFFF", fontSize: 22, fontWeight: "bold" },
+  backButtonText: { color: "#FFF", fontSize: 24, fontWeight: "bold" },
+  headerTitle: { color: "#FFF", fontSize: 22, fontWeight: "bold" },
+
+  searchContainer: {
+    backgroundColor: "#FFF",
+    marginHorizontal: 16,
+    marginTop: 16,
+    borderRadius: 14,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  searchInput: { fontSize: 16, color: "#333" },
+
   listContainer: { padding: 16 },
   card: {
     backgroundColor: "#FFF",
@@ -125,11 +166,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
   },
-  image: {
-    width: "100%",
-    height: 180,
-    resizeMode: "cover",
-  },
+  image: { width: "100%", height: 180, resizeMode: "cover" },
   cardContent: { padding: 12 },
   name: { fontSize: 18, fontWeight: "bold", color: "#333" },
   ingredients: { fontSize: 14, color: "#777", marginTop: 4, marginBottom: 10 },
@@ -157,4 +194,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addBtnText: { color: "#FFF", fontSize: 22, fontWeight: "bold" },
+  notFoundText: {
+    textAlign: "center",
+    color: "#777",
+    fontSize: 16,
+    marginTop: 40,
+  },
 });
