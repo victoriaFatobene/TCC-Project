@@ -17,7 +17,9 @@ import * as Crypto from 'expo-crypto';
 
 export default function Pagamento({ navigation, route }) {
   const { cartItems, clearCart } = useCart();
-  const subtotal = cartItems.reduce((total, item) => total + (item.preco || 0) * (item.quantidade || 1), 0);
+  
+  // --- CORREÇÃO 1: Usar precoFinal no subtotal ---
+  const subtotal = cartItems.reduce((total, item) => total + (item.precoFinal || item.preco || 0) * (item.quantidade || 1), 0);
   
   const [metodo, setMetodo] = useState('dinheiro');
   const [cartoes, setCartoes] = useState([
@@ -63,27 +65,29 @@ export default function Pagamento({ navigation, route }) {
         .single(); 
 
       if (errorPedido || !pedidoCriado) {
-        console.error('ERRO NO PASSO 1 (orders):', errorPedido.message); // Correção aqui
+        console.error('ERRO NO PASSO 1 (orders):', errorPedido.message);
         throw errorPedido;
       }
 
-      // --- PASSO 2: SALVAR OS ITENS DO PEDIDO (A CORREÇÃO FINAL) ---
-      
+      // --- CORREÇÃO 2: Adicionar extras e observações para o Supabase ---
       const itensParaInserir = cartItems.map(item => ({
         id: Crypto.randomUUID(),    
         orderId: pedidoCriado.id, 
         productId: item.id,       
         amount: item.quantidade,
         created_at: timestamp,    
-        updated_at: timestamp    
+        updated_at: timestamp,
+        extras: item.extras || [], // <-- ADICIONADO
+        observacoes: item.observacoes || null // <-- ADICIONADO
       }));
+      // -----------------------------------------------------------------
 
       const { error: errorItens } = await supabase
         .from('items') 
         .insert(itensParaInserir);
 
       if (errorItens) {
-        console.error('ERRO NO PASSO 2 (items):', errorItens.message); // Correção aqui
+        console.error('ERRO NO PASSO 2 (items):', errorItens.message); 
         throw errorItens;
       }
 
@@ -92,20 +96,23 @@ export default function Pagamento({ navigation, route }) {
       setLoading(false);
       clearCart();
       
+      // --- CORREÇÃO 3: Enviar dados completos para a tela de Status ---
       const dadosParaStatus = {
         ...pedidoCriado, 
-        itens: cartItems.map(item => ({ nome: item.nome, qtd: item.quantidade })),
+        itens: cartItems.map(item => ({ 
+          nome: item.nome, 
+          qtd: item.quantidade,
+          extras: item.extras || [], // <-- ADICIONADO
+          observacoes: item.observacoes || null // <-- ADICIONADO
+        })),
         total: subtotal,
       };
+      // -------------------------------------------------------------
       
       navigation.navigate('StatusPedido', { pedido: dadosParaStatus });
 
     } catch (error) {
       setLoading(false);
-      
-      // --- A CORREÇÃO PRINCIPAL ESTÁ AQUI ---
-      // Antes: console.error("...", error);
-      // Agora: console.error("...", error.message);
       console.error("Erro ao finalizar pedido (Supabase):", error.message); 
       
       if (error.message.includes('Network request failed')) {
@@ -123,7 +130,6 @@ export default function Pagamento({ navigation, route }) {
   };
   
   // O resto do seu código (return, styles) está perfeito.
-  // ... (return e styles permanecem iguais)
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />

@@ -14,7 +14,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function Carrinho({ navigation }) {
   const { cartItems, addToCart, decreaseQuantity, removeFromCart } = useCart();
-  const subtotal = cartItems.reduce((total, p) => total + (p.preco || 0) * (p.quantidade || 0), 0);
+  
+  // --- CORREÇÃO 1: Usar precoFinal no subtotal ---
+  const subtotal = cartItems.reduce((total, p) => total + (p.precoFinal || p.preco || 0) * (p.quantidade || 0), 0);
+  
   const insets = useSafeAreaInsets();
 
   const finalizarPedido = () => {
@@ -31,18 +34,32 @@ function Carrinho({ navigation }) {
     );
   };
 
+  // --- CORREÇÃO 2: Mostrar extras e observações ---
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       
-      {/* --- A CORREÇÃO ESTÁ AQUI --- */}
-      {/* Antes estava: item.imagem
-        O correto é:  item.imageUrl (como definimos no Supabase)
-      */}
       <Image source={{ uri: item.imageUrl }} style={styles.image} />
       
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
-        <Text style={styles.price}>R$ {item.preco.toFixed(2)}</Text>
+        
+        {/* Usar o precoFinal se existir */}
+        <Text style={styles.price}>R$ {(item.precoFinal || item.preco).toFixed(2)}</Text>
+        
+        {/* Mostrar Extras (se houver) */}
+        {item.extras && item.extras.length > 0 && (
+          <Text style={styles.extrasText}>
+            Extras: {item.extras.map(e => e.nome).join(', ')}
+          </Text>
+        )}
+        
+        {/* Mostrar Observações (se houver) */}
+        {item.observacoes && (
+          <Text style={styles.obsText}>
+            Obs: {item.observacoes}
+          </Text>
+        )}
+
         <View style={styles.controls}>
           <TouchableOpacity style={styles.button} onPress={() => decreaseQuantity(item.id)}>
             <Text style={styles.buttonText}>-</Text>
@@ -82,7 +99,7 @@ function Carrinho({ navigation }) {
           <FlatList
             data={cartItems}
             renderItem={renderItem}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item.id.toString()} // Idealmente, crie um ID único para itens customizados
             contentContainerStyle={styles.scrollContainer}
           />
           <View style={styles.footer}>
@@ -115,6 +132,22 @@ const styles = StyleSheet.create({
   cardContent: { flex: 1 },
   name: { fontSize: 18, fontWeight: "600" },
   price: { fontSize: 16, color: "#888", marginVertical: 5 },
+  
+  // --- NOVOS ESTILOS ---
+  extrasText: {
+    fontSize: 14,
+    color: '#555',
+    fontStyle: 'italic',
+    marginBottom: 4,
+  },
+  obsText: {
+    fontSize: 14,
+    color: '#555',
+    fontStyle: 'italic',
+    marginBottom: 8,
+  },
+  // --- FIM DOS NOVOS ESTILOS ---
+  
   controls: { flexDirection: "row", alignItems: "center", marginTop: 5 },
   button: { backgroundColor: "#E53935", width: 30, height: 30, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
   buttonText: { color: "#FFF", fontSize: 18, fontWeight: "600" },

@@ -15,28 +15,28 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 // --- Dados dos sorvetes ---
 const sorvetes = [
   {
-    id: "s1",
+    id: "t1",
     nome: "Sorvete de Chocolate",
     ingredientes: "Cremoso, feito com cacau puro.",
     preco: 12.9,
     imagem: require("../../assets/images/sorvetechoco.webp"),
   },
   {
-    id: "s2",
+    id: "t2",
     nome: "Sorvete de Morango",
     ingredientes: "Natural com pedaços de morango fresco.",
     preco: 11.5,
     imagem: require("../../assets/images/sorvetemorango.jpg"),
   },
   {
-    id: "s3",
+    id: "t3",
     nome: "Sorvete de Creme",
     ingredientes: "Tradicional, sabor leve e clássico.",
     preco: 10.0,
     imagem: require("../../assets/images/sorvetecreme.webp"),
   },
   {
-    id: "s4",
+    id: "t4",
     nome: "Açaí na Tigela",
     ingredientes: "Com granola e banana.",
     preco: 14.0,

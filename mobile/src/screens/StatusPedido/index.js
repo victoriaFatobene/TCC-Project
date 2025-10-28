@@ -26,6 +26,7 @@ export default function StatusPedido({ navigation, route }) {
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
+    // ... (seu useEffect está correto, nenhuma mudança aqui) ...
     console.log(`--- TENTANDO OUVIR O PEDIDO: ${dadosDoPedido.id} ---`);
 
     const subscription = supabase
@@ -41,7 +42,12 @@ export default function StatusPedido({ navigation, route }) {
         (payload) => {
           console.log('--- SINAL DO SUPABASE RECEBIDO! ATUALIZANDO TELA! ---');
           console.log('Novos dados:', payload.new);
-          setDadosDoPedido(estadoAnterior => ({ ...estadoAnterior, ...payload.new }));
+          // Atualiza o pedido, mas mantém os 'itens' que passamos via params
+          setDadosDoPedido(estadoAnterior => ({ 
+            ...estadoAnterior, 
+            ...payload.new,
+            itens: estadoAnterior.itens // Garante que os detalhes dos itens não sejam perdidos
+          }));
         }
       )
       .subscribe((status) => {
@@ -57,34 +63,28 @@ export default function StatusPedido({ navigation, route }) {
     };
   }, [dadosDoPedido.id]);
 
-  // --- LÓGICA DE TRADUÇÃO (JÁ CORRIGIDA) ---
   const isDraft = dadosDoPedido.draft;
   const isStatusPronto = dadosDoPedido.status;
 
   let currentStatusIndex = -1; 
   
   if (isDraft === false && isStatusPronto === false) {
-    currentStatusIndex = 0; // Começa em "Na Fila"
+    currentStatusIndex = 0;
   } else if (isDraft === false && isStatusPronto === true) {
-    currentStatusIndex = 2; // Pula para "Pronto!"
+    currentStatusIndex = 2;
   }
 
   const isPedidoPronto = (currentStatusIndex === 2);
-  // --- FIM DA LÓGICA ---
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
       <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         
-        {/* --- A CORREÇÃO ESTÁ AQUI --- */}
-        {/* Usamos popToTop() para voltar à primeira tela da pilha (sua tela inicial) */}
         <TouchableOpacity 
           onPress={() => navigation.popToTop()} 
           style={styles.backButton}
         >
-        {/* --- FIM DA CORREÇÃO --- */}
-
           <Text style={styles.backButtonText}>{'<'} Início</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Status do Pedido</Text>
@@ -102,6 +102,7 @@ export default function StatusPedido({ navigation, route }) {
         )}
         
         <View style={styles.statusTracker}>
+          {/* ... (StatusItems estão corretos) ... */}
           <StatusItem icon="hourglass-outline" label="Na Fila" isCompleted={currentStatusIndex >= 0} />
           <View style={[styles.statusLine, currentStatusIndex >= 1 && styles.statusLineCompleted]} />
           <StatusItem icon="pizza-outline" label="Em Preparo" isCompleted={currentStatusIndex >= 1} />
@@ -109,16 +110,36 @@ export default function StatusPedido({ navigation, route }) {
           <StatusItem icon="checkmark-done-outline" label="Pronto!" isCompleted={currentStatusIndex >= 2} />
         </View>
 
+        {/* --- CORREÇÃO: Mostrar extras e observações no resumo --- */}
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>Resumo da Compra</Text>
+          
           {dadosDoPedido.itens.map((item, index) => (
-            <Text key={index} style={styles.summaryItem}>
-              {item.qtd}x {item.nome}
-            </Text>
+            <View key={index} style={styles.itemContainer}>
+              <Text style={styles.summaryItem}>
+                {item.qtd}x {item.nome}
+              </Text>
+              
+              {/* Mostrar Extras (se houver) */}
+              {item.extras && item.extras.length > 0 && (
+                <Text style={styles.extrasText}>
+                  Extras: {item.extras.map(e => e.nome).join(', ')}
+                </Text>
+              )}
+              
+              {/* Mostrar Observações (se houver) */}
+              {item.observacoes && (
+                <Text style={styles.obsText}>
+                  Obs: {item.observacoes}
+                </Text>
+              )}
+            </View>
           ))}
+          
           <View style={styles.divider} />
           <Text style={styles.summaryTotal}>Total: R$ {dadosDoPedido.total.toFixed(2)}</Text>
         </View>
+        {/* --- FIM DA CORREÇÃO --- */}
         
         {isPedidoPronto && (
           <TouchableOpacity 
@@ -160,7 +181,28 @@ const styles = StyleSheet.create({
   statusLineCompleted: { backgroundColor: '#7B0909' },
   summaryCard: { backgroundColor: '#fff', borderRadius: 10, padding: 20, elevation: 2, marginBottom: 30 },
   summaryTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 15 },
-  summaryItem: { fontSize: 16, color: '#444', marginBottom: 5 },
+  
+  // --- NOVOS ESTILOS ---
+  itemContainer: {
+    marginBottom: 10,
+  },
+  summaryItem: { fontSize: 16, color: '#444' },
+  extrasText: {
+    fontSize: 14,
+    color: '#555',
+    fontStyle: 'italic',
+    marginTop: 4,
+    marginLeft: 10, // Indentação
+  },
+  obsText: {
+    fontSize: 14,
+    color: '#555',
+    fontStyle: 'italic',
+    marginTop: 4,
+    marginLeft: 10, // Indentação
+  },
+  // --- FIM DOS NOVOS ESTILOS ---
+
   divider: { height: 1, backgroundColor: '#eee', marginVertical: 15 },
   summaryTotal: { fontSize: 18, fontWeight: 'bold', textAlign: 'right' },
   evaluateButton: { backgroundColor: '#0288D1', padding: 15, borderRadius: 8, alignItems: 'center', marginTop: 10 },
