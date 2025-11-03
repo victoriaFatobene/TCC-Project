@@ -64,10 +64,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     },
 
     // --- A MUDANÇA ESTÁ AQUI ---
-    // Função de Cadastro (Cria o usuário e desloga em seguida)
     signUp: async (email, password) => {
       
-      // Passo 1: Cria o usuário no sistema de Auth
+      // Passo 1: Cria o usuário no sistema de Auth (seguro)
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -81,25 +80,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return Alert.alert("Erro", "Não foi possível criar o usuário.");
       }
 
-      // Passo 2: Salva o usuário na sua tabela 'public.users'
-      // (Já corrigimos os erros de 'name' e 'updated_at' no Supabase)
+      // Passo 2: Salva os dados na sua tabela 'public.users'
       const { error: publicError } = await supabase
         .from('users') 
         .insert({ 
           id: authData.user.id, 
           email: authData.user.email,
+          password: password // <-- AQUI! Adicionamos a senha
         });
 
       if (publicError) {
         console.error("Erro ao salvar em public.users:", publicError.message);
       }
 
-      // --- A LINHA MÁGICA! ---
-      // Imediatamente desloga o usuário para destruir a sessão
-      // e impedir o login automático.
+      // Desloga o usuário para ele ir para a tela de Login
       await supabase.auth.signOut();
       
-      // Mensagem de sucesso atualizada!
       Alert.alert('Cadastro Concluído!', 'Por favor, faça o login.');
     },
 
