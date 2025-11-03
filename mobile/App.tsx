@@ -6,7 +6,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { CartProvider } from './src/contexts/CartContext';
 
-// --- IMPORTS ---
+import { AuthProvider, useAuth } from './src/contexts/AuthContext';
+
+import LoginScreen from './src/screens/Login';
+import RegisterScreen from './src/screens/Register';
+
+
+
 import HomeScreen from './src/screens/TelaInicial';
 import Pizzas from './src/screens/Pizzas';
 import MenuPizzas from './src/screens/MenuPizzas';
@@ -29,7 +35,7 @@ import StatusPedido from './src/screens/StatusPedido';
 import CadastroCartao from './src/screens/CadastroCartao';
 import VerMais from './src/screens/VerMais';
 
-// --- TIPAGEM ---
+
 type RootStackParamList = {
   MainTabs: undefined;
   Pagamento: { novoCartao?: object };
@@ -62,12 +68,31 @@ type TabParamList = {
   Carrinho: undefined;
 };
 
-// --- ESTRUTURA DE NAVEGAÇÃO ---
+
+type AuthStackParamList = {
+  Login: undefined;
+  Register: undefined;
+};
+
+
+
 const RootStack = createStackNavigator<RootStackParamList>();
 const MenuStackNav = createStackNavigator<MenuStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
-// Navegador com as telas do menu
+
+const AuthStack = createStackNavigator<AuthStackParamList>();
+function AuthScreens() {
+  return (
+    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+      <AuthStack.Screen name="Login" component={LoginScreen} />
+      <AuthStack.Screen name="Register" component={RegisterScreen} />
+    </AuthStack.Navigator>
+  );
+}
+
+
+
 function MenuScreens() {
   return (
     <MenuStackNav.Navigator screenOptions={{ headerShown: false }}>
@@ -91,7 +116,7 @@ function MenuScreens() {
   );
 }
 
-// Navegador com as abas principais (Início e Carrinho)
+
 function TabNavigator() {
   return (
     <Tab.Navigator
@@ -123,21 +148,41 @@ function TabNavigator() {
   );
 }
 
-// Navegador principal que controla tudo
+
+function RootNavigator() {
+  const { session } = useAuth();
+
+  return (
+    <RootStack.Navigator screenOptions={{ headerShown: false }}>
+      {session && session.user ? (
+       
+        <>
+          <RootStack.Screen name="MainTabs" component={TabNavigator} />
+          <RootStack.Screen name="Pagamento" component={Pagamento} />
+          <RootStack.Screen name="StatusPedido" component={StatusPedido} />
+          <RootStack.Screen name="CadastroCartao" component={CadastroCartao} />
+          <RootStack.Screen name="Avaliacao" component={Avaliacao} />
+        </>
+      ) : (
+        
+        <RootStack.Screen name="MainTabs" component={AuthScreens} />
+      )}
+    </RootStack.Navigator>
+  );
+}
+
+
+
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <CartProvider>
-        <NavigationContainer>
-          <RootStack.Navigator screenOptions={{ headerShown: false }}>
-            <RootStack.Screen name="MainTabs" component={TabNavigator} />
-            <RootStack.Screen name="Pagamento" component={Pagamento} />
-            <RootStack.Screen name="StatusPedido" component={StatusPedido} />
-            <RootStack.Screen name="CadastroCartao" component={CadastroCartao} />
-            <RootStack.Screen name="Avaliacao" component={Avaliacao} />
-          </RootStack.Navigator>
-        </NavigationContainer>
-      </CartProvider>
+      <AuthProvider> 
+        <CartProvider>
+          <NavigationContainer>
+            <RootNavigator /> 
+          </NavigationContainer>
+        </CartProvider>
+      </AuthProvider>
     </GestureHandlerRootView>
   );
 }
