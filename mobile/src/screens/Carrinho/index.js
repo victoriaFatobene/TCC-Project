@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 function Carrinho({ navigation }) {
   const { cartItems, addToCart, decreaseQuantity, removeFromCart } = useCart();
   
-  // --- CORREÇÃO 1: Usar precoFinal no subtotal ---
+  // O seu subtotal aqui está correto, usando precoFinal!
   const subtotal = cartItems.reduce((total, p) => total + (p.precoFinal || p.preco || 0) * (p.quantidade || 0), 0);
   
   const insets = useSafeAreaInsets();
@@ -34,47 +34,58 @@ function Carrinho({ navigation }) {
     );
   };
 
-  // --- CORREÇÃO 2: Mostrar extras e observações ---
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       
-      <Image source={{ uri: item.imageUrl }} style={styles.image} />
+      {/* --- CORREÇÃO 1: Bug da Imagem --- */}
+      {/* Antes: <Image source={{ uri: item.imageUrl }} ... /> */}
+      {/* Correto: (usando item.imagem para imagens locais) */}
+      <Image source={item.imagem} style={styles.image} />
       
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         
-        {/* Usar o precoFinal se existir */}
+        {/* Usar o precoFinal (está correto) */}
         <Text style={styles.price}>R$ {(item.precoFinal || item.preco).toFixed(2)}</Text>
         
-        {/* Mostrar Extras (se houver) */}
+        {/* --- CORREÇÃO 2: Bug dos Extras --- */}
+        {/* Antes: item.extras.map(e => e.nome).join(', ') */}
+        {/* Correto: (usar e.name, que vem do Supabase) */}
         {item.extras && item.extras.length > 0 && (
           <Text style={styles.extrasText}>
-            Extras: {item.extras.map(e => e.nome).join(', ')}
+            Extras: {item.extras.map(e => e.name).join(', ')}
           </Text>
         )}
         
-        {/* Mostrar Observações (se houver) */}
+        {/* Mostrar Observações (está correto) */}
         {item.observacoes && (
           <Text style={styles.obsText}>
             Obs: {item.observacoes}
           </Text>
         )}
 
+        {/* --- CORREÇÃO 4: Passar mais dados para os botões --- */}
         <View style={styles.controls}>
-          <TouchableOpacity style={styles.button} onPress={() => decreaseQuantity(item.id)}>
+          <TouchableOpacity style={styles.button} onPress={() => decreaseQuantity(item.id, item.extras, item.observacoes)}>
             <Text style={styles.buttonText}>-</Text>
           </TouchableOpacity>
           <Text style={styles.quantity}>{item.quantidade}</Text>
           <TouchableOpacity style={styles.button} onPress={() => addToCart(item)}>
             <Text style={styles.buttonText}>+</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => removeFromCart(item.id)}>
+          <TouchableOpacity onPress={() => removeFromCart(item.id, item.extras, item.observacoes)}>
             <Text style={styles.remove}>Remover</Text>
           </TouchableOpacity>
         </View>
       </View>
     </View>
   );
+
+  // Função para criar uma chave única
+  const criarChaveUnica = (item) => {
+    const extrasId = item.extras ? item.extras.map(e => e.id).join('-') : '';
+    return `${item.id}-${extrasId}-${item.observacoes || ''}`;
+  };
 
   return (
     <View style={styles.container}>
@@ -99,7 +110,8 @@ function Carrinho({ navigation }) {
           <FlatList
             data={cartItems}
             renderItem={renderItem}
-            keyExtractor={item => item.id.toString()} // Idealmente, crie um ID único para itens customizados
+            /* --- CORREÇÃO 3: Chave Unica --- */
+            keyExtractor={(item, index) => `${criarChaveUnica(item)}-${index}`}
             contentContainerStyle={styles.scrollContainer}
           />
           <View style={styles.footer}>
@@ -133,7 +145,7 @@ const styles = StyleSheet.create({
   name: { fontSize: 18, fontWeight: "600" },
   price: { fontSize: 16, color: "#888", marginVertical: 5 },
   
-  // --- NOVOS ESTILOS ---
+  // Estilos para os extras e obs
   extrasText: {
     fontSize: 14,
     color: '#555',
@@ -146,7 +158,6 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     marginBottom: 8,
   },
-  // --- FIM DOS NOVOS ESTILOS ---
   
   controls: { flexDirection: "row", alignItems: "center", marginTop: 5 },
   button: { backgroundColor: "#E53935", width: 30, height: 30, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },

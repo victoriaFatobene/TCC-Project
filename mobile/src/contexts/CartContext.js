@@ -1,36 +1,63 @@
-// src/contexts/CartContext.js
 import React, { createContext, useState, useContext } from 'react';
 import { Alert } from 'react-native';
 
 const CartContext = createContext();
 
+// --- FUNÇÃO AJUDANTE ---
+// Cria uma "chave" (ID único) para cada item, 
+// baseada no ID do produto, nos extras e nas observações.
+const getItemKey = (item) => {
+  // 1. Pega os IDs dos extras, ordena (para 'Bacon, Milho' ser igual a 'Milho, Bacon') e junta.
+  const extrasId = (item.extras || []).map(e => e.id).sort().join('-');
+  // 2. Pega as observações
+  const obs = item.observacoes || '';
+  // 3. Retorna a chave única
+  return `${item.id}-${extrasId}-${obs}`;
+};
+
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
 
   const addToCart = (product) => {
-    const existingProduct = cartItems.find(item => item.id === product.id);
+    // 1. Pega a chave única do produto que está sendo adicionado
+    const productKey = getItemKey(product);
+    
+    // 2. Procura se um item com ESSA MESMA CHAVE já existe
+    const existingProduct = cartItems.find(item => getItemKey(item) === productKey);
+
     if (existingProduct) {
+      // 3. SE EXISTE, aumenta a quantidade SÓ DELE
       setCartItems(
         cartItems.map(item =>
-          item.id === product.id
+          getItemKey(item) === productKey
             ? { ...item, quantidade: (item.quantidade || 0) + 1 }
             : item
         )
       );
     } else {
+      // 4. SE NÃO EXISTE, é um item novo (ex: pizza com extras diferentes)
+      // Adiciona com a quantidade 1
       setCartItems([...cartItems, { ...product, quantidade: 1 }]);
     }
-    Alert.alert("Sucesso!", `${product.nome} foi adicionado ao carrinho.`);
+    
+    // 5. REMOVIDO! O Alert.alert("Sucesso!") foi removido daqui.
+    // A tela ProductDetails.js já mostra um alerta. 
+    // Manter aqui causava dois alertas (um com "NaN" e outro sem).
   };
 
-  const decreaseQuantity = (productId) => {
-    const existingProduct = cartItems.find(item => item.id === productId);
+  // 6. ATUALIZADO para receber extras e observações
+  const decreaseQuantity = (productId, extras, observacoes) => {
+    const productKey = getItemKey({ id: productId, extras, observacoes });
+    const existingProduct = cartItems.find(item => getItemKey(item) === productKey);
+
     if (existingProduct && existingProduct.quantidade === 1) {
-      removeFromCart(productId);
+      // Se a quantidade for 1, remove o item
+      removeFromCart(productId, extras, observacoes);
     } else {
+      // Se for maior que 1, só diminui
       setCartItems(
         cartItems.map(item =>
-          item.id === productId
+          getItemKey(item) === productKey
             ? { ...item, quantidade: item.quantidade - 1 }
             : item
         )
@@ -38,11 +65,13 @@ export function CartProvider({ children }) {
     }
   };
 
-  const removeFromCart = (productId) => {
-    setCartItems(cartItems.filter(item => item.id !== productId));
+  // 7. ATUALIZADO para receber extras e observações
+  const removeFromCart = (productId, extras, observacoes) => {
+    const productKey = getItemKey({ id: productId, extras, observacoes });
+    setCartItems(cartItems.filter(item => getItemKey(item) !== productKey));
   };
 
-  // --- FUNÇÃO NOVA ---
+  // A função clearCart está perfeita
   const clearCart = () => {
     setCartItems([]);
   };
@@ -52,7 +81,7 @@ export function CartProvider({ children }) {
     addToCart,
     decreaseQuantity,
     removeFromCart,
-    clearCart, // <-- Adicionada aqui para o app poder usar
+    clearCart,
   };
 
   return (
