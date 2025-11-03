@@ -18,7 +18,7 @@ export default function TelaInicial({ navigation }) {
       <StatusBar barStyle="light-content" backgroundColor="#7C1D26" />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Header com estilo moderno */}
+        {/* Cabeçalho */}
         <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
           <Text style={styles.headerEmoji}>🍕</Text>
           <Text style={styles.headerTitle}>Cardápio</Text>
@@ -27,8 +27,9 @@ export default function TelaInicial({ navigation }) {
           </Text>
         </View>
 
-        {/* Cards refinados */}
+        {/* Seções do cardápio */}
         <View style={styles.menuContainer}>
+          {/* PIZZAS */}
           <TouchableOpacity
             style={styles.card}
             activeOpacity={0.85}
@@ -44,30 +45,28 @@ export default function TelaInicial({ navigation }) {
             <Text style={styles.cardSubtitle}>Sabores irresistíveis</Text>
           </TouchableOpacity>
 
+          {/* BEBIDAS (imagem local) */}
           <TouchableOpacity
             style={styles.card}
             activeOpacity={0.85}
             onPress={() => navigation.navigate('Bebidas')}
           >
             <Image
-              source={{
-                uri: 'https://cdn-icons-png.flaticon.com/512/924/924514.png',
-              }}
+              source={require('../../assets/images/iconrefri.jpg')}
               style={styles.cardImage}
             />
             <Text style={styles.cardTitle}>Bebidas</Text>
             <Text style={styles.cardSubtitle}>Para refrescar o momento</Text>
           </TouchableOpacity>
 
+          {/* SOBREMESAS (imagem local) */}
           <TouchableOpacity
             style={styles.card}
             activeOpacity={0.85}
             onPress={() => navigation.navigate('Sobremesas')}
           >
             <Image
-              source={{
-                uri: 'https://cdn-icons-png.flaticon.com/512/415/415682.png',
-              }}
+              source={require('../../assets/images/iconsorvete.jpg')}
               style={styles.cardImage}
             />
             <Text style={styles.cardTitle}>Sobremesas</Text>
@@ -85,7 +84,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFDF6',
   },
 
-  // HEADER
   header: {
     alignItems: 'center',
     backgroundColor: '#7C1D26',
@@ -106,7 +104,7 @@ const styles = StyleSheet.create({
     fontSize: 42,
     fontWeight: '800',
     letterSpacing: 1,
-    fontFamily: 'Poppins-Bold', // ou Quicksand-Bold, se instalada
+    fontFamily: 'Poppins-Bold',
   },
   headerSubtitle: {
     color: '#FFF9EE',
@@ -116,13 +114,11 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 
-  // MENU
   menuContainer: {
     paddingHorizontal: 22,
     paddingTop: 30,
   },
 
-  // CARD
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 24,
