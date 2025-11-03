@@ -14,9 +14,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const vinhos = [
   { id: "v1", nome: "Vinho Tinto Seco", ingredientes: "Garrafa 750ml, ideal para carnes.", preco: 89.9, imagem: require("../../assets/images/vinhoseco.jpg") },
-  { id: "v1", nome: "Vinho Tinto Suave", ingredientes: "Garrafa 750ml, ideal para carnes.", preco: 110.0, imagem: require("../../assets/images/vinhosuave.jpg") },
-  { id: "v2", nome: "Vinho Branco", ingredientes: "Garrafa 750ml, perfeito para peixes e frutos do mar.", preco: 79.9, imagem: require("../../assets/images/vinhobranco.png") },
-  { id: "v3", nome: "Espumante Brut", ingredientes: "Garrafa 750ml, refrescante e festivo.", preco: 120.0, imagem: require("../../assets/images/espumante.webp") },
+  { id: "v2", nome: "Vinho Tinto Suave", ingredientes: "Garrafa 750ml, ideal para carnes.", preco: 110.0, imagem: require("../../assets/images/vinhosuave.jpg") },
+  { id: "v3", nome: "Vinho Branco", ingredientes: "Garrafa 750ml, perfeito para peixes e frutos do mar.", preco: 79.9, imagem: require("../../assets/images/vinhobranco.png") },
+  { id: "v4", nome: "Espumante Brut", ingredientes: "Garrafa 750ml, refrescante e festivo.", preco: 120.0, imagem: require("../../assets/images/espumante.webp") },
 ];
 
 const VinhoItem = ({ item, navigation }) => {
