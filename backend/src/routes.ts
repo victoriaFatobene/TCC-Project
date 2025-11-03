@@ -18,6 +18,7 @@ import { CreateProductController } from './controllers/product/CreateProductCont
 import { ListByCategoryController } from './controllers/product/ListByCategoryController';
 import { UpdateProductController } from './controllers/product/UpdateProductController';
 import { DetailProductController } from './controllers/product/DetailProductController';
+import { PesquisarProdutoController } from './controllers/product/PesquisarProdutoController'; 
 
 // ORDER
 import { CreateOrderController } from './controllers/order/CreateOrderController';
@@ -70,6 +71,9 @@ router.post('/product', isAuthenticated, upload.single('file'), h((req, res) => 
 router.put('/products/:id', isAuthenticated, h((req, res) => new UpdateProductController().handle(req, res)));
 router.get('/products/:id', isAuthenticated, h((req, res) => new DetailProductController().handle(req, res)));
 router.get('/category/product', isAuthenticated, h((req, res) => new ListByCategoryController().handle(req, res)));
+
+// ✅ Nova rota para pesquisa de produtos
+router.get('/produtos', h((req, res) => new PesquisarProdutoController().handle(req, res)));
 
 /** Orders */
 router.post('/order', isAuthenticated, h((req, res) => new CreateOrderController().handle(req, res)));

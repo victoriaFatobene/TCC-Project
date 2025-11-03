@@ -99,6 +99,12 @@ const styles = StyleSheet.create({
     fontSize: 48,
     marginBottom: 5,
   },
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 10,
+    resizeMode: 'contain',
+  },
   headerTitle: {
     color: '#FFECD1',
     fontSize: 42,

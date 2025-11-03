@@ -13,9 +13,13 @@ import { useCart } from "../../contexts/CartContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const bebidasAlcoolicas = [
-  { id: "a1", nome: "Cerveja Heineken", ingredientes: "Garrafa 600ml gelada.", preco: 12.0, imagem: require("../../assets/images/heineken.webp") },
-  { id: "a2", nome: "Vinho Tinto", ingredientes: "Taça de vinho tinto seco.", preco: 18.5, imagem: require("../../assets/images/Vinho-Tinto.jpg") },
-  { id: "a3", nome: "Caipirinha", ingredientes: "Cachaça, limão e açúcar.", preco: 15.0, imagem: require("../../assets/images/caipirinha.jpg") },
+  { id: "a1", nome: "Cerveja Heineken", ingredientes: "Lata 350ml.", preco: 12.0, imagem: require("../../assets/images/heineken.webp") },
+  { id: "a2", nome: "Cerveja Corona", ingredientes: "Garrafa 600ml gelada.", preco: 15.0, imagem: require("../../assets/images/corona.jpg") },
+  { id: "a3", nome: "Cerveja Budweiser", ingredientes: "Lata 269ml.", preco: 10.0, imagem: require("../../assets/images/Budweiser.png") },
+  { id: "a3", nome: "Caipirinha de limão", ingredientes: "Cachaça, limão e açúcar.", preco: 15.0, imagem: require("../../assets/images/caipirinhalimao.jpg") },
+  { id: "a3", nome: "Caipirinha de morango", ingredientes: "Vodka, morango e açúcar.", preco: 15.0, imagem: require("../../assets/images/caipirinhamorango.jpg") },
+  { id: "a3", nome: "Caipirinha de maracujá", ingredientes: "Cachaça, limão e açúcar.", preco: 15.0, imagem: require("../../assets/images/caipirinhamaracuja.png") },
+  
 ];
 
 const BebidaAlcoolicaItem = ({ item, navigation }) => {
@@ -127,7 +131,13 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     elevation: 6,
   },
-  image: { width: "100%", height: 200, resizeMode: "cover" },
+  image: { 
+    width: "100%", 
+    height: 200, 
+    resizeMode: "contain", // imagem inteira
+    alignSelf: "center", 
+    backgroundColor: "#FFF", 
+  },
   cardContent: { padding: 14 },
   name: { fontSize: 20, fontWeight: "bold", color: "#B22222" },
   ingredients: {
