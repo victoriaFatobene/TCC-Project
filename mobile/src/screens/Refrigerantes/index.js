@@ -50,8 +50,9 @@ const RefrigeranteItem = ({ item, navigation }) => {
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={styles.detailsButton}
+              /* --- A CORREÇÃO ESTÁ AQUI --- */
               onPress={() =>
-                navigation.navigate("ProductDetails", { product: item })
+                navigation.navigate("ProductDetails", { product: item, categoria: 'bebida' })
               }
             >
               <Text style={styles.detailsButtonText}>🍴 Ver Mais</Text>
@@ -118,6 +119,7 @@ export default function Refrigerantes({ navigation }) {
   );
 }
 
+// ... (Seus estilos estão corretos)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFF8F0" },
   header: {
@@ -131,7 +133,6 @@ const styles = StyleSheet.create({
   backButton: { padding: 5, marginRight: 15 },
   backButtonText: { color: "#FFD700", fontSize: 26, fontWeight: "bold" },
   headerTitle: { color: "#FFD700", fontSize: 24, fontWeight: "bold" },
-
   searchContainer: {
     backgroundColor: "#FFF",
     marginHorizontal: 16,
@@ -140,15 +141,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
   searchInput: {
     fontSize: 16,
     color: "#333",
   },
-
   listContainer: { padding: 18 },
   card: {
     backgroundColor: "#FFF",
@@ -156,10 +153,6 @@ const styles = StyleSheet.create({
     marginBottom: 22,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
   },
   image: { width: "100%", height: 200, resizeMode: "cover" },
   cardContent: { padding: 14 },
