@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react'; // <-- Importe o 'useState'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -7,12 +7,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { CartProvider } from './src/contexts/CartContext';
 
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
-
 import LoginScreen from './src/screens/Login';
 import RegisterScreen from './src/screens/Register';
 
-
-
+// --- Imports das suas telas (Tudo certo) ---
 import HomeScreen from './src/screens/TelaInicial';
 import Pizzas from './src/screens/Pizzas';
 import MenuPizzas from './src/screens/MenuPizzas';
@@ -35,7 +33,7 @@ import StatusPedido from './src/screens/StatusPedido';
 import CadastroCartao from './src/screens/CadastroCartao';
 import VerMais from './src/screens/VerMais';
 
-
+// --- Tipagem (Tudo certo) ---
 type RootStackParamList = {
   MainTabs: undefined;
   Pagamento: { novoCartao?: object };
@@ -43,7 +41,6 @@ type RootStackParamList = {
   CadastroCartao: undefined;
   Avaliacao: undefined;
 };
-
 type MenuStackParamList = {
   HomeScreen: undefined;
   Pizzas: undefined;
@@ -62,37 +59,36 @@ type MenuStackParamList = {
   ProductDetails: { product: object };
   VerMais: undefined;
 };
-
 type TabParamList = {
   Menu: undefined;
   Carrinho: undefined;
 };
-
-
 type AuthStackParamList = {
   Login: undefined;
   Register: undefined;
 };
 
-
-
+// --- Navegadores ---
 const RootStack = createStackNavigator<RootStackParamList>();
 const MenuStackNav = createStackNavigator<MenuStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
-
-
 const AuthStack = createStackNavigator<AuthStackParamList>();
-function AuthScreens() {
+
+// --- MODIFICAÇÃO (EM PORTUGUÊS) ---
+// A 'AuthScreens' agora recebe a função 'onEntrarConvidado'
+function AuthScreens({ onEntrarConvidado }: { onEntrarConvidado: () => void }) {
   return (
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
-      <AuthStack.Screen name="Login" component={LoginScreen} />
+      <AuthStack.Screen name="Login">
+        {/* E passa essa função para o LoginScreen */}
+        {(props) => <LoginScreen {...props} onEntrarConvidado={onEntrarConvidado} />}
+      </AuthStack.Screen>
       <AuthStack.Screen name="Register" component={RegisterScreen} />
     </AuthStack.Navigator>
   );
 }
 
-
-
+// --- MenuScreens (Sem mudança) ---
 function MenuScreens() {
   return (
     <MenuStackNav.Navigator screenOptions={{ headerShown: false }}>
@@ -116,7 +112,7 @@ function MenuScreens() {
   );
 }
 
-
+// --- TabNavigator (Sem mudança) ---
 function TabNavigator() {
   return (
     <Tab.Navigator
@@ -149,13 +145,18 @@ function TabNavigator() {
 }
 
 
+// --- MODIFICAÇÃO (EM PORTUGUÊS) ---
+// O "Porteiro" agora entende 'eConvidado'
 function RootNavigator() {
   const { session } = useAuth();
+  const [eConvidado, setEConvidado] = useState(false); // 1. Criamos o estado "é Convidado"
 
   return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
-      {session && session.user ? (
-       
+      {/* 2. Verificamos: O usuário está logado OU 'é Convidado'? */}
+      {(session && session.user) || eConvidado ? (
+        
+        // Sim? Mostre o app principal
         <>
           <RootStack.Screen name="MainTabs" component={TabNavigator} />
           <RootStack.Screen name="Pagamento" component={Pagamento} />
@@ -165,14 +166,16 @@ function RootNavigator() {
         </>
       ) : (
         
-        <RootStack.Screen name="MainTabs" component={AuthScreens} />
+        // Não? Mostre as telas de Auth e passe a função 'setEConvidado'
+        <RootStack.Screen name="MainTabs">
+          {(props) => <AuthScreens {...props} onEntrarConvidado={() => setEConvidado(true)} />}
+        </RootStack.Screen>
       )}
     </RootStack.Navigator>
   );
 }
 
-
-
+// --- App() (Sem mudança) ---
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

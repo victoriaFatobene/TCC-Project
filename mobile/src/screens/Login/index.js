@@ -12,7 +12,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../contexts/AuthContext";
 
-export default function Login({ navigation }) {
+// 1. A tela agora espera receber a função 'onEntrarConvidado'
+export default function Login({ navigation, onEntrarConvidado }) {
   const insets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -72,6 +73,16 @@ export default function Login({ navigation }) {
         >
           <Text style={styles.linkText}>Não tem uma conta? Cadastre-se</Text>
         </TouchableOpacity>
+        
+        {/* --- 2. BOTÃO NOVO (EM PORTUGUÊS) --- */}
+        <TouchableOpacity 
+          style={styles.botaoConvidado}   // Estilo em português
+          onPress={onEntrarConvidado}    // Chama a função
+        >
+          <Text style={styles.textoConvidado}>Entrar como convidado</Text>
+        </TouchableOpacity>
+        {/* --- FIM DO BOTÃO NOVO --- */}
+        
       </View>
     </View>
   );
@@ -107,4 +118,18 @@ const styles = StyleSheet.create({
   buttonText: { color: '#FFF', fontSize: 18, fontWeight: 'bold' },
   linkButton: { marginTop: 20, alignItems: 'center' },
   linkText: { color: '#7B0909', fontSize: 16, fontWeight: 'bold' },
+  
+  // --- 3. ESTILOS NOVOS (EM PORTUGUÊS) ---
+  botaoConvidado: {
+    marginTop: 15,
+    padding: 10,
+    alignItems: 'center',
+  },
+  textoConvidado: {
+    color: '#555',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+  },
+  // --- FIM DOS ESTILOS NOVOS ---
 });
