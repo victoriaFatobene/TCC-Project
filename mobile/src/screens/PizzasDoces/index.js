@@ -18,32 +18,28 @@ const pizzasDoces = [
     nome: "Pizza de Chocolate",
     ingredientes: "Coberta com muito chocolate ao leite derretido.",
     preco: 34.9,
-    imagem:
-      "https://images.unsplash.com/photo-1617196039897-c824dff0b8d2?q=80&w=2070&auto=format&fit=crop",
+    imagem: require("../../assets/images/pizza-choco.png"),
   },
   {
     id: "d2",
     nome: "Pizza de Morango com Chocolate",
     ingredientes: "Chocolate derretido e morangos frescos.",
     preco: 39.9,
-    imagem:
-      "https://images.unsplash.com/photo-1632932227092-4a7929fdbefb?q=80&w=2070&auto=format&fit=crop",
+    imagem: require("../../assets/images/pizza-choco-morango.png"),
   },
   {
     id: "d3",
     nome: "Pizza de Banana com Canela",
     ingredientes: "Banana fatiada, açúcar e canela polvilhada.",
     preco: 32.5,
-    imagem:
-      "https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?q=80&w=2070&auto=format&fit=crop",
+    imagem: require("../../assets/images/banana.png"),
   },
   {
     id: "d4",
     nome: "Pizza de Nutella",
     ingredientes: "Recheada e coberta com creme de avelã.",
     preco: 42.0,
-    imagem:
-      "https://images.unsplash.com/photo-1593560708920-61dd95d6d251?q=80&w=2070&auto=format&fit=crop",
+    imagem: require("../../assets/images/nutella.jpg"),
   },
 ];
 
@@ -51,7 +47,7 @@ const PizzaDoceItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
   return (
     <View style={styles.card}>
-      <Image source={{ uri: item.imagem }} style={styles.image} />
+      <Image source={item.imagem} style={styles.image} />
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
@@ -111,6 +107,8 @@ export default function PizzasDoces({ navigation }) {
           placeholderTextColor="#999"
           value={searchText}
           onChangeText={setSearchText}
+          autoCapitalize="none"
+          clearButtonMode="while-editing"
         />
       </View>
 
