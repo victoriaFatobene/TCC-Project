@@ -18,28 +18,28 @@ const pizzasVeganas = [
         nome: "Vegana Margherita",
         ingredientes: "Molho de tomate, queijo vegano, manjericão fresco.",
         preco: 44.9,
-        imagem: "https://images.unsplash.com/photo-1617196039897-c824dff0b8d2?q=80&w=2070&auto=format&fit=crop",
+        imagem: "src/assets/images/marguerita vegana.jpg",
     },
     {
         id: "v2",
         nome: "Vegana de Legumes",
         ingredientes: "Molho, queijo vegano, abobrinha, berinjela e pimentão.",
         preco: 48.5,
-        imagem: "https://images.unsplash.com/photo-1628840042765-3561f65e1b6f?q=80&w=2070&auto=format&fit=crop",
+        imagem: "src/assets/images/vegana legumes.jpg",
     },
     {
         id: "v3",
         nome: "Vegana de Cogumelos",
         ingredientes: "Molho, queijo vegano, cogumelos frescos e alho-poró.",
         preco: 49.9,
-        imagem: "https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2b?q=80&w=2070&auto=format&fit=crop",
+        imagem: "src/assets/images/vegana cogumelo.jpg",
     },
     {
         id: "v4",
         nome: "Vegana Especial",
         ingredientes: "Molho, rúcula, tomate seco e queijo vegano.",
         preco: 52.0,
-        imagem: "https://images.unsplash.com/photo-1632932227092-4a7929fdbefb?q=80&w=2070&auto=format&fit=crop",
+        imagem: "src/assets/images/vegana especial.jpg",
     },
 ];
 
