@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react'; // <-- Importe o 'useState'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -6,7 +6,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { CartProvider } from './src/contexts/CartContext';
 
-// --- IMPORTS ---
+import { AuthProvider, useAuth } from './src/contexts/AuthContext';
+import LoginScreen from './src/screens/Login';
+import RegisterScreen from './src/screens/Register';
+
+// --- Imports das suas telas (Tudo certo) ---
 import HomeScreen from './src/screens/TelaInicial';
 import Pizzas from './src/screens/Pizzas';
 import MenuPizzas from './src/screens/MenuPizzas';
@@ -29,7 +33,7 @@ import StatusPedido from './src/screens/StatusPedido';
 import CadastroCartao from './src/screens/CadastroCartao';
 import VerMais from './src/screens/VerMais';
 
-// --- TIPAGEM ---
+// --- Tipagem (Tudo certo) ---
 type RootStackParamList = {
   MainTabs: undefined;
   Pagamento: { novoCartao?: object };
@@ -37,7 +41,6 @@ type RootStackParamList = {
   CadastroCartao: undefined;
   Avaliacao: undefined;
 };
-
 type MenuStackParamList = {
   HomeScreen: undefined;
   Pizzas: undefined;
@@ -56,18 +59,36 @@ type MenuStackParamList = {
   ProductDetails: { product: object };
   VerMais: undefined;
 };
-
 type TabParamList = {
   Menu: undefined;
   Carrinho: undefined;
 };
+type AuthStackParamList = {
+  Login: undefined;
+  Register: undefined;
+};
 
-// --- ESTRUTURA DE NAVEGAÇÃO ---
+// --- Navegadores ---
 const RootStack = createStackNavigator<RootStackParamList>();
 const MenuStackNav = createStackNavigator<MenuStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
+const AuthStack = createStackNavigator<AuthStackParamList>();
 
-// Navegador com as telas do menu
+// --- MODIFICAÇÃO (EM PORTUGUÊS) ---
+// A 'AuthScreens' agora recebe a função 'onEntrarConvidado'
+function AuthScreens({ onEntrarConvidado }: { onEntrarConvidado: () => void }) {
+  return (
+    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+      <AuthStack.Screen name="Login">
+        {/* E passa essa função para o LoginScreen */}
+        {(props) => <LoginScreen {...props} onEntrarConvidado={onEntrarConvidado} />}
+      </AuthStack.Screen>
+      <AuthStack.Screen name="Register" component={RegisterScreen} />
+    </AuthStack.Navigator>
+  );
+}
+
+// --- MenuScreens (Sem mudança) ---
 function MenuScreens() {
   return (
     <MenuStackNav.Navigator screenOptions={{ headerShown: false }}>
@@ -91,7 +112,7 @@ function MenuScreens() {
   );
 }
 
-// Navegador com as abas principais (Início e Carrinho)
+// --- TabNavigator (Sem mudança) ---
 function TabNavigator() {
   return (
     <Tab.Navigator
@@ -123,21 +144,48 @@ function TabNavigator() {
   );
 }
 
-// Navegador principal que controla tudo
+
+// --- MODIFICAÇÃO (EM PORTUGUÊS) ---
+// O "Porteiro" agora entende 'eConvidado'
+function RootNavigator() {
+  const { session } = useAuth();
+  const [eConvidado, setEConvidado] = useState(false); // 1. Criamos o estado "é Convidado"
+
+  return (
+    <RootStack.Navigator screenOptions={{ headerShown: false }}>
+      {/* 2. Verificamos: O usuário está logado OU 'é Convidado'? */}
+      {(session && session.user) || eConvidado ? (
+        
+        // Sim? Mostre o app principal
+        <>
+          <RootStack.Screen name="MainTabs" component={TabNavigator} />
+          <RootStack.Screen name="Pagamento" component={Pagamento} />
+          <RootStack.Screen name="StatusPedido" component={StatusPedido} />
+          <RootStack.Screen name="CadastroCartao" component={CadastroCartao} />
+          <RootStack.Screen name="Avaliacao" component={Avaliacao} />
+        </>
+      ) : (
+        
+        // Não? Mostre as telas de Auth e passe a função 'setEConvidado'
+        <RootStack.Screen name="MainTabs">
+          {(props) => <AuthScreens {...props} onEntrarConvidado={() => setEConvidado(true)} />}
+        </RootStack.Screen>
+      )}
+    </RootStack.Navigator>
+  );
+}
+
+// --- App() (Sem mudança) ---
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <CartProvider>
-        <NavigationContainer>
-          <RootStack.Navigator screenOptions={{ headerShown: false }}>
-            <RootStack.Screen name="MainTabs" component={TabNavigator} />
-            <RootStack.Screen name="Pagamento" component={Pagamento} />
-            <RootStack.Screen name="StatusPedido" component={StatusPedido} />
-            <RootStack.Screen name="CadastroCartao" component={CadastroCartao} />
-            <RootStack.Screen name="Avaliacao" component={Avaliacao} />
-          </RootStack.Navigator>
-        </NavigationContainer>
-      </CartProvider>
+      <AuthProvider> 
+        <CartProvider>
+          <NavigationContainer>
+            <RootNavigator /> 
+          </NavigationContainer>
+        </CartProvider>
+      </AuthProvider>
     </GestureHandlerRootView>
   );
 }
