@@ -16,9 +16,9 @@ const bebidasAlcoolicas = [
   { id: "a1", nome: "Cerveja Heineken", ingredientes: "Lata 350ml.", preco: 12.0, imagem: require("../../assets/images/heineken.webp") },
   { id: "a2", nome: "Cerveja Corona", ingredientes: "Garrafa 600ml gelada.", preco: 15.0, imagem: require("../../assets/images/corona.jpg") },
   { id: "a3", nome: "Cerveja Budweiser", ingredientes: "Lata 269ml.", preco: 10.0, imagem: require("../../assets/images/Budweiser.png") },
-  { id: "a3", nome: "Caipirinha de limão", ingredientes: "Cachaça, limão e açúcar.", preco: 15.0, imagem: require("../../assets/images/caipirinhalimao.jpg") },
-  { id: "a3", nome: "Caipirinha de morango", ingredientes: "Vodka, morango e açúcar.", preco: 15.0, imagem: require("../../assets/images/caipirinhamorango.jpg") },
-  { id: "a3", nome: "Caipirinha de maracujá", ingredientes: "Cachaça, limão e açúcar.", preco: 15.0, imagem: require("../../assets/images/caipirinhamaracuja.png") },
+  { id: "a4", nome: "Caipirinha de limão", ingredientes: "Cachaça, limão e açúcar.", preco: 15.0, imagem: require("../../assets/images/caipirinhalimao.jpg") },
+  { id: "a5", nome: "Caipirinha de morango", ingredientes: "Vodka, morango e açúcar.", preco: 15.0, imagem: require("../../assets/images/caipirinhamorango.jpg") },
+  { id: "a6", nome: "Caipirinha de maracujá", ingredientes: "Cachaça, limão e açúcar.", preco: 15.0, imagem: require("../../assets/images/caipirinhamaracuja.png") },
   
 ];
 
