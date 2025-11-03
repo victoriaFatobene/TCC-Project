@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const vinhos = [
   { id: "v1", nome: "Vinho Tinto Seco", ingredientes: "Garrafa 750ml, ideal para carnes.", preco: 89.9, imagem: require("../../assets/images/vinhoseco.jpg") },
+  { id: "v1", nome: "Vinho Tinto Suave", ingredientes: "Garrafa 750ml, ideal para carnes.", preco: 110.0, imagem: require("../../assets/images/vinhosuave.jpg") },
   { id: "v2", nome: "Vinho Branco", ingredientes: "Garrafa 750ml, perfeito para peixes e frutos do mar.", preco: 79.9, imagem: require("../../assets/images/vinhobranco.png") },
   { id: "v3", nome: "Espumante Brut", ingredientes: "Garrafa 750ml, refrescante e festivo.", preco: 120.0, imagem: require("../../assets/images/espumante.webp") },
 ];
@@ -115,10 +116,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  searchInput: {
-    fontSize: 16,
-    color: "#333",
-  },
+  searchInput: { fontSize: 16, color: "#333" },
 
   listContainer: { padding: 18 },
   card: {
@@ -132,7 +130,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 6,
   },
-  image: { width: "100%", height: 200, resizeMode: "cover" },
+  image: { 
+    width: "100%", 
+    height: 200, 
+    resizeMode: "contain", // imagem inteira
+    alignSelf: "center", 
+    backgroundColor: "#FFF", 
+  },
   cardContent: { padding: 14 },
   name: { fontSize: 20, fontWeight: "bold", color: "#B22222" },
   ingredients: {
@@ -142,11 +146,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontStyle: "italic",
   },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+  footer: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   price: { fontSize: 18, fontWeight: "bold", color: "#2E8B57" },
   buttonsContainer: { flexDirection: "row", alignItems: "center" },
   detailsButton: {
@@ -166,11 +166,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addBtnText: { color: "#FFD700", fontSize: 22, fontWeight: "bold" },
-  notFoundText: {
-    textAlign: "center",
-    color: "#777",
-    fontSize: 16,
-    marginTop: 40,
-  },
+  notFoundText: { textAlign: "center", color: "#777", fontSize: 16, marginTop: 40 },
 });
 

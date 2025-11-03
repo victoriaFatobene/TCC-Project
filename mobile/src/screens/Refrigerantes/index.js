@@ -20,20 +20,35 @@ const refrigerantes = [
     preco: 5.0,
     imagem: require("../../assets/images/cocacola.jpg"),
   },
-  {
+   {
     id: "r2",
+    nome: "Coca-Cola Zero",
+    ingredientes: "Lata 350ml gelada.",
+    preco: 5.0,
+    imagem: require("../../assets/images/cocazero.png"),
+  },
+  {
+    id: "r3",
     nome: "Guaraná Antarctica",
     ingredientes: "Lata 350ml gelada.",
     preco: 5.0,
     imagem: require("../../assets/images/guarana.webp"),
   },
   {
-    id: "r3",
+    id: "r4",
     nome: "Sprite",
     ingredientes: "Lata 350ml gelada.",
     preco: 5.0,
     imagem: require("../../assets/images/sprite.webp"),
   },
+   {
+    id: "r5",
+    nome: "Itubaína",
+    ingredientes: "Lata 350ml gelada.",
+    preco: 5.0,
+    imagem: require("../../assets/images/itubaina.png"),
+  },
+  
 ];
 
 const RefrigeranteItem = ({ item, navigation }) => {
@@ -111,7 +126,9 @@ export default function Refrigerantes({ navigation }) {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={
-          <Text style={styles.notFoundText}>Nenhum refrigerante encontrado 😕</Text>
+          <Text style={styles.notFoundText}>
+            Nenhum refrigerante encontrado 😕
+          </Text>
         }
       />
     </View>
@@ -161,7 +178,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 6,
   },
-  image: { width: "100%", height: 200, resizeMode: "cover" },
+  image: {
+    width: "100%",
+    height: 200,
+    resizeMode: "contain", // <-- imagem inteira
+    alignSelf: "center",
+    backgroundColor: "#FFF",
+  },
   cardContent: { padding: 14 },
   name: { fontSize: 20, fontWeight: "bold", color: "#B22222" },
   ingredients: {

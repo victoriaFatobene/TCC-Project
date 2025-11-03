@@ -14,8 +14,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const sucos = [
   { id: "s1", nome: "Suco de Laranja", ingredientes: "Natural, 300ml.", preco: 7.5, imagem: require("../../assets/images/sucolaranja.jpg") },
-  { id: "s2", nome: "Suco de Uva", ingredientes: "Integral, 300ml.", preco: 8.0, imagem: require("../../assets/images/sucouva.jpg") },
-  { id: "s3", nome: "Suco de Abacaxi", ingredientes: "Natural, 300ml.", preco: 7.5, imagem: require("../../assets/images/sucoabacaxi.webp") },
+  { id: "s2", nome: "Suco de Uva", ingredientes: "Integral, 300ml.", preco: 8.0, imagem: require("../../assets/images/sucouva.png") },
+   { id: "s2", nome: "Suco de Morango", ingredientes: "Integral, 300ml.", preco: 8.0, imagem: require("../../assets/images/sucomorango.png") },
+  { id: "s3", nome: "Suco de Abacaxi", ingredientes: "Natural, 300ml.", preco: 7.5, imagem: require("../../assets/images/sucoabacaxi.jpg") },
+   { id: "s2", nome: "Suco de Caju", ingredientes: "Natural, 300ml.", preco: 8.0, imagem: require("../../assets/images/sucocaju.jpg") },
 ];
 
 const SucoItem = ({ item, navigation }) => {
@@ -134,7 +136,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 6,
   },
-  image: { width: "100%", height: 200, resizeMode: "cover" },
+  image: { 
+    width: "100%", 
+    height: 200, 
+    resizeMode: "contain", // <-- imagem inteira
+    alignSelf: "center", 
+    backgroundColor: "#FFF", 
+  },
   cardContent: { padding: 14 },
   name: { fontSize: 20, fontWeight: "bold", color: "#B22222" },
   ingredients: {
