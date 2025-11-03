@@ -13,41 +13,41 @@ import { useCart } from "../../contexts/CartContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const pizzasVeganas = [
-    {
-        id: "v1",
-        nome: "Vegana Margherita",
-        ingredientes: "Molho de tomate, queijo vegano, manjericão fresco.",
-        preco: 44.9,
-        imagem: "src/assets/images/marguerita vegana.jpg",
-    },
-    {
-        id: "v2",
-        nome: "Vegana de Legumes",
-        ingredientes: "Molho, queijo vegano, abobrinha, berinjela e pimentão.",
-        preco: 48.5,
-        imagem: "src/assets/images/vegana legumes.jpg",
-    },
-    {
-        id: "v3",
-        nome: "Vegana de Cogumelos",
-        ingredientes: "Molho, queijo vegano, cogumelos frescos e alho-poró.",
-        preco: 49.9,
-        imagem: "src/assets/images/vegana cogumelo.jpg",
-    },
-    {
-        id: "v4",
-        nome: "Vegana Especial",
-        ingredientes: "Molho, rúcula, tomate seco e queijo vegano.",
-        preco: 52.0,
-        imagem: "src/assets/images/vegana especial.jpg",
-    },
+  {
+    id: "v1",
+    nome: "Vegana Margherita",
+    ingredientes: "Molho de tomate, queijo vegano, manjericão fresco.",
+    preco: 44.9,
+    imagem: require("../../assets/images/marguerita vegana.jpg"),
+  },
+  {
+    id: "v2",
+    nome: "Vegana de Legumes",
+    ingredientes: "Molho, queijo vegano, abobrinha, berinjela e pimentão.",
+    preco: 48.5,
+    imagem: require("../../assets/images/vegana legumes.jpg"),
+  },
+  {
+    id: "v3",
+    nome: "Vegana de Cogumelos",
+    ingredientes: "Molho, queijo vegano, cogumelos frescos e alho-poró.",
+    preco: 49.9,
+    imagem: require("../../assets/images/vegana cogumelo.jpg"),
+  },
+  {
+    id: "v4",
+    nome: "Vegana Especial",
+    ingredientes: "Molho, rúcula, tomate seco e queijo vegano.",
+    preco: 52.0,
+    imagem: require("../../assets/images/vegana especial.jpg"),
+  },
 ];
 
 const PizzaVeganaItem = ({ item, navigation }) => {
   const { addToCart } = useCart();
   return (
     <View style={styles.card}>
-      <Image source={{ uri: item.imagem }} style={styles.image} />
+      <Image source={item.imagem} style={styles.image} />
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         <Text style={styles.ingredients}>{item.ingredientes}</Text>
@@ -79,7 +79,6 @@ export default function PizzasVeganas({ navigation }) {
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState("");
 
-  // Filtra as pizzas veganas pelo nome
   const filteredPizzas = pizzasVeganas.filter((pizza) =>
     pizza.nome.toLowerCase().includes(searchText.toLowerCase())
   );
@@ -107,6 +106,8 @@ export default function PizzasVeganas({ navigation }) {
           placeholderTextColor="#999"
           value={searchText}
           onChangeText={setSearchText}
+          autoCapitalize="none"
+          clearButtonMode="while-editing"
         />
       </View>
 
