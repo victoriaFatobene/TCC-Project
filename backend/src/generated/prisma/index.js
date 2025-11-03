@@ -35,12 +35,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.16.1
- * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
+ * Prisma Client JS version: 6.18.0
+ * Query Engine version: 34b5a692b7bd79939a9a2c3ef97d816e749cda2f
  */
 Prisma.prismaVersion = {
-  client: "6.16.1",
-  engine: "1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
+  client: "6.18.0",
+  engine: "34b5a692b7bd79939a9a2c3ef97d816e749cda2f"
 }
 
 Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
@@ -255,7 +255,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\SENAI\\Desktop\\PSOF_2-ORION_DEV\\TCC-Project\\TCC-Project\\backend\\src\\generated\\prisma",
+      "value": "C:\\Users\\SENAI\\Downloads\\TCC-Project\\backend\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -269,19 +269,21 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\SENAI\\Desktop\\PSOF_2-ORION_DEV\\TCC-Project\\TCC-Project\\backend\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\SENAI\\Downloads\\TCC-Project\\backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
-  "clientVersion": "6.16.1",
-  "engineVersion": "1c57fdcd7e44b29b9313256c76699e91c3ac3c43",
+  "clientVersion": "6.18.0",
+  "engineVersion": "34b5a692b7bd79939a9a2c3ef97d816e749cda2f",
   "datasourceNames": [
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -290,8 +292,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\n//informações\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n//tabela User(Salva os emails cadastrados)\nmodel User {\n  id         String   @id @default(uuid())\n  name       String\n  email      String   @unique\n  password   String\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  categoryViews CategoryView[]\n\n  @@map(\"users\")\n}\n\n//Tabela Categorias - mostra as categorias do cardápio\nmodel Category {\n  id         String   @id @default(uuid())\n  name       String\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  products      Product[]\n  categoryViews CategoryView[]\n  menuItems     MenuItem[]\n\n  @@map(\"categories\")\n}\n\n//Tabela de produtos(mostra as informações do produto)\nmodel Product {\n  id          String   @id @default(uuid())\n  name        String\n  price       Float\n  description String\n  imageUrl    String\n  created_at  DateTime @default(now())\n  updated_at  DateTime @updatedAt\n\n  category   Category @relation(fields: [categoryId], references: [id])\n  categoryId String\n\n  productIngredients ProductIngredient[]\n\n  items Item[]\n\n  statusId String\n  status   Status @relation(fields: [statusId], references: [id])\n\n  @@map(\"products\")\n}\n\n//Tabela de Pedido(mostra o numero do pedido)\nmodel Order {\n  id         String   @id @default(uuid())\n  table      Int\n  status     Boolean  @default(false)\n  draft      Boolean  @default(true)\n  name       String?\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  items    Item[]\n  payments Payment[]\n  review   Review?\n\n  @@map(\"orders\")\n}\n\n//Tabela de quantidade de itens\nmodel Item {\n  id         String   @id @default(uuid())\n  amount     Int\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  order   Order  @relation(fields: [orderId], references: [id])\n  orderId String\n\n  product   Product @relation(fields: [productId], references: [id])\n  productId String\n\n  modifications ItemModification[]\n\n  @@map(\"items\")\n}\n\n// TABELAS NOVAS!!!!!\n\n// Tabela da categoria que o cliente entrou\nmodel CategoryView {\n  id        String   @id @default(uuid())\n  createdAt DateTime @default(now())\n\n  user   User   @relation(fields: [userId], references: [id])\n  userId String\n\n  category   Category @relation(fields: [categoryId], references: [id])\n  categoryId String\n\n  @@map(\"category_views\")\n}\n\n//Tabela de MenuItem - mostra os itens individuais do cardápio(pizzas, bebidas, rodizios, etc.)\nmodel MenuItem {\n  id          String @id @default(uuid())\n  name        String\n  imageUrl    String\n  description String\n  price       Float\n\n  categoryId String\n  category   Category @relation(fields: [categoryId], references: [id])\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map(\"menu_items\")\n}\n\n//Tabela de Produto_Ingrediente - Tabela que junta os produtos com os ingredientes\nmodel ProductIngredient {\n  id           String   @id @default(uuid())\n  productId    String\n  ingredientId String\n  createdAt    DateTime @default(now())\n\n  product    Product    @relation(fields: [productId], references: [id])\n  ingredient Ingredient @relation(fields: [ingredientId], references: [id])\n\n  @@unique([productId, ingredientId])\n  @@map(\"product_ingredients\")\n}\n\n//Tabela de Ingredientes - mostra os ingredientes que podem ser adcionados ou removidos dos itens do pedido\nmodel Ingredient {\n  id        String   @id @default(uuid())\n  name      String\n  price     Float\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  productIngredients ProductIngredient[]\n  itemModifications  ItemModification[]\n\n  @@map(\"ingredients\")\n}\n\n// Tabela de modificação de item - Esta é a tabela que registra as alterações do cliente\nmodel ItemModification {\n  id        String   @id @default(uuid())\n  type      String\n  createdAt DateTime @default(now())\n\n  item   Item   @relation(fields: [itemId], references: [id])\n  itemId String\n\n  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])\n  ingredientId String\n\n  @@map(\"item_modifications\")\n}\n\n// tabela status - apresenta os status do pedido\nmodel Status {\n  id   String @id @default(uuid())\n  name String @unique\n\n  payments Payment[]\n  products Product[]\n\n  @@map(\"statuses\")\n}\n\n// Tabela de pagamentos - apresenta o tipo de pagamento do pedido\nmodel Payment {\n  id          String   @id @default(uuid())\n  paymentDate DateTime @default(now())\n  amount      Decimal\n  paymentType String\n\n  order   Order?  @relation(fields: [orderId], references: [id])\n  orderId String?\n\n  status   Status @relation(fields: [statusId], references: [id])\n  statusId String\n\n  @@map(\"payments\")\n}\n\n// Tabela de Cliente - salva informações do cliente\nmodel Client {\n  id        String   @id @default(uuid())\n  name      String\n  email     String   @unique\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  reviews Review[]\n\n  @@map(\"clients\")\n}\n\n// Tabela de Avaliação - salva as informações da pesquisa\nmodel Review {\n  id       String   @id @default(uuid())\n  rating   Int\n  comment  String?\n  createAt DateTime @default(now())\n\n  order   Order  @relation(fields: [orderId], references: [id])\n  orderId String @unique\n\n  client   Client @relation(fields: [clientId], references: [id])\n  clientId String\n\n  @@map(\"reviews\")\n}\n",
-  "inlineSchemaHash": "7c9c97a5d2e70aacca35c2de9fc47c9f417efa1be2ead72feeb6852f96814c27",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\n//informações\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n//tabela User(Salva os emails cadastrados)\nmodel User {\n  id         String   @id @default(uuid())\n  name       String\n  email      String   @unique\n  password   String\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  categoryViews CategoryView[]\n\n  @@map(\"users\")\n}\n\n//Tabela Categorias - mostra as categorias do cardápio\nmodel Category {\n  id         String   @id @default(uuid())\n  name       String\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  products      Product[]\n  categoryViews CategoryView[]\n  menuItems     MenuItem[]\n\n  @@map(\"categories\")\n}\n\n//Tabela de produtos(mostra as informações do produto)\nmodel Product {\n  id          String   @id @default(uuid())\n  name        String\n  price       Float\n  description String\n  imageUrl    String\n  created_at  DateTime @default(now())\n  updated_at  DateTime @updatedAt\n\n  category   Category @relation(fields: [categoryId], references: [id])\n  categoryId String\n\n  productIngredients ProductIngredient[]\n\n  items Item[]\n\n  statusId String\n  status   Status @relation(fields: [statusId], references: [id])\n\n  @@map(\"products\")\n}\n\n//Tabela de Pedido(mostra o numero do pedido)\nmodel Order {\n  id         String   @id @default(uuid())\n  table      Int\n  status     Boolean  @default(false)\n  draft      Boolean  @default(true)\n  name       String?\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  items    Item[]\n  payments Payment[]\n  review   Review?\n\n  @@map(\"orders\")\n}\n\n//Tabela de quantidade de itens\nmodel Item {\n  id         String   @id @default(uuid())\n  amount     Int\n  created_at DateTime @default(now())\n  updated_at DateTime @updatedAt\n\n  order   Order  @relation(fields: [orderId], references: [id])\n  orderId String\n\n  product   Product @relation(fields: [productId], references: [id])\n  productId String\n\n  modifications ItemModification[]\n\n  @@map(\"items\")\n}\n\n// TABELAS NOVAS!!!!!\n\n// Tabela da categoria que o cliente entrou\nmodel CategoryView {\n  id        String   @id @default(uuid())\n  createdAt DateTime @default(now())\n\n  user   User   @relation(fields: [userId], references: [id])\n  userId String\n\n  category   Category @relation(fields: [categoryId], references: [id])\n  categoryId String\n\n  @@map(\"category_views\")\n}\n\n//Tabela de MenuItem - mostra os itens individuais do cardápio(pizzas, bebidas, rodizios, etc.)\nmodel MenuItem {\n  id          String @id @default(uuid())\n  name        String\n  imageUrl    String\n  description String\n  price       Float\n\n  categoryId String\n  category   Category @relation(fields: [categoryId], references: [id])\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map(\"menu_items\")\n}\n\n//Tabela de Produto_Ingrediente - Tabela que junta os produtos com os ingredientes\nmodel ProductIngredient {\n  id           String   @id @default(uuid())\n  productId    String\n  ingredientId String\n  createdAt    DateTime @default(now())\n\n  product    Product    @relation(fields: [productId], references: [id])\n  ingredient Ingredient @relation(fields: [ingredientId], references: [id])\n\n  @@unique([productId, ingredientId])\n  @@map(\"product_ingredients\")\n}\n\n//Tabela de Ingredientes - mostra os ingredientes que podem ser adcionados ou removidos dos itens do pedido\nmodel Ingredient {\n  id        String   @id @default(uuid())\n  name      String\n  price     Float\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  productIngredients ProductIngredient[]\n  itemModifications  ItemModification[]\n\n  @@map(\"ingredients\")\n}\n\n// Tabela de modificação de item - Esta é a tabela que registra as alterações do cliente\nmodel ItemModification {\n  id        String   @id @default(uuid())\n  type      String\n  createdAt DateTime @default(now())\n\n  item   Item   @relation(fields: [itemId], references: [id])\n  itemId String\n\n  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])\n  ingredientId String\n\n  @@map(\"item_modifications\")\n}\n\n// tabela status - apresenta os status do pedido\nmodel Status {\n  id   String @id @default(uuid())\n  name String @unique\n\n  payments Payment[]\n  products Product[]\n\n  @@map(\"statuses\")\n}\n\n// ...existing code...\n\n// Tabela de pagamentos - apresenta o tipo de pagamento do pedido\nmodel Payment {\n  id          String   @id @default(uuid())\n  paymentDate DateTime @default(now())\n  amount      Decimal\n  paymentType String\n\n  order   Order?  @relation(fields: [orderId], references: [id])\n  orderId String?\n\n  status   Status @relation(fields: [statusId], references: [id])\n  statusId String\n\n  @@map(\"payments\")\n}\n\n// Tabela de Cliente - salva informações do cliente\nmodel Client {\n  id        String   @id @default(uuid())\n  name      String\n  email     String   @unique\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  reviews Review[]\n\n  @@map(\"clients\")\n}\n\n// Tabela de Avaliação - salva as informações da pesquisa\nmodel Review {\n  id       String   @id @default(uuid())\n  rating   Int\n  comment  String?\n  createAt DateTime @default(now())\n\n  order   Order  @relation(fields: [orderId], references: [id])\n  orderId String @unique\n\n  client   Client @relation(fields: [clientId], references: [id])\n  clientId String\n  // ...existing code...\n\n  @@map(\"reviews\")\n}\n",
+  "inlineSchemaHash": "1c3397004569690de15e22a4255d5b07d1536c1f12d5c80348451484f6144100",
   "copyEngine": true
 }
 
@@ -300,8 +302,8 @@ const fs = require('fs')
 config.dirname = __dirname
 if (!fs.existsSync(path.join(__dirname, 'schema.prisma'))) {
   const alternativePaths = [
-    "../src/generated/prisma",
     "src/generated/prisma",
+    "generated/prisma",
   ]
   
   const alternativePath = alternativePaths.find((altPath) => {
@@ -331,7 +333,7 @@ Object.assign(exports, Prisma)
 
 // file annotations for bundling tools to include these files
 path.join(__dirname, "query_engine-windows.dll.node");
-path.join(process.cwd(), "../src/generated/prisma/query_engine-windows.dll.node")
+path.join(process.cwd(), "src/generated/prisma/query_engine-windows.dll.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
-path.join(process.cwd(), "../src/generated/prisma/schema.prisma")
+path.join(process.cwd(), "src/generated/prisma/schema.prisma")

@@ -188,6 +188,8 @@ model Status {
   @@map("statuses")
 }
 
+// ...existing code...
+
 // Tabela de pagamentos - apresenta o tipo de pagamento do pedido
 model Payment {
   id          String   @id @default(uuid())
@@ -229,6 +231,7 @@ model Review {
 
   client   Client @relation(fields: [clientId], references: [id])
   clientId String
+  // ...existing code...
 
   @@map("reviews")
 }
