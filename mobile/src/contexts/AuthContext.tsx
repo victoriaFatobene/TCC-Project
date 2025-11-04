@@ -11,6 +11,8 @@ type AuthContextData = {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  isGuest: boolean; // <-- NOVO! A "memória" do convidado
+  signInAsGuest: () => void; // <-- NOVO! Função para entrar como convidado
 };
 
 // 2. Definir o tipo das props do Provedor
@@ -25,6 +27,7 @@ const AuthContext = createContext<AuthContextData | undefined>(undefined);
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isGuest, setIsGuest] = useState(false); // <-- NOVO! Estado do convidado
 
   useEffect(() => {
     setLoading(true);
@@ -40,6 +43,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
+        // Se o usuário deslogar (SIGNED_OUT), saia do modo convidado também
+        if (_event === 'SIGNED_OUT') { 
+          setIsGuest(false);
+        }
       }
     );
 
@@ -47,14 +54,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       authListener.subscription.unsubscribe();
     };
   }, []);
+  
+  // --- FUNÇÕES NOVAS E ATUALIZADAS ---
+  
+  // Nova função para entrar como convidado
+  const signInAsGuest = () => {
+    console.log("Entrando como convidado...");
+    setIsGuest(true);
+  };
+  
+  // Função de Logout ATUALIZADA
+  const signOut = async () => {
+    console.log("Saindo da conta ou do modo convidado...");
+    const { error } = await supabase.auth.signOut();
+    setIsGuest(false); // <-- A CORREÇÃO! Limpa o modo convidado
+    if (error) Alert.alert("Erro no Logout", error.message);
+  };
+  // --- FIM DAS MUDANÇAS ---
 
   // Valor que será compartilhado
   const value: AuthContextData = {
     session,
     user: session?.user,
     loading, 
+    isGuest, // <-- NOVO!
+    signInAsGuest, // <-- NOVO!
+    signOut, // <-- ATUALIZADO!
 
-    // Função de Login (Não muda)
+    // Funções originais (não mudam)
     signIn: async (email, password) => {
       const { error } = await supabase.auth.signInWithPassword({
         email,
@@ -63,10 +90,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (error) Alert.alert("Erro no Login", error.message);
     },
 
-    // --- A MUDANÇA ESTÁ AQUI ---
     signUp: async (email, password) => {
-      
-      // Passo 1: Cria o usuário no sistema de Auth (seguro)
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -80,29 +104,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return Alert.alert("Erro", "Não foi possível criar o usuário.");
       }
 
-      // Passo 2: Salva os dados na sua tabela 'public.users'
       const { error: publicError } = await supabase
         .from('users') 
         .insert({ 
           id: authData.user.id, 
           email: authData.user.email,
-          password: password // <-- AQUI! Adicionamos a senha
+          password: password 
         });
 
       if (publicError) {
         console.error("Erro ao salvar em public.users:", publicError.message);
       }
 
-      // Desloga o usuário para ele ir para a tela de Login
       await supabase.auth.signOut();
       
       Alert.alert('Cadastro Concluído!', 'Por favor, faça o login.');
-    },
-
-    // Função de Logout (Não muda)
-    signOut: async () => {
-      const { error } = await supabase.auth.signOut();
-      if (error) Alert.alert("Erro no Logout", error.message);
     },
   };
 

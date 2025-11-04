@@ -12,7 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../services/supabase';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-// Componente Bolinha (Está perfeito)
+// ... (Componente StatusCircle está perfeito) ...
 const StatusCircle = ({ statusId }) => {
   let color = '#E0E0E0'; 
   if (statusId === 1) {
@@ -25,7 +25,7 @@ const StatusCircle = ({ statusId }) => {
   return <View style={[styles.statusCircle, { backgroundColor: color }]} />;
 };
 
-// Componente StatusItem (Está perfeito)
+// ... (Componente StatusItem está perfeito) ...
 const StatusItem = ({ icon, label, isCompleted }) => (
   <View style={styles.statusItem}>
     <View style={[styles.statusIconContainer, isCompleted && styles.statusIconCompleted]}>
@@ -36,11 +36,15 @@ const StatusItem = ({ icon, label, isCompleted }) => (
 );
 
 export default function StatusPedido({ navigation, route }) {
-  const { pedido: pedidoInicial } = route.params;
+  // --- MUDANÇA 1: Ler o novo parâmetro 'fromHistory' ---
+  const { pedido: pedidoInicial, fromHistory = false } = route.params;
+  // --- FIM DA MUDANÇA 1 ---
+
   const [dadosDoPedido, setDadosDoPedido] = useState(pedidoInicial);
   const [itensDetalhados, setItensDetalhados] = useState([]); 
   const insets = useSafeAreaInsets();
 
+  // ... (Função fetchItensDoPedido está perfeita) ...
   const fetchItensDoPedido = useCallback(async (orderId) => {
     try {
       const { data, error } = await supabase
@@ -82,8 +86,15 @@ export default function StatusPedido({ navigation, route }) {
       const fetchedItens = await fetchItensDoPedido(dadosDoPedido.id);
       setItensDetalhados(fetchedItens);
       
+      // Se veio do histórico OU se o pedido já está pronto (status 3), não ligue o tempo real!
+      if (fromHistory || dadosDoPedido.status_id === 3) {
+        console.log('--- Pedido antigo. Não vou ligar o tempo real. ---');
+        return; 
+      }
+
       console.log(`--- TENTANDO OUVIR O PEDIDO: ${dadosDoPedido.id} E SEUS ITENS ---`);
 
+      // ... (O resto do seu useEffect de tempo real está perfeito) ...
       const orderSubscription = supabase
         .channel(`pedido-status-${dadosDoPedido.id}`)
         .on(
@@ -103,13 +114,7 @@ export default function StatusPedido({ navigation, route }) {
             }));
           }
         )
-        .subscribe((status) => {
-          if (status === 'SUBSCRIBED') {
-            console.log('--- CONEXÃO DE TEMPO REAL (orders) ESTABELECIDA COM SUCESSO! ---');
-          } else {
-            console.log('--- FALHA NA CONEXÃO DE TEMPO REAL (orders). STATUS:', status);
-          }
-        });
+        .subscribe((status) => { /* ... (logs de status) ... */ });
 
       const itemSubscription = supabase
         .channel(`itens-do-pedido-${dadosDoPedido.id}`)
@@ -123,17 +128,38 @@ export default function StatusPedido({ navigation, route }) {
           },
           async (payload) => {
             console.log('--- SINAL DO SUPABASE RECEBIDO (items)! ATUALIZANDO ITENS! ---');
+            
             const updatedItens = await fetchItensDoPedido(dadosDoPedido.id);
             setItensDetalhados(updatedItens);
+
+            const allItemsProntos = updatedItens.length > 0 && updatedItens.every(item => item.item_status_id === 3);
+
+            const { data: currentOrder, error: fetchError } = await supabase
+              .from('orders')
+              .select('status_id')
+              .eq('id', dadosDoPedido.id)
+              .single();
+
+            if (fetchError) {
+              console.error("Erro ao verificar status atual do pedido:", fetchError.message);
+              return;
+            }
+
+            if (allItemsProntos && currentOrder.status_id !== 3) {
+              console.log("--- TODOS OS ITENS PRONTOS! ATUALIZANDO PEDIDO GERAL... ---");
+              
+              const { error: updateError } = await supabase
+                .from('orders')
+                .update({ status_id: 3 }) 
+                .eq('id', dadosDoPedido.id);
+
+              if (updateError) {
+                console.error("Erro ao auto-atualizar status do pedido:", updateError.message);
+              }
+            }
           }
         )
-        .subscribe((status) => {
-          if (status === 'SUBSCRIBED') {
-            console.log('--- CONEXÃO DE TEMPO REAL (items) ESTABELECIDA COM SUCESSO! ---');
-          } else {
-            console.log('--- FALHA NA CONEXÃO DE TEMPO REAL (items). STATUS:', status);
-          }
-        });
+        .subscribe((status) => { /* ... (logs de status) ... */ });
 
       return () => {
         supabase.removeChannel(orderSubscription);
@@ -142,8 +168,9 @@ export default function StatusPedido({ navigation, route }) {
     };
 
     setupSubscriptions();
-  }, [dadosDoPedido.id, fetchItensDoPedido]); 
+  }, [dadosDoPedido.id, dadosDoPedido.status_id, fetchItensDoPedido, fromHistory]); // Adicionado fromHistory às dependências
 
+  // ... (Lógica de status está perfeita) ...
   const statusId = dadosDoPedido.status_id || 1;
   let currentStatusIndex = -1; 
   if (statusId === 1) {
@@ -217,23 +244,24 @@ export default function StatusPedido({ navigation, route }) {
           <Text style={styles.summaryTotal}>Total: R$ {dadosDoPedido.total.toFixed(2)}</Text>
         </View>
         
-        {isPedidoPronto && (
+        {/* --- MUDANÇA 2: Esconder o botão --- */}
+        {/* Só mostre o botão se o pedido estiver pronto E NÃO veio do histórico */}
+        {isPedidoPronto && !fromHistory && (
           <TouchableOpacity 
             style={styles.evaluateButton} 
             onPress={() => navigation.navigate('Avaliacao', { orderId: dadosDoPedido.id })}
           >
-            {/* --- A CORREÇÃO ESTÁ AQUI --- */}
-            {/* Antes: </Sairam> */}
             <Text style={styles.evaluateButtonText}>Avaliar Pedido</Text>
-            {/* --- FIM DA CORREÇÃO --- */}
           </TouchableOpacity>
         )}
+        {/* --- FIM DA MUDANÇA 2 --- */}
+        
       </ScrollView>
     </View>
   );
 }
 
-// ... (Seus estilos estão perfeitos)
+// ... (Seus estilos estão perfeitos) ...
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
   header: { 

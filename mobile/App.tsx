@@ -10,7 +10,7 @@ import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import LoginScreen from './src/screens/Login';
 import RegisterScreen from './src/screens/Register';
 
-// --- Imports das suas telas (Tudo certo) ---
+// --- Imports (Tudo certo) ---
 import HomeScreen from './src/screens/TelaInicial';
 import Pizzas from './src/screens/Pizzas';
 import MenuPizzas from './src/screens/MenuPizzas';
@@ -32,18 +32,16 @@ import ProductDetails from './src/screens/ProductDetails';
 import StatusPedido from './src/screens/StatusPedido';
 import CadastroCartao from './src/screens/CadastroCartao';
 import VerMais from './src/screens/VerMais';
-
-// --- 1. IMPORTAR A NOVA TELA ---
 import ProfileScreen from './src/screens/ProfileScreen';
 
-// --- Tipagem ---
+// --- Tipagem (Tudo certo) ---
 type RootStackParamList = {
   MainTabs: undefined;
   Pagamento: { novoCartao?: object };
   StatusPedido: { pedido: object };
   CadastroCartao: undefined;
   Avaliacao: undefined;
-  Profile: undefined; // <-- 2. ADICIONAR A TELA À LISTA
+  Profile: undefined; 
 };
 type MenuStackParamList = {
   HomeScreen: undefined;
@@ -72,13 +70,14 @@ type AuthStackParamList = {
   Register: undefined;
 };
 
-// --- Navegadores ---
+// --- Navegadores (Tudo certo) ---
 const RootStack = createStackNavigator<RootStackParamList>();
 const MenuStackNav = createStackNavigator<MenuStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 const AuthStack = createStackNavigator<AuthStackParamList>();
 
-// --- AuthScreens (Sem mudança) ---
+// --- AuthScreens (Tudo certo) ---
+// Ele recebe 'onEntrarConvidado' e passa para o LoginScreen
 function AuthScreens({ onEntrarConvidado }: { onEntrarConvidado: () => void }) {
   return (
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
@@ -90,7 +89,7 @@ function AuthScreens({ onEntrarConvidado }: { onEntrarConvidado: () => void }) {
   );
 }
 
-// --- MenuScreens (Sem mudança) ---
+// --- MenuScreens (Tudo certo) ---
 function MenuScreens() {
   return (
     <MenuStackNav.Navigator screenOptions={{ headerShown: false }}>
@@ -114,7 +113,7 @@ function MenuScreens() {
   );
 }
 
-// --- TabNavigator (Sem mudança) ---
+// --- TabNavigator (Tudo certo) ---
 function TabNavigator() {
   return (
     <Tab.Navigator
@@ -147,14 +146,19 @@ function TabNavigator() {
 }
 
 
-// --- RootNavigator (O "Porteiro") ---
+// --- RootNavigator (A CORREÇÃO ESTÁ AQUI) ---
 function RootNavigator() {
-  const { session } = useAuth();
-  const [eConvidado, setEConvidado] = useState(false); 
+  // 1. Pegamos 'isGuest' e 'signInAsGuest' do CONTEXTO
+  const { session, isGuest, signInAsGuest } = useAuth();
+  
+  // 2. Removemos a "memória" local que estava aqui
+  // const [eConvidado, setEConvidado] = useState(false); // <-- REMOVIDO!
 
   return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
-      {(session && session.user) || eConvidado ? (
+      
+      {/* 3. Verificamos o 'isGuest' do CONTEXTO */}
+      {(session && session.user) || isGuest ? (
         
         // Sim? Mostre o app principal
         <>
@@ -163,21 +167,21 @@ function RootNavigator() {
           <RootStack.Screen name="StatusPedido" component={StatusPedido} />
           <RootStack.Screen name="CadastroCartao" component={CadastroCartao} />
           <RootStack.Screen name="Avaliacao" component={Avaliacao} />
-          {/* --- 3. ADICIONAR A TELA AO STACK --- */}
           <RootStack.Screen name="Profile" component={ProfileScreen} />
         </>
       ) : (
         
         // Não? Mostre as telas de Auth
         <RootStack.Screen name="MainTabs">
-          {(props) => <AuthScreens {...props} onEntrarConvidado={() => setEConvidado(true)} />}
+          {/* 4. Passamos a função 'signInAsGuest' do CONTEXTO para o Login */}
+          {(props) => <AuthScreens {...props} onEntrarConvidado={signInAsGuest} />}
         </RootStack.Screen>
       )}
     </RootStack.Navigator>
   );
 }
 
-// --- App() (Sem mudança) ---
+// --- App() (Tudo certo) ---
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

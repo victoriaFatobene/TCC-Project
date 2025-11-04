@@ -14,22 +14,28 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../services/supabase';
 
-// Componente para renderizar cada pedido antigo
-const PedidoAntigoItem = ({ item }) => {
-  // Formata a data para (DD/MM/AAAA)
+// --- MUDANÇA AQUI ---
+const PedidoAntigoItem = ({ item, navigation }) => { 
   const data = new Date(item.created_at).toLocaleDateString('pt-BR');
   
   return (
-    <View style={styles.pedidoCard}>
-      <View style={styles.pedidoHeader}>
-        <Text style={styles.pedidoSenha}>Senha: {item.senha ? item.senha.toString().padStart(3, '0') : 'N/A'}</Text>
-        <Text style={styles.pedidoData}>{data}</Text>
+    <TouchableOpacity 
+      style={styles.pedidoCard}
+      // Adicionamos 'fromHistory: true' para a tela de Status saber de onde viemos
+      onPress={() => navigation.navigate('StatusPedido', { pedido: item, fromHistory: true })}
+    >
+      <View style={styles.pedidoInfo}>
+        <View style={styles.pedidoHeader}>
+          <Text style={styles.pedidoSenha}>Senha: {item.senha ? item.senha.toString().padStart(3, '0') : 'N/A'}</Text>
+          <Text style={styles.pedidoData}>{data}</Text>
+        </View>
+        <Text style={styles.pedidoTotal}>Total: R$ {item.total ? item.total.toFixed(2) : '0.00'}</Text>
       </View>
-      <Text style={styles.pedidoTotal}>Total: R$ {item.total ? item.total.toFixed(2) : '0.00'}</Text>
-      {/* Você pode adicionar um onPress={() => navigation.navigate(...)} aqui se quiser */}
-    </View>
+      <Ionicons name="chevron-forward" size={24} color="#BDBDBD" />
+    </TouchableOpacity>
   );
 };
+// --- FIM DA MUDANÇA ---
 
 export default function ProfileScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -38,20 +44,19 @@ export default function ProfileScreen({ navigation }) {
   const [pedidos, setPedidos] = useState([]);
 
   useEffect(() => {
-    // Se não tem usuário logado, não faz nada
     if (!user) {
       setLoading(false);
       return;
     }
 
-    // Se tem usuário, busca o histórico de pedidos dele
     const fetchHistorico = async () => {
       setLoading(true);
+      
       const { data, error } = await supabase
         .from('orders')
-        .select('id, created_at, total, senha')
-        .eq('user_id', user.id) // A MÁGICA! Busca só os pedidos desse usuário
-        .order('created_at', { ascending: false }); // Do mais novo para o mais antigo
+        .select('id, created_at, total, senha, status_id') 
+        .eq('user_id', user.id) 
+        .order('created_at', { ascending: false }); 
 
       if (error) {
         Alert.alert("Erro", "Não foi possível buscar seu histórico de pedidos.");
@@ -63,8 +68,9 @@ export default function ProfileScreen({ navigation }) {
     };
 
     fetchHistorico();
-  }, [user]); // Roda sempre que o 'user' mudar
+  }, [user]); 
 
+  // ... (O resto do seu código 'handleLogout', 'return', etc. está perfeito) ...
   const handleLogout = () => {
     Alert.alert(
       "Sair",
@@ -73,7 +79,7 @@ export default function ProfileScreen({ navigation }) {
         { text: "Cancelar", style: "cancel" },
         { 
           text: "Sair", 
-          onPress: () => signOut(), // O AuthContext cuida de levar para o Login
+          onPress: () => signOut(), 
           style: "destructive" 
         }
       ]
@@ -84,7 +90,6 @@ export default function ProfileScreen({ navigation }) {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
       
-      {/* Cabeçalho */}
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -95,10 +100,8 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.headerTitle}>Minha Conta</Text>
       </View>
 
-      {/* Conteúdo */}
       <View style={styles.content}>
         {user ? (
-          // --- MOSTRA SE ESTIVER LOGADO ---
           <>
             <Text style={styles.emailText}>Logado como: {user.email}</Text>
             <Text style={styles.historicoTitle}>Seu Histórico de Pedidos</Text>
@@ -108,7 +111,7 @@ export default function ProfileScreen({ navigation }) {
               <FlatList
                 data={pedidos}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => <PedidoAntigoItem item={item} />}
+                renderItem={({ item }) => <PedidoAntigoItem item={item} navigation={navigation} />}
                 ListEmptyComponent={<Text style={styles.emptyText}>Você ainda não fez nenhum pedido.</Text>}
                 contentContainerStyle={{ paddingBottom: 120 }}
               />
@@ -118,7 +121,6 @@ export default function ProfileScreen({ navigation }) {
             </TouchableOpacity>
           </>
         ) : (
-          // --- MOSTRA SE FOR CONVIDADO ---
           <View style={styles.convidadoContainer}>
             <Text style={styles.convidadoTitle}>Você está como convidado</Text>
             <Text style={styles.convidadoSubtext}>
@@ -126,7 +128,7 @@ export default function ProfileScreen({ navigation }) {
             </Text>
             <TouchableOpacity 
               style={styles.loginButton} 
-              onPress={() => signOut()} // 'signOut' também serve para levar ao login
+              onPress={() => signOut()}
             >
               <Text style={styles.loginButtonText}>Ir para Login / Cadastro</Text>
             </TouchableOpacity>
@@ -137,6 +139,7 @@ export default function ProfileScreen({ navigation }) {
   );
 }
 
+// ... (Seus estilos estão perfeitos) ...
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
   header: {
@@ -177,6 +180,12 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
     elevation: 2,
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-between', 
+  },
+  pedidoInfo: {
+    flex: 1, 
   },
   pedidoHeader: {
     flexDirection: 'row',
