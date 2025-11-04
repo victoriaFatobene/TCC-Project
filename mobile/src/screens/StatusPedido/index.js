@@ -1,18 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   View, 
   Text, 
   StyleSheet, 
   TouchableOpacity, 
   ScrollView,
-  StatusBar
+  StatusBar,
+  Alert 
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../services/supabase';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+// Componente Bolinha (Está perfeito)
+const StatusCircle = ({ statusId }) => {
+  let color = '#E0E0E0'; 
+  if (statusId === 1) {
+    color = '#FF0000'; // Vermelho
+  } else if (statusId === 2) {
+    color = '#FFC107'; // Amarelo
+  } else if (statusId === 3) {
+    color = '#4CAF50'; // Verde
+  }
+  return <View style={[styles.statusCircle, { backgroundColor: color }]} />;
+};
+
+// Componente StatusItem (Está perfeito)
 const StatusItem = ({ icon, label, isCompleted }) => (
-  // ... (Componente StatusItem está perfeito)
   <View style={styles.statusItem}>
     <View style={[styles.statusIconContainer, isCompleted && styles.statusIconCompleted]}>
       <Ionicons name={icon} size={24} color={isCompleted ? '#FFF' : '#7B0909'} />
@@ -24,50 +38,120 @@ const StatusItem = ({ icon, label, isCompleted }) => (
 export default function StatusPedido({ navigation, route }) {
   const { pedido: pedidoInicial } = route.params;
   const [dadosDoPedido, setDadosDoPedido] = useState(pedidoInicial);
+  const [itensDetalhados, setItensDetalhados] = useState([]); 
   const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    // ... (Seu useEffect de tempo real está perfeito)
-    console.log(`--- TENTANDO OUVIR O PEDIDO: ${dadosDoPedido.id} ---`);
-    const subscription = supabase
-      .channel(`pedido-status-${dadosDoPedido.id}`)
-      .on(
-        'postgres_changes',
-        { 
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'orders',
-          filter: `id=eq.${dadosDoPedido.id}`
-        },
-        (payload) => {
-          console.log('--- SINAL DO SUPABASE RECEBIDO! ATUALIZANDO TELA! ---');
-          setDadosDoPedido(estadoAnterior => ({ 
-            ...estadoAnterior, 
-            ...payload.new,
-            itens: estadoAnterior.itens 
-          }));
-        }
-      )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log('--- CONEXÃO DE TEMPO REAL ESTABELECIDA COM SUCESSO! ---');
-        } else {
-          console.log('--- FALHA NA CONEXÃO DE TEMPO REAL. STATUS:', status);
-        }
-      });
-    return () => {
-      supabase.removeChannel(subscription);
-    };
-  }, [dadosDoPedido.id]);
+  const fetchItensDoPedido = useCallback(async (orderId) => {
+    try {
+      const { data, error } = await supabase
+        .from('items')
+        .select(`
+          id,
+          amount,
+          extras,
+          observacoes,
+          item_status_id, 
+          product_name 
+        `)
+        .eq('orderId', orderId);
 
-  // ... (Sua lógica de status está perfeita) ...
-  const isDraft = dadosDoPedido.draft;
-  const isStatusPronto = dadosDoPedido.status;
+      if (error) {
+        console.error('Erro ao buscar itens do pedido:', error.message);
+        Alert.alert('Erro', 'Não foi possível carregar os detalhes dos itens.');
+        return [];
+      }
+
+      return data.map(item => ({
+        id: item.id,
+        qtd: item.amount,
+        nome: item.product_name || 'Produto Desconhecido', 
+        extras: item.extras || [],
+        observacoes: item.observacoes || null,
+        item_status_id: item.item_status_id || 1, 
+      }));
+
+    } catch (err) {
+      console.error('Exceção ao buscar itens do pedido:', err.message);
+      Alert.alert('Erro', 'Ocorreu um erro ao processar os itens do pedido.');
+      return [];
+    }
+  }, []); 
+
+  useEffect(() => {
+    const setupSubscriptions = async () => {
+      const fetchedItens = await fetchItensDoPedido(dadosDoPedido.id);
+      setItensDetalhados(fetchedItens);
+      
+      console.log(`--- TENTANDO OUVIR O PEDIDO: ${dadosDoPedido.id} E SEUS ITENS ---`);
+
+      const orderSubscription = supabase
+        .channel(`pedido-status-${dadosDoPedido.id}`)
+        .on(
+          'postgres_changes',
+          { 
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'orders',
+            filter: `id=eq.${dadosDoPedido.id}`
+          },
+          (payload) => {
+            console.log('--- SINAL DO SUPABASE RECEBIDO (orders)! ATUALIZANDO TELA! ---');
+            setDadosDoPedido(estadoAnterior => ({ 
+              ...estadoAnterior, 
+              ...payload.new,
+              itens: estadoAnterior.itens 
+            }));
+          }
+        )
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            console.log('--- CONEXÃO DE TEMPO REAL (orders) ESTABELECIDA COM SUCESSO! ---');
+          } else {
+            console.log('--- FALHA NA CONEXÃO DE TEMPO REAL (orders). STATUS:', status);
+          }
+        });
+
+      const itemSubscription = supabase
+        .channel(`itens-do-pedido-${dadosDoPedido.id}`)
+        .on(
+          'postgres_changes',
+          { 
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'items',
+            filter: `orderId=eq.${dadosDoPedido.id}` 
+          },
+          async (payload) => {
+            console.log('--- SINAL DO SUPABASE RECEBIDO (items)! ATUALIZANDO ITENS! ---');
+            const updatedItens = await fetchItensDoPedido(dadosDoPedido.id);
+            setItensDetalhados(updatedItens);
+          }
+        )
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            console.log('--- CONEXÃO DE TEMPO REAL (items) ESTABELECIDA COM SUCESSO! ---');
+          } else {
+            console.log('--- FALHA NA CONEXÃO DE TEMPO REAL (items). STATUS:', status);
+          }
+        });
+
+      return () => {
+        supabase.removeChannel(orderSubscription);
+        supabase.removeChannel(itemSubscription);
+      };
+    };
+
+    setupSubscriptions();
+  }, [dadosDoPedido.id, fetchItensDoPedido]); 
+
+  const statusId = dadosDoPedido.status_id || 1;
   let currentStatusIndex = -1; 
-  if (isDraft === false && isStatusPronto === false) {
-    currentStatusIndex = 0;
-  } else if (isDraft === false && isStatusPronto === true) {
-    currentStatusIndex = 2;
+  if (statusId === 1) {
+    currentStatusIndex = 0; 
+  } else if (statusId === 2) {
+    currentStatusIndex = 1; 
+  } else if (statusId === 3) {
+    currentStatusIndex = 2; 
   }
   const isPedidoPronto = (currentStatusIndex === 2);
 
@@ -86,14 +170,9 @@ export default function StatusPedido({ navigation, route }) {
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.orderId}>Senha do Pedido</Text>
-        
-        {/* --- A CORREÇÃO ESTÁ AQUI --- */}
-        {/* Antes: dadosDoPedido.id.substring(0, 8) */}
-        {/* Agora: Mostra a nova 'senha' formatada com 3 dígitos (ex: 007) */}
         <Text style={styles.orderNumber}>
           {dadosDoPedido.senha ? dadosDoPedido.senha.toString().padStart(3, '0') : '...'}
         </Text>
-        {/* --- FIM DA CORREÇÃO --- */}
         
         {isPedidoPronto && (
           <View style={styles.readyCard}>
@@ -113,12 +192,14 @@ export default function StatusPedido({ navigation, route }) {
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>Resumo da Compra</Text>
           
-          {/* O seu Resumo da Compra (já corrigido para .name) está perfeito */}
-          {dadosDoPedido.itens.map((item, index) => (
-            <View key={index} style={styles.itemContainer}>
-              <Text style={styles.summaryItem}>
-                {item.qtd}x {item.nome}
-              </Text>
+          {itensDetalhados.map((item) => ( 
+            <View key={item.id} style={styles.itemContainer}>
+              <View style={styles.itemRow}>
+                <Text style={styles.summaryItem}>
+                  {item.qtd}x {item.nome}
+                </Text>
+                <StatusCircle statusId={item.item_status_id} /> 
+              </View>
               {item.extras && item.extras.length > 0 && (
                 <Text style={styles.extrasText}>
                   Extras: {item.extras.map(e => e.name).join(', ')}
@@ -141,7 +222,10 @@ export default function StatusPedido({ navigation, route }) {
             style={styles.evaluateButton} 
             onPress={() => navigation.navigate('Avaliacao', { orderId: dadosDoPedido.id })}
           >
+            {/* --- A CORREÇÃO ESTÁ AQUI --- */}
+            {/* Antes: </Sairam> */}
             <Text style={styles.evaluateButtonText}>Avaliar Pedido</Text>
+            {/* --- FIM DA CORREÇÃO --- */}
           </TouchableOpacity>
         )}
       </ScrollView>
@@ -149,7 +233,7 @@ export default function StatusPedido({ navigation, route }) {
   );
 }
 
-// ... (Seus estilos estão corretos)
+// ... (Seus estilos estão perfeitos)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
   header: { 
@@ -179,6 +263,17 @@ const styles = StyleSheet.create({
   summaryTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 15 },
   itemContainer: {
     marginBottom: 10,
+  },
+  itemRow: { 
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  statusCircle: { 
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    marginLeft: 10,
   },
   summaryItem: { fontSize: 16, color: '#444' },
   extrasText: {

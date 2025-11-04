@@ -10,6 +10,7 @@ import {
   StatusBar
 } from 'react-native';
 import { useCart } from '../../contexts/CartContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../services/supabase'; 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,8 +18,8 @@ import * as Crypto from 'expo-crypto';
 
 export default function Pagamento({ navigation, route }) {
   const { cartItems, clearCart } = useCart();
+  const { user } = useAuth();
   
-  // --- CORREÇÃO 1: Usar precoFinal no subtotal ---
   const subtotal = cartItems.reduce((total, item) => total + (item.precoFinal || item.preco || 0) * (item.quantidade || 1), 0);
   
   const [metodo, setMetodo] = useState('dinheiro');
@@ -44,18 +45,18 @@ export default function Pagamento({ navigation, route }) {
     setLoading(true);
 
     try {
-      // --- PASSO 1: CRIAR O PEDIDO (JÁ ESTÁ FUNCIONANDO!) ---
-      
       const timestamp = new Date().toISOString(); 
 
+      // 1. Dados do Pedido (Está correto)
       const pedidoData = { 
         id: Crypto.randomUUID(), 
         table: 1,      
-        status: false, 
-        draft: false,  
-        name: "Cliente App",
+        name: user ? user.email : "Convidado",
         created_at: timestamp, 
-        updated_at: timestamp  
+        updated_at: timestamp,
+        user_id: user ? user.id : null,
+        total: subtotal,
+        status_id: 1 
       };
 
       const { data: pedidoCriado, error: errorPedido } = await supabase
@@ -69,18 +70,20 @@ export default function Pagamento({ navigation, route }) {
         throw errorPedido;
       }
 
-      // --- CORREÇÃO 2: Adicionar extras e observações para o Supabase ---
+      // --- 2. A GRANDE CORREÇÃO (DADOS DOS ITENS) ---
       const itensParaInserir = cartItems.map(item => ({
         id: Crypto.randomUUID(),    
         orderId: pedidoCriado.id, 
-        productId: item.id,       
+        // productId: item.id, // <-- REMOVIDO! (Esta é a causa do erro)
+        product_name: item.nome, // <-- ADICIONADO! (Salva o nome, ex: "Calabresa")
         amount: item.quantidade,
         created_at: timestamp,    
         updated_at: timestamp,
-        extras: item.extras || [], // <-- ADICIONADO
-        observacoes: item.observacoes || null // <-- ADICIONADO
+        extras: item.extras || [],
+        observacoes: item.observacoes || null,
+        item_status_id: 1 
       }));
-      // -----------------------------------------------------------------
+      // --- FIM DA CORREÇÃO ---
 
       const { error: errorItens } = await supabase
         .from('items') 
@@ -91,45 +94,35 @@ export default function Pagamento({ navigation, route }) {
         throw errorItens;
       }
 
-      // --- PASSO 3: SUCESSO! ---
-      
+      // 3. Navegação (Está correto)
       setLoading(false);
       clearCart();
       
-      // --- CORREÇÃO 3: Enviar dados completos para a tela de Status ---
       const dadosParaStatus = {
         ...pedidoCriado, 
         itens: cartItems.map(item => ({ 
           nome: item.nome, 
           qtd: item.quantidade,
-          extras: item.extras || [], // <-- ADICIONADO
-          observacoes: item.observacoes || null // <-- ADICIONADO
+          extras: item.extras || [],
+          observacoes: item.observacoes || null,
+          item_status_id: 1 
         })),
         total: subtotal,
       };
-      // -------------------------------------------------------------
       
       navigation.navigate('StatusPedido', { pedido: dadosParaStatus });
 
     } catch (error) {
       setLoading(false);
       console.error("Erro ao finalizar pedido (Supabase):", error.message); 
-      
-      if (error.message.includes('Network request failed')) {
-         Alert.alert(
-           "Erro de Rede", 
-           "Não foi possível se conectar ao Supabase. Verifique sua internet."
-         );
-      } else {
-         Alert.alert(
-           "Erro", 
-           `Não foi possível criar o pedido. Mensagem: ${error.message}`
-         );
-      }
+      Alert.alert(
+         "Erro", 
+         `Não foi possível criar o pedido. Mensagem: ${error.message}`
+       );
     }
   };
   
-  // O resto do seu código (return, styles) está perfeito.
+  // ... (O resto do seu return() e styles estão perfeitos) ...
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
@@ -139,10 +132,8 @@ export default function Pagamento({ navigation, route }) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Pagamento</Text>
       </View>
-
       <View style={styles.content}>
         <Text style={styles.title}>Escolha a forma de pagamento</Text>
-
         <View style={styles.methodSelector}>
           <TouchableOpacity
             style={[styles.methodButton, metodo === 'dinheiro' && styles.methodSelected]}
@@ -157,7 +148,6 @@ export default function Pagamento({ navigation, route }) {
             <Text style={[styles.methodText, metodo === 'cartao' && styles.methodTextSelected]}>Cartão</Text>
           </TouchableOpacity>
         </View>
-
         {metodo === 'cartao' && (
           <View style={styles.cardSection}>
             <Text style={styles.sectionTitle}>Meus Cartões</Text>
@@ -180,7 +170,6 @@ export default function Pagamento({ navigation, route }) {
             </TouchableOpacity>
           </View>
         )}
-
         <TouchableOpacity style={styles.confirmButton} onPress={handleFinalizarPedido} disabled={loading}>
           {loading ? (
             <ActivityIndicator color="#FFF" />
@@ -193,6 +182,7 @@ export default function Pagamento({ navigation, route }) {
   );
 }
 
+// ... (Seus estilos estão perfeitos)
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#f5f5ff' },
     header: { 
