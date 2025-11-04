@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-// 1. IMPORTAR AS FONTES
 import {
   useFonts,
   DancingScript_700Bold,
@@ -26,8 +25,7 @@ export default function Bebidas({ navigation }) {
       id: "1",
       nome: "Refrigerantes",
       imagem: require("../../assets/images/refrigerantes.png"),
-      // 2. Mudei 'tela' para 'destino' (para bater com o modelo)
-      destino: "Refrigerantes", 
+      destino: "Refrigerantes",
     },
     {
       id: "2",
@@ -53,7 +51,6 @@ export default function Bebidas({ navigation }) {
     cat.nome.toLowerCase().includes(search.toLowerCase())
   );
 
-  // 3. ADICIONAR O CARREGAMENTO DA FONTE
   const [fontsLoaded] = useFonts({
     DancingScript_700Bold,
   });
@@ -66,7 +63,7 @@ export default function Bebidas({ navigation }) {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
 
-      {/* 4. CABEÇALHO ATUALIZADO (igual ao Sobremesas.js) */}
+      {/* Cabeçalho */}
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -76,12 +73,11 @@ export default function Bebidas({ navigation }) {
         </TouchableOpacity>
 
         <View style={styles.titleContainer}>
-          {/* Você pode trocar "Bravazatta" por "Bebidas" se preferir */}
           <Text style={styles.title}>Bravazatta</Text>
         </View>
       </View>
 
-      {/* 5. BARRA DE PESQUISA ATUALIZADA (estilos) */}
+      {/* Barra de pesquisa */}
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="#7B0909" />
         <TextInput
@@ -93,7 +89,7 @@ export default function Bebidas({ navigation }) {
         />
       </View>
 
-      {/* 6. LISTA ATUALIZADA (com o novo card) */}
+      {/* Lista */}
       <FlatList
         data={filtradas}
         keyExtractor={(item) => item.id}
@@ -110,16 +106,13 @@ export default function Bebidas({ navigation }) {
           </TouchableOpacity>
         )}
         ListEmptyComponent={
-          <Text style={styles.notFoundText}>
-            Nenhuma bebida encontrada 😕
-          </Text>
+          <Text style={styles.notFoundText}>Nenhuma bebida encontrada 😕</Text>
         }
       />
     </View>
   );
 }
 
-// 7. ESTILOS SUBSTITUÍDOS (copiados do Sobremesas.js)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -182,11 +175,13 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     width: "100%",
-    height: 160,
+    height: 180, // levemente maior
+    resizeMode: "contain", // ← faz a imagem aparecer inteira
+    backgroundColor: "#FFF", // evita bordas escuras
   },
   cardOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.25)",
+    backgroundColor: "rgba(0,0,0,0.2)",
   },
   cardText: {
     position: "absolute",
@@ -195,7 +190,7 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontSize: 22,
     fontWeight: "bold",
-    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowColor: "rgba(0,0,0,0.6)",
     textShadowOffset: { width: 1, height: 2 },
     textShadowRadius: 3,
   },
