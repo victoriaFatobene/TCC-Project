@@ -9,9 +9,22 @@ import {
   StatusBar,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  useFonts,
+  DancingScript_700Bold,
+} from "@expo-google-fonts/dancing-script";
 
 export default function TelaInicial({ navigation }) {
   const insets = useSafeAreaInsets();
+
+  // Carregar a fonte
+  const [fontsLoaded] = useFonts({
+    DancingScript_700Bold,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
@@ -20,7 +33,7 @@ export default function TelaInicial({ navigation }) {
       {/* Cabeçalho fixo */}
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <Text style={styles.headerEmoji}>🍕</Text>
-        <Text style={styles.headerTitle}>Cardápio</Text>
+        <Text style={styles.headerTitle}>Bravazatta</Text>
         <Text style={styles.headerSubtitle}>
           Escolha, saboreie e se apaixone ❤️
         </Text>
@@ -88,7 +101,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFDF6",
   },
-
   header: {
     alignItems: "center",
     backgroundColor: "#7C1D26",
@@ -106,10 +118,10 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   headerTitle: {
+    fontFamily: "DancingScript_700Bold", // Fonte igual às outras telas
     color: "#FFECD1",
-    fontSize: 42,
-    fontWeight: "800",
-    letterSpacing: 1,
+    fontSize: 46,
+    marginBottom: 4,
   },
   headerSubtitle: {
     color: "#FFF9EE",
@@ -118,16 +130,13 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 10,
   },
-
   scrollContent: {
     paddingBottom: 30,
   },
-
   menuContainer: {
     paddingHorizontal: 22,
     paddingTop: 30,
   },
-
   card: {
     backgroundColor: "#FFFFFF",
     borderRadius: 24,

@@ -20,30 +20,26 @@ export default function Sobremesas({ navigation }) {
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState("");
 
-  /* --- A CORREÇÃO ESTÁ AQUI --- */
-  // Os caminhos tinham um "../" a mais. 
-  // O correto é subir 2 níveis (../../), não 3.
   const sobremesas = [
     {
       id: "1",
-      nome: "🍨 Sorvetes",
-      imagem: require("../../assets/images/sorvete.jpg"), // Corrigido
+      nome: "Sorvetes",
+      imagem: require("../../assets/images/sorvete.jpg"),
       destino: "Sorvetes",
     },
     {
       id: "2",
-      nome: "🍰 Bolos",
-      imagem: require("../../assets/images/bolo.jpg"), // Corrigido
+      nome: "Bolos",
+      imagem: require("../../assets/images/bolo.jpg"),
       destino: "Bolos",
     },
     {
       id: "3",
-      nome: "🍬 Doces",
-      imagem: require("../../assets/images/doces.jpg"), // Corrigido
+      nome: "Doces",
+      imagem: require("../../assets/images/doces.jpg"),
       destino: "Doces",
     },
   ];
-  /* --- FIM DA CORREÇÃO --- */
 
   const filtradas = sobremesas.filter((item) =>
     item.nome.toLowerCase().includes(searchText.toLowerCase())
@@ -53,9 +49,7 @@ export default function Sobremesas({ navigation }) {
     DancingScript_700Bold,
   });
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  if (!fontsLoaded) return null;
 
   return (
     <View style={styles.container}>
@@ -87,7 +81,7 @@ export default function Sobremesas({ navigation }) {
         />
       </View>
 
-      {/* Lista */}
+      {/* Lista de sobremesas */}
       <FlatList
         data={filtradas}
         keyExtractor={(item) => item.id}
@@ -113,7 +107,6 @@ export default function Sobremesas({ navigation }) {
   );
 }
 
-// ... (Seus estilos estão corretos)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -176,7 +169,9 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     width: "100%",
-    height: 160,
+    height: 180,
+    resizeMode: "contain", // imagem aparece inteira
+    backgroundColor: "#FFF", // melhora contraste
   },
   cardOverlay: {
     ...StyleSheet.absoluteFillObject,

@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-// 1. IMPORTAR AS FONTES
 import {
   useFonts,
   DancingScript_700Bold,
@@ -25,8 +24,7 @@ export default function Pizzas({ navigation }) {
     {
       id: "1",
       nome: "Pizzas Salgadas",
-      imagem: require("../../assets/images/pizzasal.jpg"),
-      // 2. Mudei 'tela' para 'destino'
+      imagem: require("../../assets/images/pizzasal.png"),
       destino: "MenuPizzas",
     },
     {
@@ -38,7 +36,7 @@ export default function Pizzas({ navigation }) {
     {
       id: "3",
       nome: "Pizzas Doces",
-      imagem: require("../../assets/images/pizzadoce.jpg"),
+      imagem: require("../../assets/images/pizzadoce.webp"),
       destino: "PizzasDoces",
     },
   ];
@@ -47,20 +45,17 @@ export default function Pizzas({ navigation }) {
     cat.nome.toLowerCase().includes(search.toLowerCase())
   );
 
-  // 3. ADICIONAR O CARREGAMENTO DA FONTE
   const [fontsLoaded] = useFonts({
     DancingScript_700Bold,
   });
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  if (!fontsLoaded) return null;
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
 
-      {/* 4. CABEÇALHO ATUALIZADO (igual ao Sobremesas.js) */}
+      {/* Cabeçalho */}
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -70,12 +65,11 @@ export default function Pizzas({ navigation }) {
         </TouchableOpacity>
 
         <View style={styles.titleContainer}>
-          {/* Você pode trocar "Bravazatta" por "Pizzas" se preferir */}
           <Text style={styles.title}>Bravazatta</Text>
         </View>
       </View>
 
-      {/* 5. BARRA DE PESQUISA ATUALIZADA (estilos) */}
+      {/* Barra de pesquisa */}
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="#7B0909" />
         <TextInput
@@ -87,7 +81,7 @@ export default function Pizzas({ navigation }) {
         />
       </View>
 
-      {/* 6. LISTA ATUALIZADA (com o novo card) */}
+      {/* Lista de categorias */}
       <FlatList
         data={filtradas}
         keyExtractor={(item) => item.id}
@@ -113,7 +107,7 @@ export default function Pizzas({ navigation }) {
   );
 }
 
-// 7. ESTILOS SUBSTITUÍDOS (copiados do Sobremesas.js)
+// === ESTILOS CORRIGIDOS ===
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -176,7 +170,9 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     width: "100%",
-    height: 160,
+    height: 180, // aumentei um pouco a altura
+    resizeMode: "contain", // mostra a imagem inteira
+    backgroundColor: "#FFF", // fundo branco pra realçar a imagem
   },
   cardOverlay: {
     ...StyleSheet.absoluteFillObject,
