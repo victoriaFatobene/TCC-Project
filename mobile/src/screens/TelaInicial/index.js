@@ -13,28 +13,28 @@ import {
   useFonts,
   DancingScript_700Bold,
 } from "@expo-google-fonts/dancing-script";
-
+ 
 // --- 1. NOVA MUDANÇA: Importar os ícones ---
 import { Ionicons } from "@expo/vector-icons";
-
+ 
 export default function TelaInicial({ navigation }) {
   const insets = useSafeAreaInsets();
-
+ 
   const [fontsLoaded] = useFonts({
     DancingScript_700Bold,
   });
-
+ 
   if (!fontsLoaded) {
     return null;
   }
-
+ 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7C1D26" />
-
+ 
       {/* Cabeçalho fixo */}
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
-        
+       
         {/* --- 2. NOVA MUDANÇA: Botão de Perfil Adicionado --- */}
         <TouchableOpacity
           style={[styles.profileButton, { top: insets.top + 15 }]} // Usa o 'insets' para alinhar
@@ -42,14 +42,18 @@ export default function TelaInicial({ navigation }) {
         >
           <Ionicons name="person-circle-outline" size={34} color="#FFECD1" />
         </TouchableOpacity>
-        
-        <Text style={styles.headerEmoji}>🍕</Text>
+       
+     
+        <Image
+          source={require("../../assets/images/pizzalogo.png")}
+          style={styles.headerImage}
+        />
         <Text style={styles.headerTitle}>Bravazatta</Text>
         <Text style={styles.headerSubtitle}>
           Escolha, saboreie e se apaixone ❤️
         </Text>
-      </View>
-
+            </View>
+ 
       {/* Conteúdo rolável */}
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -69,7 +73,7 @@ export default function TelaInicial({ navigation }) {
             <Text style={styles.cardTitle}>Pizzas</Text>
             <Text style={styles.cardSubtitle}>Sabores irresistíveis</Text>
           </TouchableOpacity>
-
+ 
           {/* BEBIDAS */}
           <TouchableOpacity
             style={styles.card}
@@ -85,7 +89,7 @@ export default function TelaInicial({ navigation }) {
               Para refrescar o momento 🍹
             </Text>
           </TouchableOpacity>
-
+ 
           {/* SOBREMESAS */}
           <TouchableOpacity
             style={styles.card}
@@ -104,7 +108,7 @@ export default function TelaInicial({ navigation }) {
     </View>
   );
 }
-
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -180,7 +184,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
   },
-  
+ 
   // --- 3. NOVA MUDANÇA: Estilo do botão de perfil ---
   profileButton: {
     position: 'absolute',
