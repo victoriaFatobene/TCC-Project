@@ -20,26 +20,30 @@ export default function Sobremesas({ navigation }) {
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState("");
 
+  /* --- A CORREÇÃO ESTÁ AQUI --- */
+  // Os caminhos tinham um "../" a mais. 
+  // O correto é subir 2 níveis (../../), não 3.
   const sobremesas = [
     {
       id: "1",
       nome: "🍨 Sorvetes",
-      imagem: require("../../../assets/images/sorvete.jpg"),
+      imagem: require("../../assets/images/sorvete.jpg"), // Corrigido
       destino: "Sorvetes",
     },
     {
       id: "2",
       nome: "🍰 Bolos",
-      imagem: require("../../../assets/images/bolo.jpg"),
+      imagem: require("../../assets/images/bolo.jpg"), // Corrigido
       destino: "Bolos",
     },
     {
       id: "3",
       nome: "🍬 Doces",
-      imagem: require("../../../assets/images/doces.jpg"),
+      imagem: require("../../assets/images/doces.jpg"), // Corrigido
       destino: "Doces",
     },
   ];
+  /* --- FIM DA CORREÇÃO --- */
 
   const filtradas = sobremesas.filter((item) =>
     item.nome.toLowerCase().includes(searchText.toLowerCase())
@@ -109,12 +113,12 @@ export default function Sobremesas({ navigation }) {
   );
 }
 
+// ... (Seus estilos estão corretos)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFF8F0",
   },
-
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -141,7 +145,6 @@ const styles = StyleSheet.create({
     fontSize: 34,
     marginTop: 5,
   },
-
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -159,7 +162,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
-
   list: {
     paddingHorizontal: 20,
     paddingTop: 30,

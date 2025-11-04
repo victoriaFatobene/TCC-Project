@@ -6,20 +6,21 @@ import {
   StyleSheet,
   Alert,
   StatusBar,
-  TextInput, // 1. Importar o TextInput
-  ActivityIndicator, // 2. Importar o ActivityIndicator
+  TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import * as Crypto from 'expo-crypto'; // 3. Importar o Crypto para gerar ID
-import { supabase } from "../../services/supabase"; // 4. Importar o Supabase
+import * as Crypto from 'expo-crypto'; 
+import { supabase } from "../../services/supabase"; 
+import { useAuth } from "../../contexts/AuthContext"; // 1. IMPORTAR O AUTH
 
 export default function Avaliacao({ navigation, route }) {
   const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState(""); // 5. Estado para o comentário
-  const [loading, setLoading] = useState(false); // 6. Estado de loading
+  const [comment, setComment] = useState(""); 
+  const [loading, setLoading] = useState(false); 
   const insets = useSafeAreaInsets();
   
-  // 7. Receber o ID do pedido que veio da tela anterior
+  const { user } = useAuth(); // 2. PEGAR O USUÁRIO LOGADO
   const { orderId } = route.params;
 
   const handleSendRating = async () => {
@@ -27,7 +28,6 @@ export default function Avaliacao({ navigation, route }) {
       Alert.alert("Atenção", "Por favor, selecione uma quantidade de estrelas.");
       return;
     }
-    
     if (!orderId) {
        Alert.alert("Erro", "ID do pedido não encontrado. Tente novamente.");
        return;
@@ -36,14 +36,15 @@ export default function Avaliacao({ navigation, route }) {
     setLoading(true);
 
     const reviewData = {
-      id: Crypto.randomUUID(), // Gera um ID único para a avaliação
+      id: Crypto.randomUUID(), 
       rating: rating,
       comment: comment,
       orderId: orderId,
-      // createdAt é preenchido pelo Supabase
+      // 3. ADICIONAR O CLIENTID (se o usuário existir, senão, envia null)
+      clientId: user ? user.id : null
     };
 
-    // 8. Enviar os dados para a tabela 'reviews'
+    // 4. Salvar na tabela 'reviews' (com 's' no final)
     const { error } = await supabase.from('reviews').insert(reviewData);
 
     setLoading(false);
@@ -75,8 +76,6 @@ export default function Avaliacao({ navigation, route }) {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
-
-      {/* Cabeçalho */}
       <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -86,13 +85,10 @@ export default function Avaliacao({ navigation, route }) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Avaliar Pedido</Text>
       </View>
-
       <View style={styles.content}>
         <Text style={styles.title}>Pedido Finalizado!</Text>
         <Text style={styles.subtitle}>O que achou do nosso serviço?</Text>
         <View style={styles.starsContainer}>{renderStars()}</View>
-
-        {/* 9. Campo de Comentário Adicionado */}
         <TextInput
           style={styles.commentInput}
           placeholder="Deixe um comentário (opcional)"
@@ -101,11 +97,10 @@ export default function Avaliacao({ navigation, route }) {
           onChangeText={setComment}
           multiline
         />
-
         <TouchableOpacity 
           style={styles.button} 
           onPress={handleSendRating}
-          disabled={loading} // Desabilita o botão enquanto salva
+          disabled={loading} 
         >
           {loading ? (
             <ActivityIndicator color="#FFF" />
@@ -118,6 +113,7 @@ export default function Avaliacao({ navigation, route }) {
   );
 }
 
+// ... (Seus estilos estão corretos) ...
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFF8E7" },
   header: {
@@ -145,11 +141,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   subtitle: { fontSize: 18, marginBottom: 30, color: "#555" },
-  starsContainer: { flexDirection: "row", marginBottom: 30 }, // Aumentei a margem
+  starsContainer: { flexDirection: "row", marginBottom: 30 }, 
   star: { fontSize: 50, color: "#ccc", marginHorizontal: 5 },
   starSelected: { fontSize: 50, color: "#FFD700", marginHorizontal: 5 },
-  
-  // 10. Estilo para o campo de comentário
   commentInput: {
     backgroundColor: '#FFF',
     width: '100%',
@@ -162,15 +156,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 30,
   },
-
   button: {
     backgroundColor: "#4CAF50",
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 12,
     elevation: 3,
-    minWidth: '60%', // Largura mínima
-    alignItems: 'center', // Centralizar o ActivityIndicator
+    minWidth: '60%', 
+    alignItems: 'center', 
   },
   buttonText: { color: "#fff", fontSize: 18, fontWeight: "600" },
 });
