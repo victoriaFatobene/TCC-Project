@@ -11,6 +11,11 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+// 1. IMPORTAR AS FONTES
+import {
+  useFonts,
+  DancingScript_700Bold,
+} from "@expo-google-fonts/dancing-script";
 
 export default function Bebidas({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -21,29 +26,26 @@ export default function Bebidas({ navigation }) {
       id: "1",
       nome: "Refrigerantes",
       imagem: require("../../assets/images/refrigerantes.png"),
-      cor: "#FFFFFF",
-      tela: "Refrigerantes",
+      // 2. Mudei 'tela' para 'destino' (para bater com o modelo)
+      destino: "Refrigerantes", 
     },
     {
       id: "2",
       nome: "Sucos Naturais",
       imagem: require("../../assets/images/sucos.jpg"),
-      cor: "#FFFFFF",
-      tela: "Sucos",
+      destino: "Sucos",
     },
     {
       id: "3",
       nome: "Bebidas Alcoólicas",
       imagem: require("../../assets/images/alcoolicas.jpg"),
-      cor: "#FFFFFF",
-      tela: "Alcoolicas",
+      destino: "Alcoolicas",
     },
     {
       id: "4",
       nome: "Vinhos",
       imagem: require("../../assets/images/vinhos.webp"),
-      cor: "#FFFFFF",
-      tela: "Vinhos",
+      destino: "Vinhos",
     },
   ];
 
@@ -51,11 +53,20 @@ export default function Bebidas({ navigation }) {
     cat.nome.toLowerCase().includes(search.toLowerCase())
   );
 
+  // 3. ADICIONAR O CARREGAMENTO DA FONTE
+  const [fontsLoaded] = useFonts({
+    DancingScript_700Bold,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#4B0E10" />
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
 
-      {/* Cabeçalho sofisticado */}
+      {/* 4. CABEÇALHO ATUALIZADO (igual ao Sobremesas.js) */}
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -63,134 +74,135 @@ export default function Bebidas({ navigation }) {
         >
           <Ionicons name="chevron-back" size={26} color="#FFF" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Bebidas</Text>
+
+        <View style={styles.titleContainer}>
+          {/* Você pode trocar "Bravazatta" por "Bebidas" se preferir */}
+          <Text style={styles.title}>Bravazatta</Text>
+        </View>
       </View>
 
-      {/* Barra de pesquisa */}
+      {/* 5. BARRA DE PESQUISA ATUALIZADA (estilos) */}
       <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color="#6B4E45" />
+        <Ionicons name="search" size={20} color="#7B0909" />
         <TextInput
           style={styles.searchInput}
           placeholder="Buscar bebida..."
-          placeholderTextColor="#A9A9A9"
+          placeholderTextColor="#888"
           value={search}
           onChangeText={setSearch}
         />
       </View>
 
-      {/* Lista de categorias */}
+      {/* 6. LISTA ATUALIZADA (com o novo card) */}
       <FlatList
         data={filtradas}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={[styles.card, { backgroundColor: item.cor }]}
-            onPress={() => navigation.navigate(item.tela)}
-            activeOpacity={0.9}
+            style={styles.card}
+            onPress={() => navigation.navigate(item.destino)}
+            activeOpacity={0.85}
           >
             <Image source={item.imagem} style={styles.cardImage} />
+            <View style={styles.cardOverlay} />
             <Text style={styles.cardText}>{item.nome}</Text>
           </TouchableOpacity>
         )}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>Nenhuma bebida encontrada</Text>
+          <Text style={styles.notFoundText}>
+            Nenhuma bebida encontrada 😕
+          </Text>
         }
       />
     </View>
   );
 }
 
+// 7. ESTILOS SUBSTITUÍDOS (copiados do Sobremesas.js)
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FAF8F5" },
-
+  container: {
+    flex: 1,
+    backgroundColor: "#FFF8F0",
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#4B0E10",
-    paddingBottom: 20,
-    paddingHorizontal: 12,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 6,
+    backgroundColor: "#7B0909",
+    paddingBottom: 15,
+    paddingHorizontal: 10,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    elevation: 5,
   },
   backButton: {
     padding: 8,
-    borderRadius: 50,
     backgroundColor: "rgba(255,255,255,0.1)",
-    marginRight: 8,
+    borderRadius: 50,
   },
-  headerTitle: {
+  titleContainer: {
+    flex: 1,
+    alignItems: "center",
+    marginRight: 40,
+  },
+  title: {
+    fontFamily: "DancingScript_700Bold",
     color: "#FFF",
-    fontSize: 28,
-    fontWeight: "700",
-    fontFamily: "Poppins_700Bold", // moderna e sofisticada
-    letterSpacing: 1,
+    fontSize: 34,
+    marginTop: 5,
   },
-
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FFF",
     marginHorizontal: 20,
     marginTop: 20,
-    borderRadius: 12,
+    borderRadius: 15,
     paddingHorizontal: 15,
     paddingVertical: 10,
     elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
   },
   searchInput: {
     flex: 1,
     marginLeft: 10,
     fontSize: 16,
     color: "#333",
-    fontFamily: "Poppins_400Regular",
   },
-
-  content: {
+  list: {
     paddingHorizontal: 20,
-    paddingTop: 25,
+    paddingTop: 30,
     paddingBottom: 40,
   },
-
   card: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 18,
-    paddingVertical: 18,
-    paddingHorizontal: 18,
-    marginBottom: 18,
-    borderWidth: 1,
-    borderColor: "#E5DED8",
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 3,
+    borderRadius: 20,
+    overflow: "hidden",
+    marginBottom: 20,
+    elevation: 4,
+    backgroundColor: "#FFF",
   },
   cardImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 14,
-    marginRight: 20,
-    resizeMode: "cover",
+    width: "100%",
+    height: 160,
+  },
+  cardOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.25)",
   },
   cardText: {
-    color: "#651b1bff",
-    fontSize: 20,
-    fontFamily: "sans-serif-medium",
+    position: "absolute",
+    bottom: 15,
+    left: 20,
+    color: "#FFF",
+    fontSize: 22,
+    fontWeight: "bold",
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 1, height: 2 },
+    textShadowRadius: 3,
   },
-
-  emptyText: {
+  notFoundText: {
     textAlign: "center",
     color: "#888",
     fontSize: 16,
     marginTop: 40,
-    fontFamily: "Poppins_400Regular",
   },
 });
