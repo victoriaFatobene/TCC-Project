@@ -20,7 +20,6 @@ import { Ionicons } from "@expo/vector-icons";
 export default function TelaInicial({ navigation }) {
   const insets = useSafeAreaInsets();
 
-  // Carregar a fonte
   const [fontsLoaded] = useFonts({
     DancingScript_700Bold,
   });
@@ -64,9 +63,7 @@ export default function TelaInicial({ navigation }) {
             onPress={() => navigation.navigate("Pizzas")}
           >
             <Image
-              source={{
-                uri: "https://cdn-icons-png.flaticon.com/512/3595/3595455.png",
-              }}
+              source={require("../../assets/images/pizzainicio.webp")}
               style={styles.cardImage}
             />
             <Text style={styles.cardTitle}>Pizzas</Text>
@@ -80,7 +77,7 @@ export default function TelaInicial({ navigation }) {
             onPress={() => navigation.navigate("Bebidas")}
           >
             <Image
-              source={require("../../assets/images/iconrefri.jpg")}
+              source={require("../../assets/images/bebidainicio.jpg")}
               style={styles.cardImage}
             />
             <Text style={styles.cardTitle}>Bebidas</Text>
@@ -96,7 +93,7 @@ export default function TelaInicial({ navigation }) {
             onPress={() => navigation.navigate("Sobremesas")}
           >
             <Image
-              source={require("../../assets/images/iconsorvete.jpg")}
+              source={require("../../assets/images/sobremesainicio.webp")}
               style={styles.cardImage}
             />
             <Text style={styles.cardTitle}>Sobremesas</Text>
@@ -116,38 +113,39 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     backgroundColor: "#7C1D26",
-    paddingBottom: 30,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
+    paddingTop: 20, // 🔹 menos espaço em cima
+    paddingBottom: 15, // 🔹 menos espaço embaixo
+    borderBottomLeftRadius: 35,
+    borderBottomRightRadius: 35,
     shadowColor: "#000",
     shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
-    zIndex: 10,
+    shadowRadius: 6,
+    elevation: 5,
   },
-  headerEmoji: {
-    fontSize: 48,
-    marginBottom: 5,
+  headerImage: {
+    width: 200, // 🔹 aumentei o tamanho da logo
+    height: 160,
+    resizeMode: "contain",
+    marginBottom: 4,
   },
   headerTitle: {
-    fontFamily: "DancingScript_700Bold", // Fonte igual às outras telas
+    fontFamily: "DancingScript_700Bold",
     color: "#FFECD1",
     fontSize: 46,
-    marginBottom: 4,
+    marginTop: -70, // 🔹 aproxima o texto da logo
   },
   headerSubtitle: {
     color: "#FFF9EE",
-    fontSize: 16,
+    fontSize: 15,
     opacity: 0.9,
-    marginTop: 4,
-    marginBottom: 10,
+    marginTop: 2,
   },
   scrollContent: {
     paddingBottom: 30,
   },
   menuContainer: {
     paddingHorizontal: 22,
-    paddingTop: 30,
+    paddingTop: 25,
   },
   card: {
     backgroundColor: "#FFFFFF",
@@ -155,7 +153,7 @@ const styles = StyleSheet.create({
     paddingVertical: 28,
     paddingHorizontal: 18,
     alignItems: "center",
-    marginBottom: 25,
+    marginBottom: 24,
     elevation: 6,
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -165,20 +163,21 @@ const styles = StyleSheet.create({
     borderColor: "#F3EDE2",
   },
   cardImage: {
-    width: 100,
-    height: 100,
-    marginBottom: 15,
-    resizeMode: "contain",
+    width: 160,
+    height: 160,
+    marginBottom: 16,
+    borderRadius: 20,
+    resizeMode: "cover",
   },
   cardTitle: {
     color: "#7C1D26",
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: "700",
     marginBottom: 4,
   },
   cardSubtitle: {
     color: "#555",
-    fontSize: 15,
+    fontSize: 16,
     textAlign: "center",
   },
   
