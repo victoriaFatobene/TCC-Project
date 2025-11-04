@@ -6,142 +6,195 @@ import {
   TouchableOpacity,
   StatusBar,
   TextInput,
-  ScrollView,
+  FlatList,
+  Image,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  useFonts,
+  DancingScript_700Bold,
+} from "@expo-google-fonts/dancing-script";
 
 export default function Sobremesas({ navigation }) {
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState("");
 
   const sobremesas = [
-    { nome: "🍨 Sorvetes", cor: "#6EC1E4", destino: "Sorvetes" },
-    { nome: "🍰 Bolos", cor: "#F28DAA", destino: "Bolos" },
-    { nome: "🍬 Doces", cor: "#B189C6", destino: "Doces" },
+    {
+      id: "1",
+      nome: "🍨 Sorvetes",
+      imagem: require("../../../assets/images/sorvete.jpg"),
+      destino: "Sorvetes",
+    },
+    {
+      id: "2",
+      nome: "🍰 Bolos",
+      imagem: require("../../../assets/images/bolo.jpg"),
+      destino: "Bolos",
+    },
+    {
+      id: "3",
+      nome: "🍬 Doces",
+      imagem: require("../../../assets/images/doces.jpg"),
+      destino: "Doces",
+    },
   ];
 
   const filtradas = sobremesas.filter((item) =>
     item.nome.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const [fontsLoaded] = useFonts({
+    DancingScript_700Bold,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
 
-      {/* Cabeçalho moderno */}
-      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backButtonText}>{"<"}</Text>
+      {/* Cabeçalho */}
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
+          <Ionicons name="chevron-back" size={26} color="#FFF" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>🍨 Sobremesas</Text>
+
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Bravazatta</Text>
+        </View>
       </View>
 
-      {/* Barra de pesquisa refinada */}
+      {/* Barra de pesquisa */}
       <View style={styles.searchContainer}>
+        <Ionicons name="search" size={20} color="#7B0909" />
         <TextInput
           style={styles.searchInput}
           placeholder="Buscar sobremesa..."
-          placeholderTextColor="#AAA"
+          placeholderTextColor="#888"
           value={searchText}
           onChangeText={setSearchText}
         />
       </View>
 
-      {/* Lista de opções */}
-      <ScrollView contentContainerStyle={styles.content}>
-        {filtradas.map((item, index) => (
+      {/* Lista */}
+      <FlatList
+        data={filtradas}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        renderItem={({ item }) => (
           <TouchableOpacity
-            key={index}
-            style={[styles.menuButton, { backgroundColor: item.cor }]}
+            style={styles.card}
             onPress={() => navigation.navigate(item.destino)}
             activeOpacity={0.85}
           >
-            <Text style={styles.menuButtonText}>{item.nome}</Text>
+            <Image source={item.imagem} style={styles.cardImage} />
+            <View style={styles.cardOverlay} />
+            <Text style={styles.cardText}>{item.nome}</Text>
           </TouchableOpacity>
-        ))}
-
-        {filtradas.length === 0 && (
-          <Text style={styles.notFoundText}>Nenhum resultado encontrado 😕</Text>
         )}
-      </ScrollView>
+        ListEmptyComponent={
+          <Text style={styles.notFoundText}>
+            Nenhum resultado encontrado 😕
+          </Text>
+        }
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FAFAFA" },
+  container: {
+    flex: 1,
+    backgroundColor: "#FFF8F0",
+  },
 
-  /* Cabeçalho */
   header: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#7B0909",
-    paddingBottom: 20,
-    paddingHorizontal: 16,
+    paddingBottom: 15,
+    paddingHorizontal: 10,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
-    elevation: 6,
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
+    elevation: 5,
   },
-  backButton: { padding: 5, marginRight: 15 },
-  backButtonText: { color: "#FFF", fontSize: 28, fontWeight: "bold" },
-  headerTitle: { color: "#FFF", fontSize: 26, fontWeight: "bold", letterSpacing: 0.5 },
+  backButton: {
+    padding: 8,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 50,
+  },
+  titleContainer: {
+    flex: 1,
+    alignItems: "center",
+    marginRight: 40,
+  },
+  title: {
+    fontFamily: "DancingScript_700Bold",
+    color: "#FFF",
+    fontSize: 34,
+    marginTop: 5,
+  },
 
-  /* Pesquisa */
   searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#FFF",
     marginHorizontal: 20,
     marginTop: 20,
-    borderRadius: 20,
-    flexDirection: "row",
-    alignItems: "center",
+    borderRadius: 15,
     paddingHorizontal: 15,
-    paddingVertical: 8,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    paddingVertical: 10,
+    elevation: 3,
   },
   searchInput: {
     flex: 1,
-    height: 45,
+    marginLeft: 10,
     fontSize: 16,
     color: "#333",
   },
 
-  /* Conteúdo */
-  content: {
-    padding: 20,
-    paddingBottom: 50,
+  list: {
+    paddingHorizontal: 20,
+    paddingTop: 30,
+    paddingBottom: 40,
   },
-  menuButton: {
-    paddingVertical: 28,
-    borderRadius: 28,
-    alignItems: "center",
+  card: {
+    borderRadius: 20,
+    overflow: "hidden",
     marginBottom: 20,
-    elevation: 6,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    transform: [{ scale: 1 }],
+    elevation: 4,
+    backgroundColor: "#FFF",
   },
-  menuButtonText: {
-    fontSize: 22,
-    fontWeight: "700",
+  cardImage: {
+    width: "100%",
+    height: 160,
+  },
+  cardOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
+  cardText: {
+    position: "absolute",
+    bottom: 15,
+    left: 20,
     color: "#FFF",
-    letterSpacing: 0.5,
-    textShadowColor: "rgba(0,0,0,0.2)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
+    fontSize: 22,
+    fontWeight: "bold",
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 1, height: 2 },
+    textShadowRadius: 3,
   },
-
   notFoundText: {
     textAlign: "center",
+    color: "#888",
     fontSize: 16,
-    color: "#777",
     marginTop: 40,
   },
 });

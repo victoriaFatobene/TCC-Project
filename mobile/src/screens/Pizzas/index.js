@@ -7,7 +7,7 @@ import {
   StatusBar,
   TextInput,
   FlatList,
-  Animated,
+  Image,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -20,22 +20,19 @@ export default function Pizzas({ navigation }) {
     {
       id: "1",
       nome: "Pizzas Salgadas",
-      emoji: "🍕",
-      cor: "#E53935",
+      imagem: require("../../assets/images/pizzasal.jpg"),
       tela: "MenuPizzas",
     },
     {
       id: "2",
       nome: "Pizzas Veganas",
-      emoji: "🌱",
-      cor: "#43A047",
+      imagem: require("../../assets/images/pizzaveg.jpg"),
       tela: "PizzasVeganas",
     },
     {
       id: "3",
       nome: "Pizzas Doces",
-      emoji: "🍫",
-      cor: "#8E24AA",
+      imagem: require("../../assets/images/pizzadoce.jpg"),
       tela: "PizzasDoces",
     },
   ];
@@ -46,7 +43,7 @@ export default function Pizzas({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#B02A30" />
+      <StatusBar barStyle="light-content" backgroundColor="#4B0E10" />
 
       {/* Cabeçalho */}
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
@@ -56,38 +53,38 @@ export default function Pizzas({ navigation }) {
         >
           <Ionicons name="chevron-back" size={26} color="#FFF" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>🍕 Pizzas</Text>
+        <Text style={styles.headerTitle}>Pizzas</Text>
       </View>
 
       {/* Barra de pesquisa */}
       <View style={styles.searchContainer}>
-        <Ionicons name="search" size={22} color="#B02A30" />
+        <Ionicons name="search" size={20} color="#6B4E45" />
         <TextInput
           style={styles.searchInput}
           placeholder="Buscar categoria..."
-          placeholderTextColor="#999"
+          placeholderTextColor="#A9A9A9"
           value={search}
           onChangeText={setSearch}
         />
       </View>
 
-      {/* Lista */}
+      {/* Lista de categorias */}
       <FlatList
         data={filtradas}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.content}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={[styles.card, { backgroundColor: item.cor }]}
+            style={styles.card}
             onPress={() => navigation.navigate(item.tela)}
-            activeOpacity={0.85}
+            activeOpacity={0.9}
           >
-            <Text style={styles.emoji}>{item.emoji}</Text>
+            <Image source={item.imagem} style={styles.cardImage} />
             <Text style={styles.cardText}>{item.nome}</Text>
           </TouchableOpacity>
         )}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>Nenhuma categoria encontrada 😕</Text>
+          <Text style={styles.emptyText}>Nenhuma categoria encontrada</Text>
         }
       />
     </View>
@@ -95,20 +92,20 @@ export default function Pizzas({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF8F0" },
+  container: { flex: 1, backgroundColor: "#FAF8F5" },
 
   header: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#B02A30",
+    backgroundColor: "#4B0E10",
     paddingBottom: 20,
-    paddingHorizontal: 10,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    elevation: 6,
+    paddingHorizontal: 12,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
     shadowColor: "#000",
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.25,
     shadowRadius: 6,
+    elevation: 6,
   },
   backButton: {
     padding: 8,
@@ -117,10 +114,11 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   headerTitle: {
-    color: "#FFF8F0",
-    fontSize: 30,
-    fontWeight: "bold",
-    letterSpacing: 0.8,
+    color: "#FFF",
+    fontSize: 28,
+    fontWeight: "700",
+    fontFamily: "Poppins_700Bold",
+    letterSpacing: 1,
   },
 
   searchContainer: {
@@ -129,55 +127,61 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     marginHorizontal: 20,
     marginTop: 20,
-    borderRadius: 15,
+    borderRadius: 12,
     paddingHorizontal: 15,
     paddingVertical: 10,
     elevation: 3,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
   },
   searchInput: {
     flex: 1,
     marginLeft: 10,
     fontSize: 16,
     color: "#333",
+    fontFamily: "Poppins_400Regular",
   },
 
   content: {
     paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingTop: 25,
     paddingBottom: 40,
   },
 
   card: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
+    backgroundColor: "#FFFFFF",
     borderRadius: 18,
-    paddingVertical: 22,
-    paddingHorizontal: 20,
-    marginBottom: 20,
-    elevation: 5,
+    paddingVertical: 18,
+    paddingHorizontal: 18,
+    marginBottom: 18,
+    borderWidth: 1,
+    borderColor: "#E5DED8",
     shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 3,
   },
-  emoji: {
-    fontSize: 38,
+  cardImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 14,
     marginRight: 20,
+    resizeMode: "cover",
   },
   cardText: {
-    color: "#FFF",
-    fontSize: 22,
-    fontWeight: "700",
-    letterSpacing: 0.5,
+    color: "#651b1bff",
+    fontSize: 20,
+    fontFamily: "sans-serif-medium",
   },
 
   emptyText: {
     textAlign: "center",
-    color: "#777",
+    color: "#888",
     fontSize: 16,
     marginTop: 40,
+    fontFamily: "Poppins_400Regular",
   },
 });
