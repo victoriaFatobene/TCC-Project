@@ -14,6 +14,9 @@ import {
   DancingScript_700Bold,
 } from "@expo-google-fonts/dancing-script";
 
+// --- 1. NOVA MUDANÇA: Importar os ícones ---
+import { Ionicons } from "@expo/vector-icons";
+
 export default function TelaInicial({ navigation }) {
   const insets = useSafeAreaInsets();
 
@@ -32,6 +35,15 @@ export default function TelaInicial({ navigation }) {
 
       {/* Cabeçalho fixo */}
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+        
+        {/* --- 2. NOVA MUDANÇA: Botão de Perfil Adicionado --- */}
+        <TouchableOpacity
+          style={[styles.profileButton, { top: insets.top + 15 }]} // Usa o 'insets' para alinhar
+          onPress={() => navigation.navigate("Profile")}
+        >
+          <Ionicons name="person-circle-outline" size={34} color="#FFECD1" />
+        </TouchableOpacity>
+        
         <Text style={styles.headerEmoji}>🍕</Text>
         <Text style={styles.headerTitle}>Bravazatta</Text>
         <Text style={styles.headerSubtitle}>
@@ -168,5 +180,12 @@ const styles = StyleSheet.create({
     color: "#555",
     fontSize: 15,
     textAlign: "center",
+  },
+  
+  // --- 3. NOVA MUDANÇA: Estilo do botão de perfil ---
+  profileButton: {
+    position: 'absolute',
+    right: 22, // Distância da direita
+    zIndex: 11, // Garante que ele fique sobre o cabeçalho
   },
 });

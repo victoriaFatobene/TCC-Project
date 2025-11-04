@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // <-- Importe o 'useState'
+import React, { useState } from 'react'; 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -33,13 +33,17 @@ import StatusPedido from './src/screens/StatusPedido';
 import CadastroCartao from './src/screens/CadastroCartao';
 import VerMais from './src/screens/VerMais';
 
-// --- Tipagem (Tudo certo) ---
+// --- 1. IMPORTAR A NOVA TELA ---
+import ProfileScreen from './src/screens/ProfileScreen';
+
+// --- Tipagem ---
 type RootStackParamList = {
   MainTabs: undefined;
   Pagamento: { novoCartao?: object };
   StatusPedido: { pedido: object };
   CadastroCartao: undefined;
   Avaliacao: undefined;
+  Profile: undefined; // <-- 2. ADICIONAR A TELA À LISTA
 };
 type MenuStackParamList = {
   HomeScreen: undefined;
@@ -74,13 +78,11 @@ const MenuStackNav = createStackNavigator<MenuStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 const AuthStack = createStackNavigator<AuthStackParamList>();
 
-// --- MODIFICAÇÃO (EM PORTUGUÊS) ---
-// A 'AuthScreens' agora recebe a função 'onEntrarConvidado'
+// --- AuthScreens (Sem mudança) ---
 function AuthScreens({ onEntrarConvidado }: { onEntrarConvidado: () => void }) {
   return (
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
       <AuthStack.Screen name="Login">
-        {/* E passa essa função para o LoginScreen */}
         {(props) => <LoginScreen {...props} onEntrarConvidado={onEntrarConvidado} />}
       </AuthStack.Screen>
       <AuthStack.Screen name="Register" component={RegisterScreen} />
@@ -145,15 +147,13 @@ function TabNavigator() {
 }
 
 
-// --- MODIFICAÇÃO (EM PORTUGUÊS) ---
-// O "Porteiro" agora entende 'eConvidado'
+// --- RootNavigator (O "Porteiro") ---
 function RootNavigator() {
   const { session } = useAuth();
-  const [eConvidado, setEConvidado] = useState(false); // 1. Criamos o estado "é Convidado"
+  const [eConvidado, setEConvidado] = useState(false); 
 
   return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
-      {/* 2. Verificamos: O usuário está logado OU 'é Convidado'? */}
       {(session && session.user) || eConvidado ? (
         
         // Sim? Mostre o app principal
@@ -163,10 +163,12 @@ function RootNavigator() {
           <RootStack.Screen name="StatusPedido" component={StatusPedido} />
           <RootStack.Screen name="CadastroCartao" component={CadastroCartao} />
           <RootStack.Screen name="Avaliacao" component={Avaliacao} />
+          {/* --- 3. ADICIONAR A TELA AO STACK --- */}
+          <RootStack.Screen name="Profile" component={ProfileScreen} />
         </>
       ) : (
         
-        // Não? Mostre as telas de Auth e passe a função 'setEConvidado'
+        // Não? Mostre as telas de Auth
         <RootStack.Screen name="MainTabs">
           {(props) => <AuthScreens {...props} onEntrarConvidado={() => setEConvidado(true)} />}
         </RootStack.Screen>
