@@ -14,8 +14,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const vinhos = [
   { id: "v1", nome: "Vinho Tinto Seco", ingredientes: "Garrafa 750ml, ideal para carnes.", preco: 89.9, imagem: require("../../assets/images/vinhoseco.jpg") },
-  { id: "v2", nome: "Vinho Branco", ingredientes: "Garrafa 750ml, perfeito para peixes e frutos do mar.", preco: 79.9, imagem: require("../../assets/images/vinhobranco.png") },
-  { id: "v3", nome: "Espumante Brut", ingredientes: "Garrafa 750ml, refrescante e festivo.", preco: 120.0, imagem: require("../../assets/images/espumante.webp") },
+  { id: "v2", nome: "Vinho Tinto Suave", ingredientes: "Garrafa 750ml.", preco: 110.0, imagem: require("../../assets/images/vinhosuave.jpg") },
+  { id: "v3", nome: "Vinho Branco", ingredientes: "Garrafa 750ml, perfeito para peixes e frutos do mar.", preco: 79.9, imagem: require("../../assets/images/vinhobranco.png") },
+  { id: "v4", nome: "Espumante Brut", ingredientes: "Garrafa 750ml, refrescante e festivo.", preco: 120.0, imagem: require("../../assets/images/espumante.webp") },
 ];
 
 const VinhoItem = ({ item, navigation }) => {
@@ -32,7 +33,6 @@ const VinhoItem = ({ item, navigation }) => {
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={styles.detailsButton}
-              // Correção que fizemos antes (sem categoria para vinhos):
               onPress={() => navigation.navigate("ProductDetails", { product: item })}
             >
               <Text style={styles.detailsButtonText}>🍷 Ver Mais</Text>
@@ -82,11 +82,7 @@ export default function Vinhos({ navigation }) {
       <FlatList
         data={filteredVinhos}
         renderItem={({ item }) => <VinhoItem item={item} navigation={navigation} />}
-        
-        /* --- A CORREÇÃO MAIS PROVÁVEL É ESTA LINHA --- */
         keyExtractor={(item) => item.id}
-        /* ------------------------------------------- */
-
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={<Text style={styles.notFoundText}>Nenhum vinho encontrado 😕</Text>}
       />
@@ -94,8 +90,6 @@ export default function Vinhos({ navigation }) {
   );
 }
 
-// ... (Seus estilos estão corretos, eu peguei a versão de 
-//      depois do merge conflict 'image_115ad2.jpg') ...
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFF8F0" },
   header: {
@@ -109,8 +103,7 @@ const styles = StyleSheet.create({
   backButton: { padding: 5, marginRight: 15 },
   backButtonText: { color: "#FFD700", fontSize: 26, fontWeight: "bold" },
   headerTitle: { color: "#FFD700", fontSize: 24, fontWeight: "bold" },
-  
-  // Estilos da barra de busca que você resolveu no merge
+
   searchContainer: {
     backgroundColor: "#FFF",
     marginHorizontal: 16,
@@ -123,11 +116,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  searchInput: {
-    fontSize: 16,
-    color: "#333",
-  },
-  // Fim dos estilos de busca
+  searchInput: { fontSize: 16, color: "#333" },
 
   listContainer: { padding: 18 },
   card: {
@@ -136,8 +125,18 @@ const styles = StyleSheet.create({
     marginBottom: 22,
     overflow: "hidden",
     elevation: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
   },
-  image: { width: "100%", height: 200, resizeMode: "cover" },
+  image: { 
+    width: "100%", 
+    height: 200, 
+    resizeMode: "contain", // imagem inteira
+    alignSelf: "center", 
+    backgroundColor: "#FFF", 
+  },
   cardContent: { padding: 14 },
   name: { fontSize: 20, fontWeight: "bold", color: "#B22222" },
   ingredients: {
@@ -147,11 +146,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontStyle: "italic",
   },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+  footer: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   price: { fontSize: 18, fontWeight: "bold", color: "#2E8B57" },
   buttonsContainer: { flexDirection: "row", alignItems: "center" },
   detailsButton: {
@@ -171,10 +166,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addBtnText: { color: "#FFD700", fontSize: 22, fontWeight: "bold" },
-  notFoundText: {
-    textAlign: "center",
-    color: "#777",
-    fontSize: 16,
-    marginTop: 40,
-  },
+  notFoundText: { textAlign: "center", color: "#777", fontSize: 16, marginTop: 40 },
 });
