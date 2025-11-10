@@ -15,6 +15,13 @@ import { useCart } from "../../contexts/CartContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { supabase } from "../../services/supabase"; 
 
+// --- MUDANÇA: Importar a fonte e ícones ---
+import {
+  useFonts,
+  DancingScript_700Bold,
+} from "@expo-google-fonts/dancing-script";
+import { Ionicons } from "@expo/vector-icons"; // Ícone de voltar
+
 export default function ProductDetails({ route, navigation }) {
   const { product, categoria } = route.params; 
   const { addToCart } = useCart();
@@ -25,6 +32,11 @@ export default function ProductDetails({ route, navigation }) {
   const [extrasSelecionados, setExtrasSelecionados] = useState([]);
   const [observacoes, setObservacoes] = useState("");
 
+  // --- MUDANÇA: Carregar a fonte ---
+  const [fontsLoaded] = useFonts({
+    DancingScript_700Bold,
+  });
+
   useEffect(() => {
     const fetchExtras = async () => {
       if (!categoria) {
@@ -33,14 +45,10 @@ export default function ProductDetails({ route, navigation }) {
       }
       setLoadingExtras(true);
       
-      /* --- A CORREÇÃO ESTÁ AQUI --- */
-      // Antes: .from('ingredientes')
-      // Correto: (em inglês, plural, minúsculo)
       const { data, error } = await supabase
         .from('ingredients') 
         .select('*')
         .eq('categoria', categoria); 
-      /* --- FIM DA CORREÇÃO --- */
 
       if (error) {
         Alert.alert("Erro", "Não foi possível buscar os ingredientes extras.");
@@ -85,18 +93,31 @@ export default function ProductDetails({ route, navigation }) {
     navigation.goBack();
   };
 
-  // ... (O resto do seu return() e styles estão perfeitos) ...
+  // --- MUDANÇA: Aguarda a fonte carregar ---
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
-      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backButtonText}>{"<"}</Text>
+      {/* --- MUDANÇA: Cor do StatusBar --- */}
+      <StatusBar barStyle="light-content" backgroundColor="#7C1D26" />
+      
+      {/* --- MUDANÇA: Cabeçalho com o novo estilo --- */}
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+        <TouchableOpacity 
+          onPress={() => navigation.goBack()} 
+          style={[styles.backButton, { top: insets.top + 12 }]} // Alinha com o 'insets'
+        >
+          <Ionicons name="chevron-back" size={28} color="#FFECD1" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          {product.nome}
-        </Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            {product.nome}
+          </Text>
+        </View>
       </View>
+      
       <ScrollView contentContainerStyle={styles.content}>
         <Image source={product.imagem} style={styles.productImage} />
         <View style={styles.detailsContainer}>
@@ -107,9 +128,9 @@ export default function ProductDetails({ route, navigation }) {
           </Text>
         </View>
         <View style={styles.extrasContainer}>
-          <Text style={styles.subtitulo}>Adicione ou remova ingredientes</Text>
+          <Text style={styles.subtitulo}>Adicionar / Remover</Text>
           {loadingExtras ? (
-            <ActivityIndicator size="large" color="#7B0909" style={{ marginVertical: 20 }} />
+            <ActivityIndicator size="large" color="#7C1D26" style={{ marginVertical: 20 }} />
           ) : (
             listaDeExtras.map((item) => {
               const selecionado = extrasSelecionados.find((i) => i.id === item.id);
@@ -121,7 +142,8 @@ export default function ProductDetails({ route, navigation }) {
                 >
                   <Text style={styles.nomeIngrediente}>{item.name}</Text>
                   <Text style={styles.precoIngrediente}>+ R$ {item.price.toFixed(2)}</Text>
-                  <Text style={styles.acaoIngrediente}>{selecionado ? "Remover" : "Adicionar"}</Text>
+                  {/* --- MUDANÇA: Ícone de Check --- */}
+                  {selecionado && <Ionicons name="checkmark-circle" size={22} color="#7C1D26" style={styles.acaoIcone} />}
                 </TouchableOpacity>
               );
             })
@@ -132,6 +154,7 @@ export default function ProductDetails({ route, navigation }) {
           <TextInput
             style={styles.observacoesInput}
             placeholder="Ex: Sem cebola, borda recheada..."
+            placeholderTextColor="#999"
             multiline
             value={observacoes}
             onChangeText={setObservacoes}
@@ -149,64 +172,125 @@ export default function ProductDetails({ route, navigation }) {
   );
 }
 
-// ... (Seus estilos estão corretos)
+// --- MUDANÇA: Estilos atualizados ---
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FAFAFA" },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#7B0909",
-    paddingBottom: 15,
-    paddingHorizontal: 10,
-    elevation: 4,
+  container: { 
+    flex: 1, 
+    backgroundColor: '#FFFDF6' // Cor de fundo principal
   },
-  backButton: { padding: 5, marginRight: 15 },
-  backButtonText: { color: "#FFFFFF", fontSize: 24, fontWeight: "bold" },
-  headerTitle: { color: "#FFFFFF", fontSize: 22, fontWeight: "bold", flex: 1 },
+  header: {
+    backgroundColor: '#7C1D26', // Cor do cabeçalho principal
+    borderBottomLeftRadius: 35,
+    borderBottomRightRadius: 35,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 20,
+    paddingTop: 10,
+    elevation: 5,
+    paddingHorizontal: 60, // Espaço para o botão de voltar
+  },
+  backButton: {
+    padding: 8,
+    position: 'absolute',
+    left: 10,
+    zIndex: 10,
+  },
+  titleContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontFamily: "DancingScript_700Bold", // Fonte
+    color: "#FFECD1", // Cor
+    fontSize: 36, // Um pouco menor para caber
+    textAlign: 'center',
+  },
   content: { padding: 20, paddingBottom: 40 },
-  productImage: { width: "100%", height: 280, borderRadius: 20, marginBottom: 20 },
+  productImage: { 
+    width: "100%", 
+    height: 280, 
+    borderRadius: 24, // Borda
+    marginBottom: 20 
+  },
   detailsContainer: {
-    backgroundColor: "#FFF",
-    borderRadius: 15,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24, // Borda
     padding: 20,
     marginBottom: 20,
-    elevation: 3,
+    elevation: 6, // Sombra
+    borderWidth: 1,
+    borderColor: '#F3EDE2', // Borda
   },
-  productName: { fontSize: 26, fontWeight: "bold", color: "#333" },
-  productPrice: { fontSize: 22, fontWeight: "bold", color: "#7B0909", marginVertical: 10 },
+  productName: { 
+    fontSize: 26, 
+    fontWeight: "bold", 
+    color: "#7C1D26" // Cor principal
+  },
+  productPrice: { 
+    fontSize: 22, 
+    fontWeight: "bold", 
+    color: "#7C1D26", // Cor principal
+    marginVertical: 10 
+  },
   productDescription: { fontSize: 16, color: "#666", lineHeight: 22 },
   extrasContainer: { marginBottom: 25 },
-  subtitulo: { fontSize: 18, fontWeight: "600", color: "#333", marginBottom: 10 },
+  subtitulo: { 
+    fontSize: 20, // Maior
+    fontWeight: "bold", 
+    color: "#7C1D26", // Cor principal
+    marginBottom: 15 
+  },
   ingredienteItem: {
     backgroundColor: "#fff",
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 12, // Borda
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#F3EDE2", // Borda
     marginBottom: 10,
+    flexDirection: 'row', // Para alinhar o ícone
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    elevation: 2,
   },
-  ingredienteSelecionado: { backgroundColor: "#d9fdd3", borderColor: "#4CAF50" },
-  nomeIngrediente: { fontSize: 16, fontWeight: "500", color: "#333" },
-  precoIngrediente: { fontSize: 14, color: "#666", marginTop: 4 },
-  acaoIngrediente: { marginTop: 6, fontWeight: "bold", color: "#7B0909", textAlign: "right" },
+  ingredienteSelecionado: { 
+    backgroundColor: "#FFF8F0", // Fundo leve
+    borderColor: "#7C1D26", // Borda principal
+    borderWidth: 1.5,
+  },
+  nomeIngrediente: { fontSize: 16, fontWeight: "500", color: "#333", flex: 1 },
+  precoIngrediente: { fontSize: 14, color: "#555", marginLeft: 10 },
+  acaoIcone: { // Ícone de check
+    marginLeft: 10,
+  },
   observacoesContainer: { marginBottom: 25 },
   observacoesInput: {
     backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
+    borderColor: "#F3EDE2",
+    borderRadius: 12, // Borda
     padding: 15,
     fontSize: 16,
     textAlignVertical: "top",
     minHeight: 80,
+    elevation: 2,
   },
-  totalContainer: { flexDirection: "row", justifyContent: "space-between", marginBottom: 15 },
-  totalTexto: { fontSize: 18, fontWeight: "600" },
-  totalPreco: { fontSize: 20, fontWeight: "bold", color: "#7B0909" },
+  totalContainer: { 
+    flexDirection: "row", 
+    justifyContent: "space-between", 
+    marginBottom: 15,
+    alignItems: 'center',
+    paddingHorizontal: 5,
+  },
+  totalTexto: { fontSize: 20, fontWeight: "600", color: '#333' },
+  totalPreco: { 
+    fontSize: 24, // Maior
+    fontWeight: "bold", 
+    color: "#7C1D26" // Cor principal
+  },
   cartButton: {
-    backgroundColor: "#4CAF50",
-    paddingVertical: 15,
-    borderRadius: 12,
+    backgroundColor: "#7C1D26", // Cor principal
+    paddingVertical: 18, // Mais padding
+    borderRadius: 12, // Borda
     alignItems: "center",
     elevation: 4,
   },

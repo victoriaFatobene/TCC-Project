@@ -12,6 +12,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../services/supabase';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+// --- MUDANÇA: Importar a fonte ---
+import {
+  useFonts,
+  DancingScript_700Bold,
+} from "@expo-google-fonts/dancing-script";
+
 // ... (Componente StatusCircle está perfeito) ...
 const StatusCircle = ({ statusId }) => {
   let color = '#E0E0E0'; 
@@ -29,20 +35,23 @@ const StatusCircle = ({ statusId }) => {
 const StatusItem = ({ icon, label, isCompleted }) => (
   <View style={styles.statusItem}>
     <View style={[styles.statusIconContainer, isCompleted && styles.statusIconCompleted]}>
-      <Ionicons name={icon} size={24} color={isCompleted ? '#FFF' : '#7B0909'} />
+      <Ionicons name={icon} size={24} color={isCompleted ? '#FFF' : '#7C1D26'} />
     </View>
     <Text style={[styles.statusLabel, isCompleted && styles.statusLabelCompleted]}>{label}</Text>
   </View>
 );
 
 export default function StatusPedido({ navigation, route }) {
-  // --- MUDANÇA 1: Ler o novo parâmetro 'fromHistory' ---
   const { pedido: pedidoInicial, fromHistory = false } = route.params;
-  // --- FIM DA MUDANÇA 1 ---
 
   const [dadosDoPedido, setDadosDoPedido] = useState(pedidoInicial);
   const [itensDetalhados, setItensDetalhados] = useState([]); 
   const insets = useSafeAreaInsets();
+
+  // --- MUDANÇA: Carregar a fonte ---
+  const [fontsLoaded] = useFonts({
+    DancingScript_700Bold,
+  });
 
   // ... (Função fetchItensDoPedido está perfeita) ...
   const fetchItensDoPedido = useCallback(async (orderId) => {
@@ -86,7 +95,6 @@ export default function StatusPedido({ navigation, route }) {
       const fetchedItens = await fetchItensDoPedido(dadosDoPedido.id);
       setItensDetalhados(fetchedItens);
       
-      // Se veio do histórico OU se o pedido já está pronto (status 3), não ligue o tempo real!
       if (fromHistory || dadosDoPedido.status_id === 3) {
         console.log('--- Pedido antigo. Não vou ligar o tempo real. ---');
         return; 
@@ -168,7 +176,12 @@ export default function StatusPedido({ navigation, route }) {
     };
 
     setupSubscriptions();
-  }, [dadosDoPedido.id, dadosDoPedido.status_id, fetchItensDoPedido, fromHistory]); // Adicionado fromHistory às dependências
+  }, [dadosDoPedido.id, dadosDoPedido.status_id, fetchItensDoPedido, fromHistory]); 
+
+  // --- MUDANÇA: Aguarda a fonte carregar ---
+  if (!fontsLoaded) {
+    return null;
+  }
 
   // ... (Lógica de status está perfeita) ...
   const statusId = dadosDoPedido.status_id || 1;
@@ -184,15 +197,21 @@ export default function StatusPedido({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
-      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
+      {/* --- MUDANÇA: Cor do StatusBar --- */}
+      <StatusBar barStyle="light-content" backgroundColor="#7C1D26" />
+      
+      {/* --- MUDANÇA: Cabeçalho com o novo estilo --- */}
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <TouchableOpacity 
           onPress={() => navigation.popToTop()} 
-          style={styles.backButton}
+          style={[styles.backButton, { top: insets.top + 12 }]} // Alinha com o 'insets'
         >
-          <Text style={styles.backButtonText}>{'<'} Início</Text>
+          {/* Mudei o texto '< Início' para um ícone */}
+          <Ionicons name="chevron-back" size={28} color="#FFECD1" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Status do Pedido</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.headerTitle}>Status do Pedido</Text>
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -244,8 +263,6 @@ export default function StatusPedido({ navigation, route }) {
           <Text style={styles.summaryTotal}>Total: R$ {dadosDoPedido.total.toFixed(2)}</Text>
         </View>
         
-        {/* --- MUDANÇA 2: Esconder o botão --- */}
-        {/* Só mostre o botão se o pedido estiver pronto E NÃO veio do histórico */}
         {isPedidoPronto && !fromHistory && (
           <TouchableOpacity 
             style={styles.evaluateButton} 
@@ -254,41 +271,81 @@ export default function StatusPedido({ navigation, route }) {
             <Text style={styles.evaluateButtonText}>Avaliar Pedido</Text>
           </TouchableOpacity>
         )}
-        {/* --- FIM DA MUDANÇA 2 --- */}
         
       </ScrollView>
     </View>
   );
 }
 
-// ... (Seus estilos estão perfeitos) ...
+// --- MUDANÇA: Estilos atualizados ---
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
-  header: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    backgroundColor: '#7B0909', 
-    paddingBottom: 15, 
-    paddingHorizontal: 10 
+  container: { 
+    flex: 1, 
+    backgroundColor: '#FFFDF6' // Cor de fundo principal
   },
-  backButton: { padding: 5, marginRight: 15 },
-  backButtonText: { color: '#FFFFFF', fontSize: 18, fontWeight: 'bold' },
-  headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
+  header: {
+    backgroundColor: '#7C1D26', // Cor do cabeçalho principal
+    borderBottomLeftRadius: 35,
+    borderBottomRightRadius: 35,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 20,
+    paddingTop: 10,
+    elevation: 5,
+  },
+  backButton: {
+    padding: 8,
+    position: 'absolute',
+    left: 10,
+    zIndex: 10,
+  },
+  backButtonText: { color: '#FFFFFF', fontSize: 18, fontWeight: 'bold' }, // Mantido por segurança, mas o ícone é usado
+  titleContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontFamily: "DancingScript_700Bold", // Fonte
+    color: "#FFECD1", // Cor
+    fontSize: 40,
+  },
   scrollContent: { padding: 20, paddingBottom: 40 },
   orderId: { fontSize: 22, fontWeight: '600', textAlign: 'center', color: '#555' },
-  orderNumber: { fontSize: 80, fontWeight: 'bold', textAlign: 'center', color: '#7B0909', marginBottom: 20 },
-  readyCard: { backgroundColor: '#4CAF50', borderRadius: 12, padding: 20, flexDirection: 'row', alignItems: 'center', elevation: 4, marginBottom: 30 },
+  orderNumber: { 
+    fontSize: 80, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    color: '#7C1D26', // Cor principal
+    marginBottom: 20 
+  },
+  readyCard: { 
+    backgroundColor: '#4CAF50', 
+    borderRadius: 12, // Borda
+    padding: 20, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    elevation: 4, 
+    marginBottom: 30 
+  },
   readyText: { color: '#FFF', fontSize: 18, fontWeight: 'bold', marginLeft: 15, flex: 1 },
   statusTracker: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 40 },
   statusItem: { alignItems: 'center', flex: 1 },
   statusIconContainer: { width: 50, height: 50, borderRadius: 25, backgroundColor: '#e0e0e0', justifyContent: 'center', alignItems: 'center' },
-  statusIconCompleted: { backgroundColor: '#7B0909' },
+  statusIconCompleted: { backgroundColor: '#7C1D26' }, // Cor principal
   statusLabel: { marginTop: 8, color: '#666', fontWeight: '600', textAlign: 'center' },
-  statusLabelCompleted: { color: '#7B0909' },
+  statusLabelCompleted: { color: '#7C1D26' }, // Cor principal
   statusLine: { flex: 1, height: 4, backgroundColor: '#e0e0e0', marginHorizontal: -15, top: 23, zIndex: -1 },
-  statusLineCompleted: { backgroundColor: '#7B0909' },
-  summaryCard: { backgroundColor: '#fff', borderRadius: 10, padding: 20, elevation: 2, marginBottom: 30 },
-  summaryTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 15 },
+  statusLineCompleted: { backgroundColor: '#7C1D26' }, // Cor principal
+  summaryCard: { 
+    backgroundColor: '#FFFFFF', // Card
+    borderRadius: 24, // Borda
+    padding: 20, 
+    elevation: 6, // Sombra
+    marginBottom: 30,
+    borderWidth: 1,
+    borderColor: '#F3EDE2', // Borda
+  },
+  summaryTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 15, color: '#7C1D26' }, // Cor principal
   itemContainer: {
     marginBottom: 10,
   },
@@ -319,7 +376,19 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   divider: { height: 1, backgroundColor: '#eee', marginVertical: 15 },
-  summaryTotal: { fontSize: 18, fontWeight: 'bold', textAlign: 'right' },
-  evaluateButton: { backgroundColor: '#0288D1', padding: 15, borderRadius: 8, alignItems: 'center', marginTop: 10 },
+  summaryTotal: { 
+    fontSize: 20, // Maior
+    fontWeight: 'bold', 
+    textAlign: 'right',
+    color: '#7C1D26', // Cor principal
+  },
+  evaluateButton: { 
+    backgroundColor: '#7C1D26', // Cor principal
+    padding: 18, // Mais padding
+    borderRadius: 12, // Borda
+    alignItems: 'center', 
+    marginTop: 10,
+    elevation: 3,
+  },
   evaluateButtonText: { color: '#FFF', fontSize: 16, fontWeight: 'bold' },
 });

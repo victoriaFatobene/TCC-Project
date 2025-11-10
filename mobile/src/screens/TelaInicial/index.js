@@ -48,7 +48,7 @@ export default function TelaInicial({ navigation }) {
           source={require("../../assets/images/pizzalogo.png")}
           style={styles.headerImage}
         />
-        <Text style={styles.headerTitle}>Bravazatta</Text>
+        <Text style={styles.headerTitle}>BravaZatta</Text>
         <Text style={styles.headerSubtitle}>
           Escolha, saboreie e se apaixone ❤️
         </Text>

@@ -12,13 +12,24 @@ import {
 import { useCart } from '../../contexts/CartContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+// --- MUDANÇA: Importar a fonte e ícones ---
+import {
+  useFonts,
+  DancingScript_700Bold,
+} from "@expo-google-fonts/dancing-script";
+import { Ionicons } from "@expo/vector-icons";
+
 function Carrinho({ navigation }) {
   const { cartItems, addToCart, decreaseQuantity, removeFromCart } = useCart();
   
-  // O seu subtotal aqui está correto, usando precoFinal!
   const subtotal = cartItems.reduce((total, p) => total + (p.precoFinal || p.preco || 0) * (p.quantidade || 0), 0);
   
   const insets = useSafeAreaInsets();
+
+  // --- MUDANÇA: Carregar a fonte ---
+  const [fontsLoaded] = useFonts({
+    DancingScript_700Bold,
+  });
 
   const finalizarPedido = () => {
     Alert.alert(
@@ -35,43 +46,34 @@ function Carrinho({ navigation }) {
   };
 
   const renderItem = ({ item }) => (
+    // --- MUDANÇA: Estilo do card ---
     <View style={styles.card}>
-      
-      {/* --- CORREÇÃO 1: Bug da Imagem --- */}
-      {/* Antes: <Image source={{ uri: item.imageUrl }} ... /> */}
-      {/* Correto: (usando item.imagem para imagens locais) */}
       <Image source={item.imagem} style={styles.image} />
       
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.nome}</Text>
         
-        {/* Usar o precoFinal (está correto) */}
         <Text style={styles.price}>R$ {(item.precoFinal || item.preco).toFixed(2)}</Text>
         
-        {/* --- CORREÇÃO 2: Bug dos Extras --- */}
-        {/* Antes: item.extras.map(e => e.nome).join(', ') */}
-        {/* Correto: (usar e.name, que vem do Supabase) */}
         {item.extras && item.extras.length > 0 && (
           <Text style={styles.extrasText}>
             Extras: {item.extras.map(e => e.name).join(', ')}
           </Text>
         )}
         
-        {/* Mostrar Observações (está correto) */}
         {item.observacoes && (
           <Text style={styles.obsText}>
             Obs: {item.observacoes}
           </Text>
         )}
 
-        {/* --- CORREÇÃO 4: Passar mais dados para os botões --- */}
         <View style={styles.controls}>
           <TouchableOpacity style={styles.button} onPress={() => decreaseQuantity(item.id, item.extras, item.observacoes)}>
-            <Text style={styles.buttonText}>-</Text>
+            <Ionicons name="remove" size={18} color="#FFECD1" />
           </TouchableOpacity>
           <Text style={styles.quantity}>{item.quantidade}</Text>
           <TouchableOpacity style={styles.button} onPress={() => addToCart(item)}>
-            <Text style={styles.buttonText}>+</Text>
+            <Ionicons name="add" size={18} color="#FFECD1" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => removeFromCart(item.id, item.extras, item.observacoes)}>
             <Text style={styles.remove}>Remover</Text>
@@ -87,15 +89,26 @@ function Carrinho({ navigation }) {
     return `${item.id}-${extrasId}-${item.observacoes || ''}`;
   };
 
+  if (!fontsLoaded) {
+    return null; // Aguarda a fonte carregar
+  }
+
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+      {/* --- MUDANÇA: Cor do StatusBar --- */}
+      <StatusBar barStyle="light-content" backgroundColor="#7C1D26" />
       
-      <View style={[styles.header, { paddingTop: insets.top + 15 }]}>
-        <TouchableOpacity onPress={() => navigation.navigate('Menu')} style={styles.backButton}>
-          <Text style={styles.backButtonText}>{'<'}</Text>
+      {/* --- MUDANÇA: Cabeçalho com o novo estilo --- */}
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('Menu')} 
+          style={[styles.backButton, { top: insets.top + 12 }]} // Alinha com o 'insets'
+        >
+          <Ionicons name="chevron-back" size={28} color="#FFECD1" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Meu Carrinho 🛒</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.headerTitle}>Meu Carrinho</Text>
+        </View>
       </View>
 
       {cartItems.length === 0 ? (
@@ -110,7 +123,6 @@ function Carrinho({ navigation }) {
           <FlatList
             data={cartItems}
             renderItem={renderItem}
-            /* --- CORREÇÃO 3: Chave Unica --- */
             keyExtractor={(item, index) => `${criarChaveUnica(item)}-${index}`}
             contentContainerStyle={styles.scrollContainer}
           />
@@ -126,26 +138,57 @@ function Carrinho({ navigation }) {
   );
 }
 
+// --- MUDANÇA: Estilos atualizados ---
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FAFAFA" },
-  header: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    backgroundColor: '#7B0909', 
-    paddingBottom: 15, 
-    paddingHorizontal: 15 
+  container: { 
+    flex: 1, 
+    backgroundColor: '#FFFDF6' // Cor de fundo principal
   },
-  backButton: { padding: 5, marginRight: 15 },
-  backButtonText: { color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' },
-  headerTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
-  scrollContainer: { padding: 20, paddingBottom: 20 },
-  card: { flexDirection: "row", backgroundColor: "#FFF", borderRadius: 15, padding: 15, marginBottom: 15, alignItems: "center", elevation: 3 },
+  header: {
+    backgroundColor: '#7C1D26', // Cor do cabeçalho principal
+    borderBottomLeftRadius: 35,
+    borderBottomRightRadius: 35,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 20,
+    paddingTop: 10,
+    elevation: 5,
+  },
+  backButton: {
+    padding: 8,
+    position: 'absolute',
+    left: 10,
+    zIndex: 10,
+  },
+  titleContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontFamily: "DancingScript_700Bold", // Fonte
+    color: "#FFECD1", // Cor
+    fontSize: 40,
+  },
+  scrollContainer: { padding: 22, paddingBottom: 20 },
+  card: { 
+    flexDirection: "row", 
+    backgroundColor: "#FFFFFF", 
+    borderRadius: 24, // Borda
+    padding: 15, 
+    marginBottom: 15, 
+    alignItems: "center", 
+    elevation: 6, // Sombra
+    borderWidth: 1,
+    borderColor: '#F3EDE2', // Borda
+  },
   image: { width: 70, height: 70, borderRadius: 12, marginRight: 15 },
   cardContent: { flex: 1 },
-  name: { fontSize: 18, fontWeight: "600" },
-  price: { fontSize: 16, color: "#888", marginVertical: 5 },
-  
-  // Estilos para os extras e obs
+  name: { 
+    fontSize: 18, 
+    fontWeight: "600",
+    color: '#7C1D26', // Cor principal
+  },
+  price: { fontSize: 16, color: "#555", marginVertical: 5 },
   extrasText: {
     fontSize: 14,
     color: '#555',
@@ -158,19 +201,54 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     marginBottom: 8,
   },
-  
   controls: { flexDirection: "row", alignItems: "center", marginTop: 5 },
-  button: { backgroundColor: "#E53935", width: 30, height: 30, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
-  buttonText: { color: "#FFF", fontSize: 18, fontWeight: "600" },
-  quantity: { marginHorizontal: 15, fontSize: 16, fontWeight: 'bold' },
-  remove: { marginLeft: 15, color: "#FF5252", fontWeight: "600" },
-  footer: { padding: 20, borderTopWidth: 1, borderColor: "#EEE", backgroundColor: "#FFF" },
-  subtotal: { fontSize: 20, fontWeight: "600", marginBottom: 15 },
-  checkoutButton: { backgroundColor: "#4CAF50", paddingVertical: 15, borderRadius: 12, alignItems: "center" },
+  button: { 
+    backgroundColor: "#7C1D26", // Cor principal
+    width: 30, 
+    height: 30, 
+    borderRadius: 15, 
+    justifyContent: 'center', 
+    alignItems: 'center' 
+  },
+  buttonText: { color: "#FFF", fontSize: 18, fontWeight: "600" }, // Mantido
+  quantity: { marginHorizontal: 15, fontSize: 16, fontWeight: 'bold', color: '#333' },
+  remove: { marginLeft: 15, color: "#E53935", fontWeight: "600" },
+  footer: { 
+    padding: 20, 
+    borderTopWidth: 1, 
+    borderColor: "#F3EDE2", // Borda
+    backgroundColor: "#FFFFFF",
+    elevation: 10,
+  },
+  subtotal: { 
+    fontSize: 22, // Maior
+    fontWeight: "bold", 
+    marginBottom: 15,
+    color: '#7C1D26', // Cor principal
+    textAlign: 'right',
+  },
+  checkoutButton: { 
+    backgroundColor: "#4CAF50", // Verde
+    paddingVertical: 18, // Mais padding
+    borderRadius: 12, // Borda
+    alignItems: "center",
+    elevation: 3,
+  },
   checkoutText: { color: "#FFF", fontSize: 18, fontWeight: "600" },
-  emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
-  emptyText: { fontSize: 22, color: '#333', marginBottom: 20, textAlign: 'center' },
-  browseText: { fontSize: 18, color: '#7B0909', textDecorationLine: 'underline', fontWeight: 'bold' },
+  emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#FFFDF6' },
+  emptyText: { 
+    fontSize: 22, 
+    color: '#7C1D26', // Cor principal
+    marginBottom: 20, 
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  browseText: { 
+    fontSize: 18, 
+    color: '#555', 
+    textDecorationLine: 'underline', 
+    fontWeight: 'bold' 
+  },
 });
 
 export default Carrinho;

@@ -14,14 +14,18 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../services/supabase';
 
-// --- MUDANÇA AQUI ---
+// --- MUDANÇA: Importar a fonte ---
+import {
+  useFonts,
+  DancingScript_700Bold,
+} from "@expo-google-fonts/dancing-script";
+
 const PedidoAntigoItem = ({ item, navigation }) => { 
   const data = new Date(item.created_at).toLocaleDateString('pt-BR');
   
   return (
     <TouchableOpacity 
       style={styles.pedidoCard}
-      // Adicionamos 'fromHistory: true' para a tela de Status saber de onde viemos
       onPress={() => navigation.navigate('StatusPedido', { pedido: item, fromHistory: true })}
     >
       <View style={styles.pedidoInfo}>
@@ -35,13 +39,17 @@ const PedidoAntigoItem = ({ item, navigation }) => {
     </TouchableOpacity>
   );
 };
-// --- FIM DA MUDANÇA ---
 
 export default function ProfileScreen({ navigation }) {
   const insets = useSafeAreaInsets();
   const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [pedidos, setPedidos] = useState([]);
+
+  // --- MUDANÇA: Carregar a fonte ---
+  const [fontsLoaded] = useFonts({
+    DancingScript_700Bold,
+  });
 
   useEffect(() => {
     if (!user) {
@@ -70,7 +78,6 @@ export default function ProfileScreen({ navigation }) {
     fetchHistorico();
   }, [user]); 
 
-  // ... (O resto do seu código 'handleLogout', 'return', etc. está perfeito) ...
   const handleLogout = () => {
     Alert.alert(
       "Sair",
@@ -86,18 +93,27 @@ export default function ProfileScreen({ navigation }) {
     );
   };
 
+  // --- MUDANÇA: Aguarda a fonte carregar ---
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
+      {/* --- MUDANÇA: Cor do StatusBar --- */}
+      <StatusBar barStyle="light-content" backgroundColor="#7C1D26" />
       
+      {/* --- MUDANÇA: Cabeçalho com o novo estilo --- */}
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
+        <TouchableOpacity 
+          onPress={() => navigation.goBack()} 
+          style={[styles.backButton, { top: insets.top + 12 }]} // Alinha com o 'insets'
         >
-          <Ionicons name="chevron-back" size={26} color="#FFF" />
+          <Ionicons name="chevron-back" size={28} color="#FFECD1" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Minha Conta</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.headerTitle}>Minha Conta</Text>
+        </View>
       </View>
 
       <View style={styles.content}>
@@ -106,7 +122,7 @@ export default function ProfileScreen({ navigation }) {
             <Text style={styles.emailText}>Logado como: {user.email}</Text>
             <Text style={styles.historicoTitle}>Seu Histórico de Pedidos</Text>
             {loading ? (
-              <ActivityIndicator size="large" color="#7B0909" style={{ marginTop: 20 }} />
+              <ActivityIndicator size="large" color="#7C1D26" style={{ marginTop: 20 }} />
             ) : (
               <FlatList
                 data={pedidos}
@@ -139,23 +155,36 @@ export default function ProfileScreen({ navigation }) {
   );
 }
 
-// ... (Seus estilos estão perfeitos) ...
+// --- MUDANÇA: Estilos atualizados ---
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+  container: { 
+    flex: 1, 
+    backgroundColor: '#FFFDF6' // Cor de fundo principal
+  },
   header: {
+    backgroundColor: '#7C1D26', // Cor do cabeçalho principal
+    borderBottomLeftRadius: 35,
+    borderBottomRightRadius: 35,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#7B0909',
-    paddingBottom: 15,
-    paddingHorizontal: 10,
-    elevation: 4,
+    paddingBottom: 20,
+    paddingTop: 10,
+    elevation: 5,
   },
-  backButton: { padding: 8 },
+  backButton: {
+    padding: 8,
+    position: 'absolute',
+    left: 10,
+    zIndex: 10,
+  },
+  titleContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
   headerTitle: {
-    color: '#FFF',
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginLeft: 15,
+    fontFamily: "DancingScript_700Bold", // Fonte
+    color: "#FFECD1", // Cor
+    fontSize: 40,
   },
   content: {
     flex: 1,
@@ -171,18 +200,20 @@ const styles = StyleSheet.create({
   historicoTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#7C1D26', // Cor principal
     marginBottom: 15,
   },
   pedidoCard: {
-    backgroundColor: '#FFF',
-    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12, // Borda arredondada
     padding: 15,
     marginBottom: 10,
-    elevation: 2,
+    elevation: 3, // Sombra
     flexDirection: 'row', 
     alignItems: 'center', 
-    justifyContent: 'space-between', 
+    justifyContent: 'space-between',
+    borderColor: '#F3EDE2', // Borda
+    borderWidth: 1,
   },
   pedidoInfo: {
     flex: 1, 
@@ -195,7 +226,7 @@ const styles = StyleSheet.create({
   pedidoSenha: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#7B0909',
+    color: '#7C1D26', // Cor principal
   },
   pedidoData: {
     fontSize: 14,
@@ -214,14 +245,15 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     backgroundColor: '#DC3545',
-    padding: 15,
-    borderRadius: 8,
+    padding: 18,
+    borderRadius: 12, // Borda arredondada
     alignItems: 'center',
     marginTop: 20,
     position: 'absolute',
     bottom: 20,
     left: 20,
     right: 20,
+    elevation: 3, // Sombra
   },
   logoutButtonText: {
     color: '#FFF',
@@ -232,12 +264,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 10, // Evita que o texto encoste nas bordas
   },
   convidadoTitle: {
     fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 15,
+    color: '#7C1D26', // Cor principal
   },
   convidadoSubtext: {
     fontSize: 16,
@@ -247,10 +281,12 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   loginButton: {
-    backgroundColor: '#7B0909',
-    padding: 15,
-    borderRadius: 8,
+    backgroundColor: '#7C1D26', // Cor principal
+    padding: 18,
+    borderRadius: 12, // Borda arredondada
     alignItems: 'center',
+    elevation: 3, // Sombra
+    paddingHorizontal: 30, // Mais padding
   },
   loginButtonText: {
     color: '#FFF',
