@@ -1,2 +1,5 @@
-# Ignorar dependências do Node
-node_modules/
+# Dependencies
+/node_modules
+
+# Expo files
+.expo/

@@ -1,60 +1,194 @@
 import React from "react";
-import { SafeAreaView, ScrollView, Text, View, Image, TouchableOpacity, StyleSheet } from "react-native";
-
-export default function HomeScreen({ navigation }) {
-  const categories = [
-    { name: "Pizzas", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/uulzo8g5_expires_30_days.png", color: "#F44336", screen: "Cardapio" },
-    { name: "Bebidas", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/88znwjll_expires_30_days.png", color: "#2196F3", screen: "Cardapio" },
-    { name: "Favoritos", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/d174b2pj_expires_30_days.png", color: "#FF9800", screen: "Cardapio" },
-    { name: "Sobremesas", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/snpswyio_expires_30_days.png", color: "#9C27B0", screen: "Cardapio" },
-    { name: "Rodízios", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/z9p8vx67_expires_30_days.png", color: "#4CAF50", screen: "Cardapio" },
-    { name: "Acompanhamentos", img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/gdiRRrvLT5/alzgc0j5_expires_30_days.png", color: "#00BCD4", screen: "Cardapio" },
-  ];
-
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  StatusBar,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  useFonts,
+  DancingScript_700Bold,
+} from "@expo-google-fonts/dancing-script";
+ 
+// --- 1. NOVA MUDANÇA: Importar os ícones ---
+import { Ionicons } from "@expo/vector-icons";
+ 
+export default function TelaInicial({ navigation }) {
+  const insets = useSafeAreaInsets();
+ 
+  const [fontsLoaded] = useFonts({
+    DancingScript_700Bold,
+  });
+ 
+  if (!fontsLoaded) {
+    return null;
+  }
+ 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.header}>🍕 Menu Principal</Text>
-
-        <View style={styles.cardsContainer}>
-          {categories.map((cat, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[styles.card, { backgroundColor: cat.color }]}
-              onPress={() => navigation.navigate(cat.screen)}
-              activeOpacity={0.8}
-            >
-              <Image source={{ uri: cat.img }} style={styles.cardImage} resizeMode="contain" />
-              <Text style={styles.cardText}>{cat.name}</Text>
-            </TouchableOpacity>
-          ))}
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7C1D26" />
+ 
+      {/* Cabeçalho fixo */}
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+       
+        {/* --- 2. NOVA MUDANÇA: Botão de Perfil Adicionado --- */}
+        <TouchableOpacity
+          style={[styles.profileButton, { top: insets.top + 15 }]} // Usa o 'insets' para alinhar
+          onPress={() => navigation.navigate("Profile")}
+        >
+          <Ionicons name="person-circle-outline" size={34} color="#FFECD1" />
+        </TouchableOpacity>
+       
+     
+        <Image
+          source={require("../../assets/images/pizzalogo.png")}
+          style={styles.headerImage}
+        />
+        <Text style={styles.headerTitle}>BravaZatta</Text>
+        <Text style={styles.headerSubtitle}>
+          Escolha, saboreie e se apaixone ❤️
+        </Text>
+            </View>
+ 
+      {/* Conteúdo rolável */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.menuContainer}>
+          {/* PIZZAS */}
+          <TouchableOpacity
+            style={styles.card}
+            activeOpacity={0.85}
+            onPress={() => navigation.navigate("Pizzas")}
+          >
+            <Image
+              source={require("../../assets/images/pizzainicio.webp")}
+              style={styles.cardImage}
+            />
+            <Text style={styles.cardTitle}>Pizzas</Text>
+            <Text style={styles.cardSubtitle}>Sabores irresistíveis</Text>
+          </TouchableOpacity>
+ 
+          {/* BEBIDAS */}
+          <TouchableOpacity
+            style={styles.card}
+            activeOpacity={0.85}
+            onPress={() => navigation.navigate("Bebidas")}
+          >
+            <Image
+              source={require("../../assets/images/bebidainicio.jpg")}
+              style={styles.cardImage}
+            />
+            <Text style={styles.cardTitle}>Bebidas</Text>
+            <Text style={styles.cardSubtitle}>
+              Para refrescar o momento 🍹
+            </Text>
+          </TouchableOpacity>
+ 
+          {/* SOBREMESAS */}
+          <TouchableOpacity
+            style={styles.card}
+            activeOpacity={0.85}
+            onPress={() => navigation.navigate("Sobremesas")}
+          >
+            <Image
+              source={require("../../assets/images/sobremesainicio.webp")}
+              style={styles.cardImage}
+            />
+            <Text style={styles.cardTitle}>Sobremesas</Text>
+            <Text style={styles.cardSubtitle}>O doce final perfeito 🍨</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
-
+ 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: "#FFF8E7" },
-  scrollContainer: { paddingVertical: 30, paddingHorizontal: 20, alignItems: "center" },
-  header: { fontSize: 36, fontWeight: "bold", color: "#333", marginBottom: 30 },
-  cardsContainer: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center" },
-  card: {
-    width: 140,
-    height: 180,
-    borderRadius: 20,
-    margin: 10,
-    padding: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFDF6",
   },
-  cardImage: { width: 100, height: 100, marginBottom: 10 },
-  cardText: { color: "#fff", fontSize: 18, fontWeight: "bold", textAlign: "center" },
+  header: {
+    alignItems: "center",
+    backgroundColor: "#7C1D26",
+    paddingTop: 20, // 🔹 menos espaço em cima
+    paddingBottom: 15, // 🔹 menos espaço embaixo
+    borderBottomLeftRadius: 35,
+    borderBottomRightRadius: 35,
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  headerImage: {
+    width: 200, // 🔹 aumentei o tamanho da logo
+    height: 160,
+    resizeMode: "contain",
+    marginBottom: 4,
+  },
+  headerTitle: {
+    fontFamily: "DancingScript_700Bold",
+    color: "#FFECD1",
+    fontSize: 46,
+    marginTop: -70, // 🔹 aproxima o texto da logo
+  },
+  headerSubtitle: {
+    color: "#FFF9EE",
+    fontSize: 15,
+    opacity: 0.9,
+    marginTop: 2,
+  },
+  scrollContent: {
+    paddingBottom: 30,
+  },
+  menuContainer: {
+    paddingHorizontal: 22,
+    paddingTop: 25,
+  },
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 24,
+    paddingVertical: 28,
+    paddingHorizontal: 18,
+    alignItems: "center",
+    marginBottom: 24,
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 5 },
+    borderWidth: 1,
+    borderColor: "#F3EDE2",
+  },
+  cardImage: {
+    width: 160,
+    height: 160,
+    marginBottom: 16,
+    borderRadius: 20,
+    resizeMode: "cover",
+  },
+  cardTitle: {
+    color: "#7C1D26",
+    fontSize: 28,
+    fontWeight: "700",
+    marginBottom: 4,
+  },
+  cardSubtitle: {
+    color: "#555",
+    fontSize: 16,
+    textAlign: "center",
+  },
+ 
+  // --- 3. NOVA MUDANÇA: Estilo do botão de perfil ---
+  profileButton: {
+    position: 'absolute',
+    right: 22, // Distância da direita
+    zIndex: 11, // Garante que ele fique sobre o cabeçalho
+  },
 });
-
-

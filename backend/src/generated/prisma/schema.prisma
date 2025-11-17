@@ -1,4 +1,10 @@
-// prisma/schema.prisma
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+//informações
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -9,25 +15,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/**
- * =======================
- * ENUMS
- * =======================
- */
-
-/// Status do PEDIDO
-enum OrderStatus {
-  RECEBIDO
-  PREPARANDO
-  PRONTO
-}
-
-/**
- * =======================
- * MODELS
- * =======================
- */
-
+//tabela User(Salva os emails cadastrados)
 model User {
   id         String   @id @default(uuid())
   name       String
@@ -41,6 +29,7 @@ model User {
   @@map("users")
 }
 
+//Tabela Categorias - mostra as categorias do cardápio
 model Category {
   id         String   @id @default(uuid())
   name       String
@@ -54,20 +43,7 @@ model Category {
   @@map("categories")
 }
 
-/**
- * Disponibilidade do PRODUTO (ex.: DISPONIVEL, INDISPONIVEL, ESGOTADO)
- */
-model Status {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  products Product[]
-
-  @@map("status")
-}
-
+//Tabela de produtos(mostra as informações do produto)
 model Product {
   id          String   @id @default(uuid())
   name        String
@@ -77,38 +53,37 @@ model Product {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  // relação com categoria
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId String
 
-  // relação com status de disponibilidade
-  status   Status @relation(fields: [statusId], references: [id])
-  statusId String
-
   productIngredients ProductIngredient[]
-  items              Item[]
+
+  items Item[]
+
+  statusId String
+  status   Status @relation(fields: [statusId], references: [id])
 
   @@map("products")
 }
 
+//Tabela de Pedido(mostra o numero do pedido)
 model Order {
-  id         String      @id @default(uuid())
+  id         String   @id @default(uuid())
   table      Int
-  status     OrderStatus @default(RECEBIDO) // RECEBIDO | PREPARANDO | PRONTO
-  draft      Boolean     @default(true)
+  status     Boolean  @default(false)
+  draft      Boolean  @default(true)
   name       String?
-  created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  // marcos opcionais do fluxo
-  startedAt DateTime? // quando virou PREPARANDO
-  readyAt   DateTime? // quando virou PRONTO
-
-  items Item[]
+  items    Item[]
+  payments Payment[]
+  review   Review?
 
   @@map("orders")
 }
 
+//Tabela de quantidade de itens
 model Item {
   id         String   @id @default(uuid())
   amount     Int
@@ -126,6 +101,23 @@ model Item {
   @@map("items")
 }
 
+// TABELAS NOVAS!!!!!
+
+// Tabela da categoria que o cliente entrou
+model CategoryView {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  @@map("category_views")
+}
+
+//Tabela de MenuItem - mostra os itens individuais do cardápio(pizzas, bebidas, rodizios, etc.)
 model MenuItem {
   id          String @id @default(uuid())
   name        String
@@ -142,6 +134,35 @@ model MenuItem {
   @@map("menu_items")
 }
 
+//Tabela de Produto_Ingrediente - Tabela que junta os produtos com os ingredientes
+model ProductIngredient {
+  id           String   @id @default(uuid())
+  productId    String
+  ingredientId String
+  createdAt    DateTime @default(now())
+
+  product    Product    @relation(fields: [productId], references: [id])
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@unique([productId, ingredientId])
+  @@map("product_ingredients")
+}
+
+//Tabela de Ingredientes - mostra os ingredientes que podem ser adcionados ou removidos dos itens do pedido
+model Ingredient {
+  id        String   @id @default(uuid())
+  name      String
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  productIngredients ProductIngredient[]
+  itemModifications  ItemModification[]
+
+  @@map("ingredients")
+}
+
+// Tabela de modificação de item - Esta é a tabela que registra as alterações do cliente
 model ItemModification {
   id        String   @id @default(uuid())
   type      String
@@ -156,41 +177,61 @@ model ItemModification {
   @@map("item_modifications")
 }
 
-model ProductIngredient {
-  id           String   @id @default(uuid())
-  productId    String
-  ingredientId String
-  createdAt    DateTime @default(now())
+// tabela status - apresenta os status do pedido
+model Status {
+  id   String @id @default(uuid())
+  name String @unique
 
-  product    Product    @relation(fields: [productId], references: [id])
-  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  payments Payment[]
+  products Product[]
 
-  @@unique([productId, ingredientId])
-  @@map("product_ingredients")
+  @@map("statuses")
 }
 
-model CategoryView {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
+// ...existing code...
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
+// Tabela de pagamentos - apresenta o tipo de pagamento do pedido
+model Payment {
+  id          String   @id @default(uuid())
+  paymentDate DateTime @default(now())
+  amount      Decimal
+  paymentType String
 
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String
+  order   Order?  @relation(fields: [orderId], references: [id])
+  orderId String?
 
-  @@map("category_views")
+  status   Status @relation(fields: [statusId], references: [id])
+  statusId String
+
+  @@map("payments")
 }
 
-model Ingredient {
+// Tabela de Cliente - salva informações do cliente
+model Client {
   id        String   @id @default(uuid())
   name      String
-  price     Float
+  email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  productIngredients ProductIngredient[]
-  itemModifications  ItemModification[]
+  reviews Review[]
 
-  @@map("ingredients")
+  @@map("clients")
+}
+
+// Tabela de Avaliação - salva as informações da pesquisa
+model Review {
+  id       String   @id @default(uuid())
+  rating   Int
+  comment  String?
+  createAt DateTime @default(now())
+
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String @unique
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId String
+  // ...existing code...
+
+  @@map("reviews")
 }

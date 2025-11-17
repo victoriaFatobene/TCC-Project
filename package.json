@@ -1,9 +1,10 @@
 {
-  "devDependencies": {
-    "@types/express": "^5.0.3",
-    "@types/mongoose": "^5.11.96"
-  },
   "dependencies": {
-    "mongoose": "^8.18.2"
+    "expo": "^54.0.10"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.13",
+    "@types/react-native": "^0.73.0",
+    "typescript": "~5.9.2"
   }
 }

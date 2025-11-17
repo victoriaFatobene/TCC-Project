@@ -1,66 +1,197 @@
-import React from "react";
-import { SafeAreaView, ScrollView, View, Text, Image, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  StatusBar,
+  TextInput,
+  FlatList,
+  Image,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  useFonts,
+  DancingScript_700Bold,
+} from "@expo-google-fonts/dancing-script";
 
-const { width } = Dimensions.get("window");
+export default function Sobremesas({ navigation }) {
+  const insets = useSafeAreaInsets();
+  const [searchText, setSearchText] = useState("");
 
-// Exemplo de dados de sobremesas
-const sobremesas = [
-  { id: 1, nome: "Brigadeiro", preco: "R$ 5,00", imagem: "https://via.placeholder.com/150" },
-  { id: 2, nome: "Pudim", preco: "R$ 7,00", imagem: "https://via.placeholder.com/150" },
-  { id: 3, nome: "Sorvete", preco: "R$ 6,50", imagem: "https://via.placeholder.com/150" },
-];
+  const sobremesas = [
+    {
+      id: "1",
+      nome: "Sorvetes",
+      imagem: require("../../assets/images/sorvete.jpg"),
+      destino: "Sorvetes",
+    },
+    {
+      id: "2",
+      nome: "Bolos",
+      imagem: require("../../assets/images/bolo.jpg"),
+      destino: "Bolos",
+    },
+    {
+      id: "3",
+      nome: "Doces",
+      imagem: require("../../assets/images/doces.jpg"),
+      destino: "Doces",
+    },
+  ];
 
-export default function Sobremesas() {
+  const filtradas = sobremesas.filter((item) =>
+    item.nome.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const [fontsLoaded] = useFonts({
+    DancingScript_700Bold,
+  });
+
+  if (!fontsLoaded) return null;
+
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Cabeçalho */}
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Sobremesas 🍰</Text>
-          <Text style={styles.subHeaderText}>Delícias doces para finalizar sua refeição!</Text>
-        </View>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#7B0909" />
 
-        {/* Lista de sobremesas */}
-        <View style={styles.list}>
-          {sobremesas.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.card}>
-              <Image source={{ uri: item.imagem }} style={styles.cardImage} resizeMode="cover" />
-              <View style={styles.cardContent}>
-                <Text style={styles.cardTitle}>{item.nome}</Text>
-                <Text style={styles.cardPrice}>{item.preco}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+      {/* Cabeçalho */}
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
+          <Ionicons name="chevron-back" size={26} color="#FFF" />
+        </TouchableOpacity>
+
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Bravazatta</Text>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+
+      {/* Barra de pesquisa */}
+      <View style={styles.searchContainer}>
+        <Ionicons name="search" size={20} color="#7B0909" />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar sobremesa..."
+          placeholderTextColor="#888"
+          value={searchText}
+          onChangeText={setSearchText}
+        />
+      </View>
+
+      {/* Lista de sobremesas */}
+      <FlatList
+        data={filtradas}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => navigation.navigate(item.destino)}
+            activeOpacity={0.85}
+          >
+            <Image source={item.imagem} style={styles.cardImage} />
+            <View style={styles.cardOverlay} />
+            <Text style={styles.cardText}>{item.nome}</Text>
+          </TouchableOpacity>
+        )}
+        ListEmptyComponent={
+          <Text style={styles.notFoundText}>
+            Nenhum resultado encontrado 😕
+          </Text>
+        }
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff8f0" },
-  scrollContent: { padding: 16, paddingBottom: 50 },
-
-  header: { alignItems: "center", marginBottom: 20 },
-  headerText: { fontSize: width * 0.08, fontWeight: "bold", color: "#ff6b00", textAlign: "center" },
-  subHeaderText: { fontSize: width * 0.045, color: "#ff914d", textAlign: "center", marginTop: 4 },
-
-  list: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
-
-  card: {
-    width: width * 0.45,
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    marginBottom: 16,
-    overflow: "hidden",
-    elevation: 3, // sombra Android
-    shadowColor: "#000", // sombra iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+  container: {
+    flex: 1,
+    backgroundColor: "#FFF8F0",
   },
-  cardImage: { width: "100%", height: width * 0.45 },
-  cardContent: { padding: 8 },
-  cardTitle: { fontSize: width * 0.045, fontWeight: "600", color: "#333" },
-  cardPrice: { fontSize: width * 0.04, fontWeight: "500", color: "#ff6b00", marginTop: 4 },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#7B0909",
+    paddingBottom: 15,
+    paddingHorizontal: 10,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    elevation: 5,
+  },
+  backButton: {
+    padding: 8,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 50,
+  },
+  titleContainer: {
+    flex: 1,
+    alignItems: "center",
+    marginRight: 40,
+  },
+  title: {
+    fontFamily: "DancingScript_700Bold",
+    color: "#FFF",
+    fontSize: 34,
+    marginTop: 5,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFF",
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    elevation: 3,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 16,
+    color: "#333",
+  },
+  list: {
+    paddingHorizontal: 20,
+    paddingTop: 30,
+    paddingBottom: 40,
+  },
+  card: {
+    borderRadius: 20,
+    overflow: "hidden",
+    marginBottom: 20,
+    elevation: 4,
+    backgroundColor: "#FFF",
+  },
+  cardImage: {
+    width: "100%",
+    height: 180,
+    resizeMode: "contain", // imagem aparece inteira
+    backgroundColor: "#FFF", // melhora contraste
+  },
+  cardOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
+  cardText: {
+    position: "absolute",
+    bottom: 15,
+    left: 20,
+    color: "#FFF",
+    fontSize: 22,
+    fontWeight: "bold",
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 1, height: 2 },
+    textShadowRadius: 3,
+  },
+  notFoundText: {
+    textAlign: "center",
+    color: "#888",
+    fontSize: 16,
+    marginTop: 40,
+  },
 });
